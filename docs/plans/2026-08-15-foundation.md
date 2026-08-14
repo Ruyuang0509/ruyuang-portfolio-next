@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Working directory: the repo root (this file's `../../`). NEVER write absolute local paths — of this machine, any `C:\Users\...`, any `D:\...` — into ANY committed file; that is exactly what `check:paths` polices. Refer to locations relative to repo root.
+- Working directory: the repo root (this file's `../../`). NEVER write absolute local paths (any drive-letter user-profile, Projects, or machine-specific path) into ANY committed file; that is exactly what `check:paths` polices — it flagged this very line's original wording, which spelled the pattern out literally. Refer to locations relative to repo root.
 - Gate configs and committed tests must NOT contain the literal secrets/patterns they police (no real username, no vault folder name). Generic regexes in config; test fixtures build offending strings at runtime by concatenation.
 - Spec of record: the vault note `projects/如願個人網站/2026-08-14-新站設計規格.md` (do not copy it here; do not need it to execute this plan).
 - Node >= 20. Package manager: npm (lockfile committed).
