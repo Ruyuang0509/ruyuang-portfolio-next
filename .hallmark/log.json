@@ -1,0 +1,11 @@
+[
+  { "date": "2026-08-15",
+    "macrostructure": "Map-Diagram",
+    "theme": "custom",
+    "theme_axes": "dark / mono / chromatic-other (amber ~72)",
+    "vibe": "深夜監聽室, 琥珀電平, 儀器刻度, 證據紙",
+    "enrichment": "Tier-A CSS console + Tier-B inline SVG paths",
+    "nav": "N9 edge-aligned",
+    "footer": "Ft5 statement",
+    "brief": "ruyuang-portfolio-next · 可演奏的監聽室 homepage direction v1 (docs/design/monitor-room-v1.html)" }
+]
