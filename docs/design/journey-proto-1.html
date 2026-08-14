@@ -37,7 +37,9 @@
 }
 *{box-sizing:border-box;margin:0}
 html,body{overflow-x:clip}
-html{background:var(--color-paper);color:var(--color-ink);font-family:var(--font-display);font-size:16px;line-height:1.8;scroll-behavior:auto}
+html{background:var(--color-paper);color:var(--color-ink);font-family:var(--font-display);font-size:16px;line-height:1.8;scroll-behavior:auto;line-break:loose}
+h1,h2{text-wrap:balance}
+p{text-wrap:pretty}
 a{color:var(--color-ink)}
 :focus-visible{outline:2px solid var(--color-focus);outline-offset:2px}
 .mono{font-family:var(--font-mono)}
@@ -53,7 +55,7 @@ a{color:var(--color-ink)}
 /* ---------- beats ---------- */
 .beat{position:relative;z-index:1;padding-block:var(--space-3xl)}
 .beat-inner{background:color-mix(in oklab,var(--color-paper) 82%,transparent);backdrop-filter:none;padding-block:var(--space-md)}
-.orient{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.16em;color:var(--color-muted);text-transform:uppercase}
+.orient{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.12em;color:var(--color-muted);text-transform:uppercase;margin-bottom:var(--space-lg)}
 .note{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);border-left:2px solid var(--color-rule);padding:var(--space-xs) var(--space-md);margin-top:var(--space-lg);max-width:46ch;line-height:1.9}
 .note b{color:var(--color-accent);font-weight:500}
 
@@ -72,14 +74,14 @@ button.cta:hover{filter:brightness(1.06)}
 .scroll-hint{margin-top:var(--space-2xl);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
 
 /* beat 2 identity */
-#identity .beat-inner{max-width:60ch}
+#identity .beat-inner{max-width:60ch;margin-inline:auto;padding-inline:var(--space-lg)}
 #identity h2{font-weight:700;font-size:1.3rem;margin-bottom:var(--space-md)}
 #identity p{color:var(--color-ink-2)}
 .readouts{display:flex;flex-wrap:wrap;gap:var(--space-sm) var(--space-xl);margin-top:var(--space-lg);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
 .readouts b{color:var(--color-ink-2);font-weight:500}
 
 /* beat 3 station */
-#station .panel{border:1px solid var(--color-rule);border-radius:3px;background:var(--color-paper-2);padding:var(--space-lg);position:relative}
+#station .panel{border:1px solid var(--color-rule);border-radius:3px;background:var(--color-paper-2);padding:var(--space-lg);position:relative;margin-top:var(--space-lg)}
 #station .plate{position:absolute;top:-11px;left:var(--space-md);background:var(--color-paper-3);border:1px solid var(--color-rule);border-radius:2px;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;color:var(--color-ink-2);padding:2px var(--space-sm)}
 #station h2{font-weight:700;font-size:1.2rem;margin-bottom:var(--space-sm)}
 #station .desc{color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch}
@@ -138,12 +140,12 @@ button.cta:hover{filter:brightness(1.06)}
     <p class="orient">MONITOR ROOM · 一場訊號的旅程</p>
     <p style="margin-top:var(--space-xl)"><span class="dot" id="hookDot" aria-hidden="true"></span></p>
     <h1>把聲學的理解門檻,<br />調到<em>人人可聽見</em>。</h1>
-    <p class="hook-sub">這個站是一台可演奏的監聽台。往下走是一趟旅程;每一站都能上手玩。</p>
+    <p class="hook-sub">一台可演奏的監聽台。每一站,都能上手。</p>
     <div class="cta-row">
       <button class="cta" id="powerBtn" aria-pressed="false">▶ 開機・完整體驗(含聲音)</button>
       <a class="ghost" href="#identity">安靜地往下讀 ↓</a>
     </div>
-    <p class="scroll-hint" id="modeNote">目前:精簡閱讀模式(無聲、無動態)。開機隨時可以,不開也什麼都不會少。</p>
+    <p class="scroll-hint" id="modeNote">精簡閱讀模式——不開機,也什麼都不少。</p>
   </div>
 </section>
 
@@ -158,7 +160,7 @@ button.cta:hover{filter:brightness(1.06)}
       <span>ROUTE <b>作品 → 證據 → 研究</b></span>
       <span>OUT <b>混合多聲道監聽</b></span>
     </div>
-    <p class="note">設計註記:這一段刻意安靜。<b>靜默是材料</b>——旅程的第一個聲音,應該由你自己按下去。</p>
+    <p class="note">設計註記:<b>靜默是材料</b>。</p>
   </div>
 </section>
 
@@ -169,7 +171,7 @@ button.cta:hover{filter:brightness(1.06)}
     <div class="panel">
       <span class="plate">XY PAD · 跨模態映射</span>
       <h2>跨模態映射之聲音互動面板</h2>
-      <p class="desc">Pure Data 即時訊號處理與互動邏輯。這一站就是概念本身:位置進來,聲音出去——下面這塊板子,是同一個想法在網頁上的化身。</p>
+      <p class="desc">Pure Data 即時訊號處理與互動邏輯。位置進來,聲音出去——這塊板子就是概念本身。</p>
       <div class="pad-wrap">
         <div class="xy-pad" id="xyPad" role="application" aria-label="XY 合成板:發聲後,橫軸控制聲像與音高,縱軸控制遠近">
           <span class="xy-dot" id="xyDot" aria-hidden="true"></span>
@@ -178,10 +180,10 @@ button.cta:hover{filter:brightness(1.06)}
         <div class="pad-controls">
           <button class="play-toggle" id="padToggle" aria-pressed="false" disabled>▶ 發聲(先開機)</button>
           <label class="vol">音量 <input type="range" id="padVol" min="0" max="100" value="60" /></label>
-          <span class="mono" style="font-size:var(--text-xs);color:var(--color-muted)">五聲音階——怎麼玩都不會有錯音</span>
+          <span class="mono" style="font-size:var(--text-xs);color:var(--color-muted)">五聲音階 · 無錯音</span>
         </div>
       </div>
-      <p class="note">設計註記:我在這裡選了<b>軟起音</b>與<b>五聲音階</b>——因為不想嚇到你,也不想讓任何人「彈錯」。探索應該是安全的。</p>
+      <p class="note">設計註記:<b>探索應該是安全的</b>。</p>
       <p class="dossier-link">深入這件作品:<a href="../../src/content/works/pd-crossmodal.md" onclick="return false" title="原型內連結示意,正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
     </div>
   </div>
@@ -190,9 +192,9 @@ button.cta:hover{filter:brightness(1.06)}
 <p id="protoend">— 原型 1 到此(節拍 1–3/7)。影院站、田野站、控制室、謝幕在下一段。—</p>
 
 <!-- power boot overlay: enhancement entered by click; never the base state -->
-<div class="boot" id="boot" aria-hidden="true"><span class="dot" aria-hidden="true"></span><p>訊號上電中……(1.6 秒,可按任意鍵跳過)</p></div>
+<div class="boot" id="boot" aria-hidden="true"><span class="dot" aria-hidden="true"></span><p>上電中——按任意鍵跳過</p></div>
 
-<div class="hint" id="hint"><button id="hintClose" aria-label="關閉提示">✕</button>已開機。互動站的板子現在可以「▶ 發聲」;左右=聲像與音高、上下=遠近。隨時再按一次開機鈕即全站靜音。</div>
+<div class="hint" id="hint"><button id="hintClose" aria-label="關閉提示">✕</button>已開機。板子可發聲:左右=聲像與音高,上下=遠近。</div>
 
 <script>
 // R2 audio engine v2 — 全部聲音 opt-in;安全鏈:voices → chGain → send(演算法殘響) → analyser → LIMITER → master
