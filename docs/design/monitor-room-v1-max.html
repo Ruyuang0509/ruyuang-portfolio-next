@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>如願 — 監聽室・全機版(設計方向 v1-max mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+/* Hallmark · genre: atmospheric · macrostructure: Map-Diagram (variant: max/全機) · nav: transport-bar (N9 derived) · footer: Ft5-as-output-bus
+ * theme: custom · vibe: "深夜監聽室, 琥珀電平, 儀器刻度, 證據紙" · paper: oklch(14% 0.008 75) · accent: oklch(78% 0.15 72)
+ * display: Noto Sans TC 900 + IBM Plex Mono · axes: dark / mono / chromatic-other (amber ~72°)
+ * variant note: the whole page is ONE chassis — every section a labelled panel; density from rules/ticks, never from accent
+ * Hallmark · pre-emit critique: P5 H4 E4 S5 R3 V5
+ */
+:root{
+  --color-paper:oklch(12% 0.008 75);
+  --color-paper-2:oklch(16% 0.010 75);
+  --color-paper-3:oklch(20% 0.010 75);
+  --color-ink:oklch(93% 0.010 80);
+  --color-ink-2:oklch(78% 0.010 80);
+  --color-muted:oklch(58% 0.012 75);
+  --color-rule:oklch(30% 0.012 75);
+  --color-rule-2:oklch(23% 0.010 75);
+  --color-accent:oklch(78% 0.15 72);
+  --color-accent-ink:oklch(18% 0.020 75);
+  --color-focus:oklch(80% 0.19 72);
+  --color-signal:oklch(62% 0.19 25);
+  --font-display:"Noto Sans TC",sans-serif;
+  --font-body:"Noto Sans TC",sans-serif;
+  --font-mono:"IBM Plex Mono",monospace;
+  --space-xs:4px;--space-sm:8px;--space-md:16px;--space-lg:24px;--space-xl:40px;--space-2xl:56px;
+  --text-body:1rem;--text-sm:.8125rem;--text-xs:.6875rem;
+  --text-display:clamp(1.8rem,4vw + .5rem,3.2rem);
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --dur-1:150ms;
+  --rule-1:1px solid var(--color-rule);
+  --radius-1:3px;
+}
+*{box-sizing:border-box;margin:0}
+html,body{overflow-x:clip}
+html{background:var(--color-paper);color:var(--color-ink);font-family:var(--font-body);font-size:16px;line-height:1.75}
+body{background-image:
+  linear-gradient(var(--color-rule-2) 1px,transparent 1px),
+  linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);
+  background-size:56px 56px;background-attachment:fixed}
+a{color:var(--color-ink);text-decoration:none}
+:focus-visible{outline:2px solid var(--color-focus);outline-offset:2px}
+.mono{font-family:var(--font-mono)}
+
+/* chassis */
+.chassis{max-width:1160px;margin:clamp(8px,2vw,24px) auto;border:var(--rule-1);border-radius:6px;background:var(--color-paper);box-shadow:0 0 0 4px var(--color-paper-2)}
+.inner{padding-inline:clamp(14px,3.5vw,36px)}
+
+/* transport bar */
+.transport{display:flex;justify-content:space-between;align-items:center;gap:var(--space-md);border-bottom:var(--rule-1);padding:var(--space-md) clamp(14px,3.5vw,36px);flex-wrap:wrap}
+.wordmark{font-family:var(--font-mono);font-weight:600;font-size:var(--text-sm);letter-spacing:.08em}
+.wordmark b{color:var(--color-accent)}
+.t-links{display:flex;gap:var(--space-sm);flex-wrap:wrap}
+.t-links a{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.06em;color:var(--color-ink-2);border:1px solid var(--color-rule);border-radius:var(--radius-1);padding:var(--space-xs) var(--space-md);white-space:nowrap}
+.t-links a:hover{background:var(--color-paper-3);color:var(--color-ink)}
+.t-state{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);white-space:nowrap}
+.led{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--color-accent);vertical-align:1px}
+.led--rec{background:var(--color-signal)}
+
+/* panel with label plate */
+.panel{border:var(--rule-1);border-radius:var(--radius-1);background:var(--color-paper);margin-block:var(--space-xl);position:relative}
+.plate{position:absolute;top:-11px;left:var(--space-md);background:var(--color-paper-2);border:var(--rule-1);border-radius:2px;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;color:var(--color-ink-2);padding:2px var(--space-sm);text-transform:uppercase}
+.panel-body{padding:var(--space-lg)}
+.ticks{height:8px;border-bottom:var(--rule-1);background:repeating-linear-gradient(90deg,var(--color-rule) 0 1px,transparent 1px 14px)}
+
+/* hero panel */
+.hero .panel-body{padding-block:var(--space-2xl)}
+.orient{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;color:var(--color-muted);text-transform:uppercase}
+.hero h1{font-family:var(--font-display);font-weight:900;font-size:var(--text-display);line-height:1.3;max-width:22ch;margin-top:var(--space-md)}
+.hero h1 em{font-style:normal;color:var(--color-accent);border-bottom:3px solid var(--color-accent)}
+.readouts{display:flex;flex-wrap:wrap;gap:var(--space-sm) var(--space-xl);margin-top:var(--space-lg);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+.readouts span b{color:var(--color-ink-2);font-weight:500}
+
+/* console strips */
+.console-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.05fr);gap:var(--space-md)}
+.strip{border:var(--rule-1);border-radius:var(--radius-1);background:var(--color-paper-2);padding:var(--space-md);display:flex;flex-direction:column;gap:var(--space-md);min-width:0}
+.strip:hover{background:var(--color-paper-3)}
+.ch{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.1em;color:var(--color-muted)}
+.strip h2{font-family:var(--font-display);font-weight:700;font-size:1.05rem;line-height:1.5}
+.strip .desc{font-size:var(--text-sm);color:var(--color-ink-2);line-height:1.7}
+.meterrow{display:flex;gap:var(--space-md);align-items:stretch;margin-top:auto}
+.scale{width:14px;background:repeating-linear-gradient(to bottom,var(--color-rule) 0 1px,transparent 1px 7px);border-right:1px solid var(--color-rule-2)}
+.meter{flex:1;height:72px;background:repeating-linear-gradient(to top,var(--color-rule-2) 0 4px,transparent 4px 6px);position:relative;border-radius:2px;overflow:clip}
+.meter::after{content:"";position:absolute;inset:auto 0 0 0;height:var(--level,46%);background:repeating-linear-gradient(to top,var(--color-accent) 0 4px,transparent 4px 6px);opacity:.85}
+.fader{width:26px;position:relative;border-left:1px solid var(--color-rule)}
+.fader::before{content:"";position:absolute;left:-7px;top:var(--fpos,34%);width:13px;height:8px;background:var(--color-ink-2);border-radius:2px}
+.evrow{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);border-top:1px solid var(--color-rule-2);padding-top:var(--space-sm);line-height:1.9;overflow-wrap:anywhere}
+.evrow b{color:var(--color-accent);font-weight:500}
+.master{border:1px solid var(--color-accent);border-radius:var(--radius-1);background:var(--color-paper-2);padding:var(--space-md);display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
+.master h2{font-family:var(--font-display);font-weight:900;font-size:1.15rem;line-height:1.45}
+.master .desc{font-size:var(--text-sm);color:var(--color-ink-2);line-height:1.7}
+.master .cta{margin-top:auto;align-self:flex-start;font-family:var(--font-mono);font-size:var(--text-sm);color:var(--color-accent-ink);background:var(--color-accent);padding:var(--space-sm) var(--space-md);border-radius:var(--radius-1);white-space:nowrap}
+.master .cta:hover{filter:brightness(1.06)}
+.legend{display:flex;flex-wrap:wrap;gap:var(--space-sm) var(--space-lg);padding:var(--space-sm) var(--space-lg) var(--space-md);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+
+/* patch bay rack */
+.rack-row{display:grid;grid-template-columns:auto 3.2rem minmax(0,1fr) auto auto;gap:var(--space-md);align-items:center;padding:var(--space-md) var(--space-lg);border-bottom:1px solid var(--color-rule-2)}
+.rack-row:last-child{border-bottom:0}
+.jack{width:10px;height:10px;border:2px solid var(--color-rule);border-radius:50%}
+.rack-row:hover{background:var(--color-paper-2)}
+.rack-row:hover .jack{border-color:var(--color-accent)}
+.rack-row .idx{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+.rack-row .t{font-weight:500;min-width:0}
+.rack-row .t small{display:block;font-weight:400;font-size:var(--text-sm);color:var(--color-muted)}
+.rack-row .dash{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-rule);letter-spacing:-1px;white-space:nowrap}
+.rack-row .tag{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-ink-2);white-space:nowrap}
+
+/* control room — rack units with switches */
+.ctrl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-md);padding:var(--space-lg)}
+.mod{border:var(--rule-1);border-radius:var(--radius-1);background:var(--color-paper-2);padding:var(--space-md)}
+.mod .sw{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-sm)}
+.mod h3{font-family:var(--font-display);font-weight:700;font-size:1rem}
+.toggle{width:30px;height:16px;border:1px solid var(--color-rule);border-radius:9px;position:relative}
+.toggle::after{content:"";position:absolute;top:2px;left:16px;width:10px;height:10px;border-radius:50%;background:var(--color-accent)}
+.mod p{font-size:var(--text-sm);color:var(--color-ink-2);line-height:1.75}
+.mod .stat{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);margin-top:var(--space-sm)}
+
+/* provenance plate */
+.prov{display:flex;flex-wrap:wrap;gap:var(--space-md) var(--space-2xl);font-size:var(--text-sm);color:var(--color-ink-2);padding:var(--space-lg)}
+.prov .mono{font-size:var(--text-xs);color:var(--color-muted)}
+
+/* output bus footer */
+.outbus{border-top:var(--rule-1);margin-top:var(--space-xl)}
+.outbus .panel-body{display:flex;flex-direction:column;gap:var(--space-lg)}
+.statement{font-family:var(--font-display);font-weight:700;font-size:clamp(1.2rem,2.6vw,1.7rem);line-height:1.6;max-width:26ch}
+.busline{display:flex;align-items:center;gap:var(--space-md);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+.busline .rail{flex:1;height:1px;background:var(--color-rule);position:relative}
+.busline .rail::after{content:"";position:absolute;left:72%;top:-4px;width:9px;height:9px;background:var(--color-ink-2);border-radius:2px}
+.foot-row{display:flex;flex-wrap:wrap;gap:var(--space-md) var(--space-lg);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+.foot-row a{color:var(--color-ink-2);white-space:nowrap}
+.foot-row a:hover{color:var(--color-ink)}
+
+@media (prefers-reduced-motion: no-preference){
+  .strip,.master,.rack-row,.t-links a{transition:background var(--dur-1) var(--ease-out)}
+}
+@media (max-width:899px){
+  .console-grid{grid-template-columns:minmax(0,1fr)}
+  .ctrl{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  .rack-row{grid-template-columns:auto minmax(0,1fr)}
+  .rack-row .idx,.rack-row .dash{display:none}
+  .rack-row .tag{grid-column:2;justify-self:start}
+}
+</style>
+</head>
+<body>
+<div class="chassis">
+
+<nav class="transport" aria-label="主導覽">
+  <span class="wordmark"><b>●</b> 如願 RUYUAN</span>
+  <div class="t-links"><a href="#console">訊號路徑</a><a href="#rack">機櫃</a><a href="#ctrl">控制室</a><a href="#prov">佐證</a></div>
+  <span class="t-state"><span class="led" aria-hidden="true"></span> MONITOR · zh-Hant-TW</span>
+</nav>
+
+<div class="inner">
+
+<section class="panel hero" aria-label="總覽">
+  <span class="plate">MONITOR ROOM</span>
+  <div class="panel-body">
+    <p class="orient">聲音 × 智能應用 · 作品即訊號</p>
+    <h1>把聲學的理解門檻,<br />調到<em>人人可聽見</em>。</h1>
+    <div class="readouts">
+      <span>FOCUS <b>心理聲學 × 人機協作</b></span>
+      <span>ROUTE <b>作品 → 證據 → 研究</b></span>
+      <span>OUT <b>混合多聲道監聽</b></span>
+    </div>
+  </div>
+  <div class="ticks" aria-hidden="true"></div>
+</section>
+
+<section class="panel" id="console" aria-label="主打作品(訊號通道)">
+  <span class="plate">SIGNAL PATH · CH 01–03 → MASTER</span>
+  <div class="panel-body">
+    <div class="console-grid">
+      <article class="strip" style="--level:62%;--fpos:28%">
+        <p class="ch"><span>CH·01 <span class="led" aria-hidden="true"></span></span><span>INTERACTIVE</span></p>
+        <h2>跨模態映射之聲音互動面板</h2>
+        <p class="desc">Pure Data 即時訊號處理與互動邏輯。自學而成——方法是 AI 協作加逆向拆解,而 Pd 正是報考所的正式課程。</p>
+        <div class="meterrow"><div class="scale" aria-hidden="true"></div><div class="meter" aria-hidden="true"></div><div class="fader" aria-hidden="true"></div></div>
+        <p class="evrow">EVIDENCE <b>操作 DEMO 已存檔</b> · 作者性聲明隨附</p>
+      </article>
+      <article class="strip" style="--level:48%;--fpos:40%">
+        <p class="ch"><span>CH·02 <span class="led" aria-hidden="true"></span></span><span>AV · 40s × 8</span></p>
+        <h2>Hamlet Story MV</h2>
+        <p class="desc">AI 生成場景與配樂、本人剪輯整合的文學影音實驗。八幕、雙語字幕,權利鏈完整可查。</p>
+        <div class="meterrow"><div class="scale" aria-hidden="true"></div><div class="meter" aria-hidden="true"></div><div class="fader" aria-hidden="true"></div></div>
+        <p class="evrow">EVIDENCE <b>權利聲明已親簽</b> · SHA-256 綁定成片</p>
+      </article>
+      <article class="strip" style="--level:55%;--fpos:33%">
+        <p class="ch"><span>CH·03 <span class="led led--rec" aria-hidden="true"></span></span><span>FIELD · 9′29″</span></p>
+        <h2>導覽影片(四部)</h2>
+        <p class="desc">地方文化見習的影音成品:潭墘、糖廠、蒜頭老街。分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
+        <div class="meterrow"><div class="scale" aria-hidden="true"></div><div class="meter" aria-hidden="true"></div><div class="fader" aria-hidden="true"></div></div>
+        <p class="evrow">EVIDENCE <b>結業證書具字號</b> · 三軌 NLE 輸出母檔</p>
+      </article>
+      <aside class="master">
+        <p class="ch"><span>MASTER OUT</span><span class="mono">RESEARCH</span></p>
+        <h2>混合多聲道監聽</h2>
+        <p class="desc">三路訊號匯向同一個研究方向:以精簡揚聲器結合開放式耳機,降低多聲道監聽的建置與理解門檻。</p>
+        <a class="cta" href="#">研究計畫 →</a>
+      </aside>
+    </div>
+  </div>
+  <p class="legend">
+    <span><span class="led" aria-hidden="true"></span> 證據已核驗</span>
+    <span><span class="led led--rec" aria-hidden="true"></span> 經歷線(證書承載)</span>
+    <span>█ 電平=完成度示意,非量測數據</span>
+  </p>
+</section>
+
+<section class="panel" id="rack" aria-label="次級展區">
+  <span class="plate">RACK · PATCH BAY</span>
+  <div>
+    <div class="rack-row"><span class="jack" aria-hidden="true"></span><span class="idx">R·01</span><p class="t">資料視覺化實際案例與數位學習應用探討<small>Canva 動態簡報 + OBS 解說影片 · 2026</small></p><span class="dash">――――</span><span class="tag">DATA·ED</span></div>
+    <div class="rack-row"><span class="jack" aria-hidden="true"></span><span class="idx">R·02</span><p class="t">線上學習互動行為之資料視覺化分析<small>Power BI 儀表板 · 含自我稽核與撤回紀錄 · 2026</small></p><span class="dash">――――</span><span class="tag">DATA·ED</span></div>
+    <div class="rack-row"><span class="jack" aria-hidden="true"></span><span class="idx">R·03</span><p class="t">短劇《畫本》<small>故事構思/攝影/剪輯 · 感動久久參賽 · 2024</small></p><span class="dash">――――</span><span class="tag">FILM</span></div>
+    <div class="rack-row"><span class="jack" aria-hidden="true"></span><span class="idx">R·04</span><p class="t">壯遊地圖與雙語海報<small>AI 輔助合成 × 製圖與美術指導 · 2025</small></p><span class="dash">――――</span><span class="tag">GRAPHIC</span></div>
+    <div class="rack-row"><span class="jack" aria-hidden="true"></span><span class="idx">R·05</span><p class="t">空英排版機<small>Windows 離線桌面應用 · .NET/WPF</small></p><span class="dash">――――</span><span class="tag">SOFTWARE</span></div>
+    <div class="rack-row"><span class="jack" aria-hidden="true"></span><span class="idx">R·06</span><p class="t">娜伊拉<small>Unity 互動敘事遊戲 · 畢業專題</small></p><span class="dash">――――</span><span class="tag">GAME</span></div>
+    <div class="rack-row"><span class="jack" aria-hidden="true"></span><span class="idx">R·07</span><p class="t">作品集網站 v1<small>本站前身,凍結為舊作展品</small></p><span class="dash">――――</span><span class="tag">WEB</span></div>
+  </div>
+</section>
+
+<section class="panel" id="ctrl" aria-label="AI 協作方法">
+  <span class="plate">CONTROL ROOM · METHOD</span>
+  <div class="ctrl">
+    <div class="mod"><div class="sw"><h3>浮士德</h3><span class="toggle" aria-hidden="true"></span></div><p>誕生於畢業專題的提示詞人格:在社群流傳框架上在地化與客製,兩代迭代,再用它產出下游工具。</p><p class="stat">v1 → v2 · 雙語運作架構</p></div>
+    <div class="mod"><div class="sw"><h3>多代理分工</h3><span class="toggle" aria-hidden="true"></span></div><p>決策者與執行者分離的派工架構:分類、規格、審查在上,建置在下,以確定性基準量測路由品質。</p><p class="stat">routing benchmark · 確定性 ground truth</p></div>
+    <div class="mod"><div class="sw"><h3>治理閘門</h3><span class="toggle" aria-hidden="true"></span></div><p>發布前的機器強制檢查:權利證據、個資樣式、措辭紀律——核准永遠是人,閘門只是不讓遺忘發生。</p><p class="stat">fail-closed · human-only approval</p></div>
+  </div>
+</section>
+
+<section class="panel" id="prov" aria-label="經歷與佐證">
+  <span class="plate">PROVENANCE</span>
+  <div class="prov">
+    <p>教育學學士 · 數位學習設計與管理<br /><span class="mono">國立嘉義大學 · 2026</span></p>
+    <p>青年壯遊見習(2025/7–11)<br /><span class="mono">結業證書 臺教青署學字第1142315380號</span></p>
+    <p>Hamlet 權利聲明<br /><span class="mono">已親簽 · SHA-256 綁定 · 2026-07-26</span></p>
+  </div>
+</section>
+
+</div>
+
+<footer class="outbus">
+  <div class="inner">
+    <div class="panel-body">
+      <p class="statement">「先讓路平坦,<br />再思考如何裝飾風景。」</p>
+      <div class="busline"><span>OUTPUT BUS</span><span class="rail" aria-hidden="true"></span><span>0 dB</span></div>
+      <div class="foot-row">
+        <a href="#">GITHUB</a><a href="#">研究計畫</a><a href="#console">回訊號路徑</a>
+        <span>© 2026 如願 · 本站無廣告、無付費牆、無聯盟收益</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>
