@@ -7,7 +7,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:paths": "node scripts/checks/paths.mjs src public scripts docs dist",
+    "check:media": "node scripts/checks/media.mjs public src dist",
+    "check:wording": "node scripts/checks/wording.mjs src dist",
+    "check:motion": "node scripts/checks/motion.mjs",
+    "check:submission": "node scripts/checks/submission.mjs"
   },
   "dependencies": {
     "astro": "^5.0.0"
