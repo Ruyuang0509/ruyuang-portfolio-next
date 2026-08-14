@@ -1,0 +1,66 @@
+---
+import "../styles/global.css";
+import TransportNav from "../components/TransportNav.astro";
+import OutputBus from "../components/OutputBus.astro";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>研究方向:混合多聲道監聽 — 如願</title>
+    <meta name="description" content="研究方向摘要:以精簡揚聲器結合開放式耳機,降低多聲道監聽的建置與理解門檻。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body>
+    <div class="chassis">
+      <TransportNav />
+      <div class="inner">
+        <article class="panel dossier">
+          <span class="plate">MASTER OUT · RESEARCH</span>
+          <div class="panel-body">
+            <p class="orient">研究方向摘要 · 計畫書全文於備審資料繳交</p>
+            <h1 class="dossier-title">混合多聲道監聽</h1>
+            <p class="dossier-summary">多聲道監聽的體驗很好,但建置門檻與理解門檻都高。這個研究問的是:能不能用精簡的揚聲器配置,結合開放式耳機的聯動,把這件事變得可負擔、可理解?</p>
+
+            <section class="dfield">
+              <h2 class="dlabel">問題</h2>
+              <p>完整的多聲道監聽環境需要空間、設備與聲學知識,三者都是門檻。一般創作者與學習者因此停在立體聲——不是不想要,是進不去。</p>
+            </section>
+
+            <div class="dossier-grid">
+              <section class="dfield">
+                <h2 class="dlabel">路徑</h2>
+                <p>以精簡揚聲器配置結合開放式耳機:耳機補足聲道、揚聲器保留空間感,兩者聯動,降低建置成本同時保住多聲道的知覺價值。</p>
+              </section>
+              <section class="dfield">
+                <h2 class="dlabel">文獻定位</h2>
+                <p>延伸自該所論文「開放式耳機與多聲道監聽系統的聯動應用研究」所指出的未來方向——本計畫正落在其開放問題上,不是平行起步。</p>
+              </section>
+            </div>
+
+            <section class="dfield">
+              <h2 class="dlabel">規劃</h2>
+              <p>研一:聲學與訊號處理的技術基礎(Pure Data 已提前自學,完成跨模態映射互動面板);研二:改良耳機端架構,鋪墊論文。長期目標是消費級聲響產品的研發與體驗設計——讓「聲學大眾化」從口號變成產品。</p>
+            </section>
+
+            <section class="dfield">
+              <h2 class="dlabel">狀態</h2>
+              <ul class="evlist">
+                <li><span class="mono evk">PROPOSAL</span><span>計畫書 v1 · 2026-07-24</span></li>
+                <li><span class="mono evk">METHOD</span><span>Pure Data 自學中(該所正式課程,提前起步)</span></li>
+                <li><span class="mono evk">THESIS</span><span>用視覺與互動能力,降低聲學的理解門檻</span></li>
+              </ul>
+            </section>
+
+            <p class="dossier-summary"><a href={`${base}/#console`}>← 回訊號路徑</a></p>
+          </div>
+          <div class="ticks" aria-hidden="true"></div>
+        </article>
+      </div>
+      <OutputBus />
+    </div>
+  </body>
+</html>

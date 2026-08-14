@@ -5,38 +5,61 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
   <span class="plate">SIGNAL PATH · CH 01–03 → MASTER</span>
   <div class="panel-body">
     <div class="console-grid">
-      <article class="strip" style="--level:62%;--fpos:28%">
+      <article class="strip" data-voice="xy" data-idle="62%" style="--level:62%;--fpos:28%">
         <p class="ch"><span>CH·01 <span class="led" aria-hidden="true"></span></span><span>INTERACTIVE</span></p>
         <h2><a href={`${base}/work/pd-crossmodal/`}>跨模態映射之聲音互動面板</a></h2>
-        <p class="desc">Pure Data 即時訊號處理與互動邏輯。自學而成——方法是 AI 協作加逆向拆解,而 Pd 正是報考所的正式課程。</p>
+        <p class="desc">Pure Data 即時訊號處理與互動邏輯。這一軌就是概念本身:位置進來,聲音出去。</p>
+        <div class="xy-pad" role="application" aria-label="XY 合成板:開機並發聲後,移動游標改變音高與濾波">
+          <span class="xy-dot" aria-hidden="true"></span>
+          <span class="xy-hint">XY PAD — 橫軸音高 · 縱軸濾波</span>
+        </div>
         <div class="meterrow"><div class="scale" aria-hidden="true"></div><div class="meter" aria-hidden="true"></div><div class="fader" aria-hidden="true"></div></div>
+        <div class="striprow"><button class="play-toggle" aria-pressed="false">▶ 發聲</button><span class="synth-note mono">即時合成示意音</span></div>
         <p class="evrow">EVIDENCE <b>操作 DEMO 已存檔</b> · 作者性聲明隨附</p>
       </article>
-      <article class="strip" style="--level:48%;--fpos:40%">
+
+      <article class="strip" data-voice="pad" data-idle="48%" style="--level:48%;--fpos:40%">
         <p class="ch"><span>CH·02 <span class="led" aria-hidden="true"></span></span><span>AV · 40s × 8</span></p>
         <h2><a href={`${base}/work/hamlet-story-mv/`}>Hamlet Story MV</a></h2>
-        <p class="desc">AI 生成場景與配樂、本人剪輯整合的文學影音實驗。八幕、雙語字幕,權利鏈完整可查。</p>
+        <p class="desc">AI 生成場景與配樂、本人剪輯整合的文學影音實驗。權利鏈完整可查。</p>
+        <div class="board" aria-label="八幕分鏡的前四幕縮圖">
+          <img src={`${base}/media/hamlet-story-mv-scene-01-420.webp`} alt="Hamlet 第一幕分鏡:城垛之夜" loading="lazy" width="420" height="236" />
+          <img src={`${base}/media/hamlet-story-mv-scene-02-420.webp`} alt="Hamlet 第二幕分鏡:房內沉思" loading="lazy" width="420" height="236" />
+          <img src={`${base}/media/hamlet-story-mv-scene-03-420.webp`} alt="Hamlet 第三幕分鏡:宮廷" loading="lazy" width="420" height="236" />
+          <img src={`${base}/media/hamlet-story-mv-scene-04-420.webp`} alt="Hamlet 第四幕分鏡" loading="lazy" width="420" height="236" />
+        </div>
         <div class="meterrow"><div class="scale" aria-hidden="true"></div><div class="meter" aria-hidden="true"></div><div class="fader" aria-hidden="true"></div></div>
+        <div class="striprow"><button class="play-toggle" aria-pressed="false">▶ 發聲</button><span class="synth-note mono">即時合成示意音</span></div>
         <p class="evrow">EVIDENCE <b>權利聲明已親簽</b> · SHA-256 綁定成片</p>
       </article>
-      <article class="strip" style="--level:55%;--fpos:33%">
+
+      <article class="strip" data-voice="field" data-idle="55%" style="--level:55%;--fpos:33%">
         <p class="ch"><span>CH·03 <span class="led led--rec" aria-hidden="true"></span></span><span>FIELD · 9′29″</span></p>
         <h2><a href={`${base}/work/guide-videos/`}>導覽影片(四部)</a></h2>
-        <p class="desc">地方文化見習的影音成品:潭墘、糖廠、蒜頭老街。分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
+        <p class="desc">地方文化見習的影音成品:分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
+        <div class="durs" aria-label="四部影片實際片長">
+          <span>潭墘 — 2′36″</span><span>糖廠(上) — 2′34″</span><span>糖廠(下) — 1′56″</span><span>蒜頭老街 — 2′23″</span>
+        </div>
         <div class="meterrow"><div class="scale" aria-hidden="true"></div><div class="meter" aria-hidden="true"></div><div class="fader" aria-hidden="true"></div></div>
+        <div class="striprow"><button class="play-toggle" aria-pressed="false">▶ 發聲</button><span class="synth-note mono">即時合成示意音</span></div>
         <p class="evrow">EVIDENCE <b>結業證書具字號</b> · 三軌 NLE 輸出母檔</p>
       </article>
+
       <aside class="master">
         <p class="ch"><span>MASTER OUT</span><span class="mono">RESEARCH</span></p>
         <h2>混合多聲道監聽</h2>
         <p class="desc">三路訊號匯向同一個研究方向:以精簡揚聲器結合開放式耳機,降低多聲道監聽的建置與理解門檻。</p>
-        <a class="cta" href="#">研究計畫 →</a>
+        <a class="cta" href={`${base}/research/`}>研究計畫 →</a>
       </aside>
     </div>
   </div>
   <p class="legend">
     <span><span class="led" aria-hidden="true"></span> 證據已核驗</span>
     <span><span class="led led--rec" aria-hidden="true"></span> 經歷線(證書承載)</span>
-    <span>█ 電平=完成度示意,非量測數據</span>
+    <span>█ 電平:開機發聲後為即時音訊,靜止時為示意</span>
+    <span>♪ 各軌聲音皆為即時合成示意音,非作品原聲</span>
   </p>
 </section>
+<script>
+  import "../scripts/console-audio.js";
+</script>
