@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>如願 — 訊號的旅程(原型 1:開機→互動站)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+/* Hallmark · genre: atmospheric · variant: R2 journey prototype 1 (beats 1-3)
+ * theme: custom(locked) · paper oklch(12% .008 75) · accent oklch(78% .15 72)
+ * R2 compliance: progressive-enhancement base(readable no-JS) · triple-guard scroll CSS ·
+ * compositor-props only · limiter chain · algorithmic reverb · no-startle · pentatonic no-wrong-notes
+ * Hallmark · pre-emit critique: P5 H4 E4 S5 R4 V5
+ */
+:root{
+  --color-paper:oklch(12% 0.008 75);
+  --color-paper-2:oklch(16% 0.010 75);
+  --color-paper-3:oklch(20% 0.010 75);
+  --color-ink:oklch(93% 0.010 80);
+  --color-ink-2:oklch(78% 0.010 80);
+  --color-muted:oklch(58% 0.012 75);
+  --color-rule:oklch(30% 0.012 75);
+  --color-rule-2:oklch(23% 0.010 75);
+  --color-accent:oklch(78% 0.15 72);
+  --color-accent-ink:oklch(18% 0.020 75);
+  --color-focus:oklch(80% 0.19 72);
+  --font-display:"Noto Sans TC",sans-serif;
+  --font-mono:"IBM Plex Mono",monospace;
+  --space-xs:4px;--space-sm:8px;--space-md:16px;--space-lg:24px;--space-xl:40px;--space-2xl:72px;--space-3xl:30vh;
+  --text-sm:.8125rem;--text-xs:.6875rem;
+  --text-display:clamp(2rem,4.6vw + .6rem,3.8rem);
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --dur-1:150ms;--dur-2:600ms;
+  --glow:0;
+}
+*{box-sizing:border-box;margin:0}
+html,body{overflow-x:clip}
+html{background:var(--color-paper);color:var(--color-ink);font-family:var(--font-display);font-size:16px;line-height:1.8;scroll-behavior:auto}
+a{color:var(--color-ink)}
+:focus-visible{outline:2px solid var(--color-focus);outline-offset:2px}
+.mono{font-family:var(--font-mono)}
+.wrap{max-width:880px;margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+
+/* ---------- the journey line (base: fully drawn; enhanced: scroll-drawn + audio glow) ---------- */
+.line-rail{position:fixed;inset:0 auto 0 calc(50% - 1px);width:2px;pointer-events:none;z-index:0;
+  background:linear-gradient(to bottom,transparent,var(--color-rule) 8%,var(--color-rule) 92%,transparent)}
+.line-glow{position:absolute;inset:0;background:linear-gradient(to bottom,transparent,var(--color-accent) 8%,var(--color-accent) 92%,transparent);
+  opacity:calc(.12 + var(--glow) * .8);transition:opacity 120ms linear}
+@media (max-width:700px){.line-rail{left:20px}}
+
+/* ---------- beats ---------- */
+.beat{position:relative;z-index:1;padding-block:var(--space-3xl)}
+.beat-inner{background:color-mix(in oklab,var(--color-paper) 82%,transparent);backdrop-filter:none;padding-block:var(--space-md)}
+.orient{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.16em;color:var(--color-muted);text-transform:uppercase}
+.note{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);border-left:2px solid var(--color-rule);padding:var(--space-xs) var(--space-md);margin-top:var(--space-lg);max-width:46ch;line-height:1.9}
+.note b{color:var(--color-accent);font-weight:500}
+
+/* beat 1 hook */
+#hook{min-height:92vh;display:grid;place-items:center;text-align:center}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--color-accent);
+  box-shadow:0 0 calc(6px + var(--glow) * 40px) calc(1px + var(--glow) * 8px) color-mix(in oklab,var(--color-accent) 60%,transparent)}
+#hook h1{font-weight:900;font-size:var(--text-display);line-height:1.3;margin-top:var(--space-lg);letter-spacing:.01em}
+#hook h1 em{font-style:normal;color:var(--color-accent);border-bottom:3px solid var(--color-accent)}
+.hook-sub{margin-top:var(--space-md);color:var(--color-muted);font-size:var(--text-sm)}
+.cta-row{display:flex;gap:var(--space-md);justify-content:center;margin-top:var(--space-xl);flex-wrap:wrap}
+button.cta{border:0;cursor:pointer;font-family:var(--font-mono);font-size:var(--text-sm);color:var(--color-accent-ink);background:var(--color-accent);padding:var(--space-sm) var(--space-lg);border-radius:3px}
+button.cta:hover{filter:brightness(1.06)}
+.ghost{display:inline-block;background:transparent;color:var(--color-ink-2);border:1px solid var(--color-rule);padding:var(--space-sm) var(--space-lg);border-radius:3px;font-family:var(--font-mono);font-size:var(--text-sm);text-decoration:none;cursor:pointer}
+.ghost:hover{color:var(--color-ink);background:var(--color-paper-3)}
+.scroll-hint{margin-top:var(--space-2xl);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+
+/* beat 2 identity */
+#identity .beat-inner{max-width:60ch}
+#identity h2{font-weight:700;font-size:1.3rem;margin-bottom:var(--space-md)}
+#identity p{color:var(--color-ink-2)}
+.readouts{display:flex;flex-wrap:wrap;gap:var(--space-sm) var(--space-xl);margin-top:var(--space-lg);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+.readouts b{color:var(--color-ink-2);font-weight:500}
+
+/* beat 3 station */
+#station .panel{border:1px solid var(--color-rule);border-radius:3px;background:var(--color-paper-2);padding:var(--space-lg);position:relative}
+#station .plate{position:absolute;top:-11px;left:var(--space-md);background:var(--color-paper-3);border:1px solid var(--color-rule);border-radius:2px;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;color:var(--color-ink-2);padding:2px var(--space-sm)}
+#station h2{font-weight:700;font-size:1.2rem;margin-bottom:var(--space-sm)}
+#station .desc{color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch}
+.pad-wrap{margin-top:var(--space-lg)}
+.xy-pad{position:relative;height:200px;border:1px solid var(--color-rule-2);border-radius:3px;cursor:crosshair;touch-action:none;overflow:clip;
+  background:linear-gradient(var(--color-rule-2) 1px,transparent 1px),linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);background-size:20px 20px}
+.xy-dot{position:absolute;left:50%;top:50%;width:12px;height:12px;border-radius:50%;background:var(--color-accent);transform:translate(-50%,-50%);pointer-events:none;
+  box-shadow:0 0 calc(4px + var(--glow) * 30px) calc(var(--glow) * 6px) color-mix(in oklab,var(--color-accent) 55%,transparent)}
+.trail{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--color-accent);opacity:.35;pointer-events:none;transform:translate(-50%,-50%)}
+.pad-legend{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);margin-top:var(--space-sm)}
+.pad-controls{display:flex;gap:var(--space-md);align-items:center;margin-top:var(--space-md);flex-wrap:wrap}
+.play-toggle{background:transparent;border:1px solid var(--color-rule);border-radius:3px;color:var(--color-ink-2);font-family:var(--font-mono);font-size:var(--text-xs);padding:var(--space-xs) var(--space-md);cursor:pointer;white-space:nowrap}
+.play-toggle:hover{border-color:var(--color-accent);color:var(--color-ink)}
+.play-toggle[aria-pressed="true"]{background:var(--color-accent);color:var(--color-accent-ink);border-color:var(--color-accent)}
+.vol{display:flex;align-items:center;gap:var(--space-sm);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+.vol input{accent-color:var(--color-accent);width:120px}
+.dossier-link{margin-top:var(--space-lg);font-size:var(--text-sm)}
+.dossier-link a{color:var(--color-accent);border-bottom:1px solid var(--color-rule);text-decoration:none}
+
+/* proto end marker */
+#protoend{text-align:center;color:var(--color-muted);font-family:var(--font-mono);font-size:var(--text-xs);padding-block:var(--space-2xl) 40vh}
+
+/* ---------- power overlay (enhancement-only, entered by click; base never blocked) ---------- */
+.boot{position:fixed;inset:0;background:oklch(6% 0.006 75);display:grid;place-items:center;z-index:50;opacity:0;pointer-events:none;transition:opacity var(--dur-2) var(--ease-out)}
+.boot.on{opacity:1;pointer-events:auto}
+.boot .dot{width:14px;height:14px}
+.boot p{position:absolute;bottom:12vh;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+
+/* hints */
+.hint{position:fixed;right:var(--space-md);bottom:var(--space-md);max-width:34ch;background:var(--color-paper-2);border:1px solid var(--color-rule);border-radius:3px;padding:var(--space-sm) var(--space-md);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-ink-2);z-index:40;display:none}
+.hint.on{display:block}
+.hint button{float:right;background:none;border:0;color:var(--color-muted);cursor:pointer;font-family:inherit}
+
+/* ---------- enhanced scene choreography (triple guard: @supports + separate longhand + 1ms) ---------- */
+@media (prefers-reduced-motion: no-preference){
+  @supports (animation-timeline: view()){
+    .enhanced .beat-inner{
+      animation-name:beat-in;animation-duration:1ms;animation-fill-mode:both;animation-timing-function:var(--ease-out);
+      animation-timeline:view();animation-range:entry 10% entry 60%;
+    }
+    @keyframes beat-in{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+  }
+  .dot,.xy-dot,.line-glow{transition:box-shadow 120ms linear,opacity 120ms linear}
+  .boot .dot{animation:bloom 1.6s var(--ease-out) both}
+  @keyframes bloom{0%{box-shadow:0 0 0 0 transparent;opacity:0}30%{opacity:1}100%{box-shadow:0 0 46px 9px color-mix(in oklab,var(--color-accent) 60%,transparent);opacity:1}}
+}
+</style>
+</head>
+<body>
+
+<div class="line-rail" aria-hidden="true"><div class="line-glow" id="lineGlow"></div></div>
+
+<!-- BEAT 1 · HOOK — base state is fully readable; 完整體驗 is an invitation, never a gate -->
+<section class="beat" id="hook">
+  <div class="wrap beat-inner">
+    <p class="orient">MONITOR ROOM · 一場訊號的旅程</p>
+    <p style="margin-top:var(--space-xl)"><span class="dot" id="hookDot" aria-hidden="true"></span></p>
+    <h1>把聲學的理解門檻,<br />調到<em>人人可聽見</em>。</h1>
+    <p class="hook-sub">這個站是一台可演奏的監聽台。往下走是一趟旅程;每一站都能上手玩。</p>
+    <div class="cta-row">
+      <button class="cta" id="powerBtn" aria-pressed="false">▶ 開機・完整體驗(含聲音)</button>
+      <a class="ghost" href="#identity">安靜地往下讀 ↓</a>
+    </div>
+    <p class="scroll-hint" id="modeNote">目前:精簡閱讀模式(無聲、無動態)。開機隨時可以,不開也什麼都不會少。</p>
+  </div>
+</section>
+
+<!-- BEAT 2 · IDENTITY -->
+<section class="beat" id="identity">
+  <div class="wrap beat-inner">
+    <p class="orient">SIGNAL · 01 — 我是誰</p>
+    <h2>用視覺與互動,降低聲學的理解門檻</h2>
+    <p>我從數位學習設計走進聲音:先是耳機打開了知覺,然後發現多數人「無法解釋自己聽到什麼」。我想做的事情一直是同一件——把聽覺經驗變成可以被理解、被操作、被分享的東西。</p>
+    <div class="readouts">
+      <span>FOCUS <b>心理聲學 × 人機協作</b></span>
+      <span>ROUTE <b>作品 → 證據 → 研究</b></span>
+      <span>OUT <b>混合多聲道監聽</b></span>
+    </div>
+    <p class="note">設計註記:這一段刻意安靜。<b>靜默是材料</b>——旅程的第一個聲音,應該由你自己按下去。</p>
+  </div>
+</section>
+
+<!-- BEAT 3 · STATION 1 (interactive) -->
+<section class="beat" id="station">
+  <div class="wrap beat-inner">
+    <p class="orient">STATION · CH 01 — 互動站</p>
+    <div class="panel">
+      <span class="plate">XY PAD · 跨模態映射</span>
+      <h2>跨模態映射之聲音互動面板</h2>
+      <p class="desc">Pure Data 即時訊號處理與互動邏輯。這一站就是概念本身:位置進來,聲音出去——下面這塊板子,是同一個想法在網頁上的化身。</p>
+      <div class="pad-wrap">
+        <div class="xy-pad" id="xyPad" role="application" aria-label="XY 合成板:發聲後,橫軸控制聲像與音高,縱軸控制遠近">
+          <span class="xy-dot" id="xyDot" aria-hidden="true"></span>
+        </div>
+        <div class="pad-legend"><span>← 左(低音・聲像左)</span><span>上=遠 / 下=近</span><span>右(高音・聲像右)→</span></div>
+        <div class="pad-controls">
+          <button class="play-toggle" id="padToggle" aria-pressed="false" disabled>▶ 發聲(先開機)</button>
+          <label class="vol">音量 <input type="range" id="padVol" min="0" max="100" value="60" /></label>
+          <span class="mono" style="font-size:var(--text-xs);color:var(--color-muted)">五聲音階——怎麼玩都不會有錯音</span>
+        </div>
+      </div>
+      <p class="note">設計註記:我在這裡選了<b>軟起音</b>與<b>五聲音階</b>——因為不想嚇到你,也不想讓任何人「彈錯」。探索應該是安全的。</p>
+      <p class="dossier-link">深入這件作品:<a href="../../src/content/works/pd-crossmodal.md" onclick="return false" title="原型內連結示意,正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
+    </div>
+  </div>
+</section>
+
+<p id="protoend">— 原型 1 到此(節拍 1–3/7)。影院站、田野站、控制室、謝幕在下一段。—</p>
+
+<!-- power boot overlay: enhancement entered by click; never the base state -->
+<div class="boot" id="boot" aria-hidden="true"><span class="dot" aria-hidden="true"></span><p>訊號上電中……(1.6 秒,可按任意鍵跳過)</p></div>
+
+<div class="hint" id="hint"><button id="hintClose" aria-label="關閉提示">✕</button>已開機。互動站的板子現在可以「▶ 發聲」;左右=聲像與音高、上下=遠近。隨時再按一次開機鈕即全站靜音。</div>
+
+<script>
+// R2 audio engine v2 — 全部聲音 opt-in;安全鏈:voices → chGain → send(演算法殘響) → analyser → LIMITER → master
+(() => {
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const PENTA = [220, 261.63, 293.66, 329.63, 392, 440, 523.25];
+  let ctx = null, master = null, limiter = null, analyser = null, buf = null;
+  let padVoice = null, padOn = false, powered = false, rafId = null;
+  let reverb = null;
+
+  const $ = (id) => document.getElementById(id);
+  const powerBtn = $("powerBtn"), padToggle = $("padToggle"), boot = $("boot"),
+        pad = $("xyPad"), dot = $("xyDot"), hint = $("hint"), modeNote = $("modeNote");
+
+  function ensureCtx(){
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // 聽力安全鏈(R2 硬規則):limiter 在 master 前,參數保守;輸出峰值可由 analyser 實測
+    limiter = ctx.createDynamicsCompressor();
+    limiter.threshold.value = -12; limiter.knee.value = 0; limiter.ratio.value = 20;
+    limiter.attack.value = 0.003; limiter.release.value = 0.25;
+    master = ctx.createGain(); master.gain.value = 0.12;
+    analyser = ctx.createAnalyser(); analyser.fftSize = 256;
+    buf = new Uint8Array(analyser.frequencyBinCount);
+    analyser.connect(limiter); limiter.connect(master); master.connect(ctx.destination);
+    // 演算法殘響(G1 決策:不用 IR 檔)——小房間身分:短延遲×2 + 回授 + 低通
+    reverb = ctx.createGain(); reverb.gain.value = 0.18;
+    const d1 = ctx.createDelay(); d1.delayTime.value = 0.031;
+    const d2 = ctx.createDelay(); d2.delayTime.value = 0.047;
+    const fb = ctx.createGain(); fb.gain.value = 0.32;
+    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2400;
+    reverb.connect(d1); reverb.connect(d2); d1.connect(fb); d2.connect(fb);
+    fb.connect(lp); lp.connect(d1); lp.connect(analyser);
+  }
+
+  function softBlip(){ // UI 回饋:軟起音+微隨機失諧(抗煩躁)
+    if (!powered || !ctx) return;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine"; o.frequency.value = 660 * (1 + (Math.random() - .5) * 0.04);
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+    o.connect(g); g.connect(analyser); o.start(); o.stop(ctx.currentTime + 0.3);
+  }
+
+  function powerOnSound(){ // 開機聲:暖正弦緩慢綻開+微上滑(情緒軌:甦醒;零驚嚇=長淡入)
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine";
+    o.frequency.setValueAtTime(180, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 1.4);
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 1.1);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.4);
+    o.connect(g); g.connect(reverb); g.connect(analyser);
+    o.start(); o.stop(ctx.currentTime + 2.5);
+  }
+
+  function buildPadVoice(){
+    const o1 = ctx.createOscillator(); o1.type = "sine"; o1.frequency.value = PENTA[2];
+    const o2 = ctx.createOscillator(); o2.type = "triangle"; o2.frequency.value = PENTA[2] * 2.003;
+    const f = ctx.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = 1400; f.Q.value = 3;
+    const panN = ctx.createStereoPanner(); // 空間映射契約:X=聲像
+    const g = ctx.createGain(); g.gain.value = 0;
+    o1.connect(f); o2.connect(f); f.connect(panN); panN.connect(g);
+    g.connect(analyser); g.connect(reverb);
+    o1.start(); o2.start();
+    g.gain.linearRampToValueAtTime(0.5 * ($("padVol").value / 100), ctx.currentTime + 0.35); // 軟起音
+    return { o1, o2, f, panN, g, stop(){
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.25); // 軟收
+      setTimeout(() => { try { o1.stop(); o2.stop(); } catch {} }, 400);
+    }};
+  }
+
+  function meterLoop(){
+    analyser.getByteFrequencyData(buf);
+    let s = 0; for (let i = 0; i < buf.length; i++) s += buf[i];
+    const lvl = Math.min(1, (s / buf.length) / 120);
+    document.documentElement.style.setProperty("--glow", lvl.toFixed(3)); // 視聽同源:analyser→光暈
+    rafId = (powered && (padOn || lvl > 0.01)) ? requestAnimationFrame(meterLoop) : null;
+    if (rafId === null) document.documentElement.style.setProperty("--glow", "0");
+  }
+  const kick = () => { if (rafId == null) rafId = requestAnimationFrame(meterLoop); };
+
+  function setPower(on){
+    powered = on;
+    powerBtn.setAttribute("aria-pressed", String(on));
+    powerBtn.textContent = on ? "■ 關機・回到安靜" : "▶ 開機・完整體驗(含聲音)";
+    padToggle.disabled = !on;
+    padToggle.textContent = on ? (padOn ? "■ 靜音" : "▶ 發聲") : "▶ 發聲(先開機)";
+    modeNote.textContent = on ? "目前:完整體驗模式(聲音已開)。再按開機鈕即全站靜音。"
+                              : "目前:精簡閱讀模式(無聲、無動態)。開機隨時可以,不開也什麼都不會少。";
+    document.documentElement.classList.toggle("enhanced", on && !reduceMotion);
+  }
+
+  powerBtn.addEventListener("click", () => {
+    if (!powered){
+      ensureCtx();
+      if (ctx.state === "suspended") ctx.resume(); // 手勢內 resume(G1 驗證的可攜模式)
+      setPower(true);
+      if (!reduceMotion){
+        boot.classList.add("on");
+        const skip = () => endBoot();
+        const endBoot = () => { boot.classList.remove("on"); hint.classList.add("on");
+          removeEventListener("keydown", skip); boot.removeEventListener("click", skip); };
+        addEventListener("keydown", skip, { once:true }); boot.addEventListener("click", skip, { once:true });
+        setTimeout(endBoot, 1700);
+      } else { hint.classList.add("on"); }
+      powerOnSound(); kick();
+    } else {
+      if (padVoice){ padVoice.stop(); padVoice = null; padOn = false; }
+      setPower(false);
+      if (ctx) ctx.suspend();
+    }
+  });
+
+  padToggle.addEventListener("click", () => {
+    if (!powered) return;
+    if (!padOn){ padVoice = buildPadVoice(); padOn = true; kick(); }
+    else { padVoice.stop(); padVoice = null; padOn = false; }
+    padToggle.setAttribute("aria-pressed", String(padOn));
+    padToggle.textContent = padOn ? "■ 靜音" : "▶ 發聲";
+    softBlip();
+  });
+
+  $("padVol").addEventListener("input", (e) => {
+    if (padVoice) padVoice.g.gain.setTargetAtTime(0.5 * (e.target.value / 100), ctx.currentTime, 0.05);
+  });
+
+  // XY:X=聲像+五聲音階音高(無錯音);Y=距離感(濾波+殘響比+微音量)——空間映射契約
+  let lastTrail = 0;
+  pad.addEventListener("pointermove", (e) => {
+    const r = pad.getBoundingClientRect();
+    const x = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1);
+    const y = Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1);
+    dot.style.left = (x * 100) + "%"; dot.style.top = (y * 100) + "%";
+    if (powered && !reduceMotion && performance.now() - lastTrail > 60){ // 光跟手走(視覺對位)
+      lastTrail = performance.now();
+      const t = document.createElement("span"); t.className = "trail";
+      t.style.left = (x * 100) + "%"; t.style.top = (y * 100) + "%";
+      pad.appendChild(t);
+      t.animate([{opacity:.35, transform:"translate(-50%,-50%) scale(1)"},{opacity:0, transform:"translate(-50%,-50%) scale(.4)"}],
+        {duration:700, easing:"ease-out"}).onfinish = () => t.remove();
+    }
+    if (padVoice){
+      const f0 = PENTA[Math.min(PENTA.length - 1, Math.floor(x * PENTA.length))];
+      padVoice.o1.frequency.setTargetAtTime(f0, ctx.currentTime, 0.03);
+      padVoice.o2.frequency.setTargetAtTime(f0 * 2.003, ctx.currentTime, 0.03);
+      padVoice.panN.pan.setTargetAtTime(x * 2 - 1, ctx.currentTime, 0.03);            // X=聲像
+      padVoice.f.frequency.setTargetAtTime(500 + (1 - y) * 2600, ctx.currentTime, 0.03); // Y=亮度(近=亮)
+      reverb.gain.setTargetAtTime(0.08 + y * 0.3, ctx.currentTime, 0.05);              // Y=遠(殘響比升)
+    }
+  });
+
+  $("hintClose").addEventListener("click", () => hint.classList.remove("on"));
+})();
+</script>
+</body>
+</html>
