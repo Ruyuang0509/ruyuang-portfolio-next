@@ -1,0 +1,70 @@
+---
+import { getCollection, render } from "astro:content";
+import "../../styles/global.css";
+import TransportNav from "../../components/TransportNav.astro";
+import OutputBus from "../../components/OutputBus.astro";
+
+export async function getStaticPaths() {
+  const works = await getCollection("works", ({ data }) => data.tier === "featured");
+  return works.map((w) => ({ params: { slug: w.id }, props: { work: w } }));
+}
+
+const { work } = Astro.props;
+const { Content } = await render(work);
+const d = work.data;
+---
+
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{d.title} — 如願</title>
+    <meta name="description" content={d.summary} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body>
+    <div class="chassis">
+      <TransportNav />
+      <div class="inner">
+        <article class="panel dossier">
+          <span class="plate">{d.channel ?? d.kind.toUpperCase()} · DOSSIER</span>
+          <div class="panel-body">
+            <p class="orient">{d.tags.join(" · ")} · {d.year}</p>
+            <h1 class="dossier-title">{d.title}</h1>
+            <p class="dossier-summary">{d.summary}</p>
+
+            <div class="dossier-grid">
+              <section class="dfield">
+                <h2 class="dlabel">角色與作者性</h2>
+                <p>{d.role}</p>
+              </section>
+              <section class="dfield">
+                <h2 class="dlabel">AI 參與聲明</h2>
+                <p>{d.aiDisclosure}</p>
+              </section>
+            </div>
+
+            <section class="dfield">
+              <h2 class="dlabel">證據鏈</h2>
+              <ul class="evlist">
+                {d.evidence.map((e) => (
+                  <li><span class="mono evk">{e.label}</span><span>{e.value}</span></li>
+                ))}
+                {d.approval && (
+                  <li><span class="mono evk">APPROVAL</span><span>{d.approval.by} · {d.approval.date} · {d.approval.scope}</span></li>
+                )}
+              </ul>
+            </section>
+
+            <section class="dbody">
+              <Content />
+            </section>
+          </div>
+          <div class="ticks" aria-hidden="true"></div>
+        </article>
+      </div>
+      <OutputBus />
+    </div>
+  </body>
+</html>

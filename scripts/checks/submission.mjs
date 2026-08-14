@@ -5,6 +5,8 @@ const GATES = [
   { name: "check:media", cmd: ["node", "scripts/checks/media.mjs", "public", "src", "dist"] },
   { name: "check:wording", cmd: ["node", "scripts/checks/wording.mjs", "src", "dist"] },
   { name: "check:motion", cmd: ["node", "scripts/checks/motion.mjs"] },
+  { name: "check:approval", cmd: ["node", "scripts/checks/approval.mjs"] },
+  { name: "check:obligations", cmd: ["node", "scripts/checks/obligations.mjs"] },
 ];
 
 let worst = 0;

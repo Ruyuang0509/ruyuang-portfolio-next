@@ -1,24 +1,27 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
 <section class="panel" id="console" aria-label="主打作品(訊號通道)">
   <span class="plate">SIGNAL PATH · CH 01–03 → MASTER</span>
   <div class="panel-body">
     <div class="console-grid">
       <article class="strip" style="--level:62%;--fpos:28%">
         <p class="ch"><span>CH·01 <span class="led" aria-hidden="true"></span></span><span>INTERACTIVE</span></p>
-        <h2>跨模態映射之聲音互動面板</h2>
+        <h2><a href={`${base}/work/pd-crossmodal/`}>跨模態映射之聲音互動面板</a></h2>
         <p class="desc">Pure Data 即時訊號處理與互動邏輯。自學而成——方法是 AI 協作加逆向拆解,而 Pd 正是報考所的正式課程。</p>
         <div class="meterrow"><div class="scale" aria-hidden="true"></div><div class="meter" aria-hidden="true"></div><div class="fader" aria-hidden="true"></div></div>
         <p class="evrow">EVIDENCE <b>操作 DEMO 已存檔</b> · 作者性聲明隨附</p>
       </article>
       <article class="strip" style="--level:48%;--fpos:40%">
         <p class="ch"><span>CH·02 <span class="led" aria-hidden="true"></span></span><span>AV · 40s × 8</span></p>
-        <h2>Hamlet Story MV</h2>
+        <h2><a href={`${base}/work/hamlet-story-mv/`}>Hamlet Story MV</a></h2>
         <p class="desc">AI 生成場景與配樂、本人剪輯整合的文學影音實驗。八幕、雙語字幕,權利鏈完整可查。</p>
         <div class="meterrow"><div class="scale" aria-hidden="true"></div><div class="meter" aria-hidden="true"></div><div class="fader" aria-hidden="true"></div></div>
         <p class="evrow">EVIDENCE <b>權利聲明已親簽</b> · SHA-256 綁定成片</p>
       </article>
       <article class="strip" style="--level:55%;--fpos:33%">
         <p class="ch"><span>CH·03 <span class="led led--rec" aria-hidden="true"></span></span><span>FIELD · 9′29″</span></p>
-        <h2>導覽影片(四部)</h2>
+        <h2><a href={`${base}/work/guide-videos/`}>導覽影片(四部)</a></h2>
         <p class="desc">地方文化見習的影音成品:潭墘、糖廠、蒜頭老街。分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
         <div class="meterrow"><div class="scale" aria-hidden="true"></div><div class="meter" aria-hidden="true"></div><div class="fader" aria-hidden="true"></div></div>
         <p class="evrow">EVIDENCE <b>結業證書具字號</b> · 三軌 NLE 輸出母檔</p>

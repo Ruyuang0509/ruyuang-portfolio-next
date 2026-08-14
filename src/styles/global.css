@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./tokens.css";
 @import "./console.css";
+@import "./dossier.css";
 
 *{box-sizing:border-box;margin:0}
 html,body{overflow-x:clip}

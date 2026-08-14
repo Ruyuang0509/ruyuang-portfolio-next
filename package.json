@@ -12,6 +12,8 @@
     "check:media": "node scripts/checks/media.mjs public src dist",
     "check:wording": "node scripts/checks/wording.mjs src dist",
     "check:motion": "node scripts/checks/motion.mjs",
+    "check:approval": "node scripts/checks/approval.mjs",
+    "check:obligations": "node scripts/checks/obligations.mjs",
     "check:submission": "node scripts/checks/submission.mjs"
   },
   "dependencies": {
@@ -21,6 +23,7 @@
     "@tailwindcss/vite": "^4.0.0",
     "tailwindcss": "^4.0.0",
     "vitest": "^3.0.0",
-    "exifr": "^7.1.3"
+    "exifr": "^7.1.3",
+    "yaml": "^2.5.0"
   }
 }
