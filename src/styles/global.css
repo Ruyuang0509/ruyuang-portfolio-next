@@ -1,20 +1,24 @@
 @import "tailwindcss";
+@import "./tokens.css";
+@import "./console.css";
 
-:root {
-  --bg: #0e0f12;
-  --fg: #e8e6e1;
-  --accent: #57c7a3;
-}
+*{box-sizing:border-box;margin:0}
+html,body{overflow-x:clip}
+html{background:var(--color-paper);color:var(--color-ink);font-family:var(--font-body);font-size:16px;line-height:1.75}
+body{background-image:
+  linear-gradient(var(--color-rule-2) 1px,transparent 1px),
+  linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);
+  background-size:56px 56px;background-attachment:fixed}
+a{color:var(--color-ink);text-decoration:none}
+:focus-visible{outline:2px solid var(--color-focus);outline-offset:2px}
+.mono{font-family:var(--font-mono)}
 
-html {
-  background: var(--bg);
-  color: var(--fg);
-}
+.chassis{max-width:1160px;margin:clamp(8px,2vw,24px) auto;border:var(--rule-1);border-radius:6px;background:var(--color-paper);box-shadow:0 0 0 4px var(--color-paper-2)}
+.inner{padding-inline:clamp(14px,3.5vw,36px)}
 
-/* Reduced motion is the DEFAULT: base styles animate nothing.
-   Motion opts IN under no-preference; never the other way around. */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
+.panel{border:var(--rule-1);border-radius:var(--radius-1);background:var(--color-paper);margin-block:var(--space-xl);position:relative}
+.plate{position:absolute;top:-11px;left:var(--space-md);background:var(--color-paper-2);border:var(--rule-1);border-radius:2px;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;color:var(--color-ink-2);padding:2px var(--space-sm);text-transform:uppercase}
+.panel-body{padding:var(--space-lg)}
+.ticks{height:8px;border-bottom:var(--rule-1);background:repeating-linear-gradient(90deg,var(--color-rule) 0 1px,transparent 1px 14px)}
+.led{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--color-accent);vertical-align:1px}
+.led--rec{background:var(--color-signal)}

@@ -1,0 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap");
+
+/* Hallmark · design system tokens — approved baseline: docs/design/monitor-room-v1-max.html
+ * theme: custom · vibe: "深夜監聽室, 琥珀電平, 儀器刻度, 證據紙"
+ * axes: dark / mono / chromatic-other (amber ~72°) */
+:root{
+  --color-paper:oklch(12% 0.008 75);
+  --color-paper-2:oklch(16% 0.010 75);
+  --color-paper-3:oklch(20% 0.010 75);
+  --color-ink:oklch(93% 0.010 80);
+  --color-ink-2:oklch(78% 0.010 80);
+  --color-muted:oklch(58% 0.012 75);
+  --color-rule:oklch(30% 0.012 75);
+  --color-rule-2:oklch(23% 0.010 75);
+  --color-accent:oklch(78% 0.15 72);
+  --color-accent-ink:oklch(18% 0.020 75);
+  --color-focus:oklch(80% 0.19 72);
+  --color-signal:oklch(62% 0.19 25);
+  --font-display:"Noto Sans TC",sans-serif;
+  --font-body:"Noto Sans TC",sans-serif;
+  --font-mono:"IBM Plex Mono",monospace;
+  --space-xs:4px;--space-sm:8px;--space-md:16px;--space-lg:24px;--space-xl:40px;--space-2xl:56px;
+  --text-body:1rem;--text-sm:.8125rem;--text-xs:.6875rem;
+  --text-display:clamp(1.8rem,4vw + .5rem,3.2rem);
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --dur-1:150ms;
+  --rule-1:1px solid var(--color-rule);
+  --radius-1:3px;
+}
