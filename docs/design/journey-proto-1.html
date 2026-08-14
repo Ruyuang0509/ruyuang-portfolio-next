@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>如願 — 訊號的旅程(原型 1:開機→互動站)</title>
+<title>如願 — 訊號的旅程(原型 1・完整旅程 節拍 1–7)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
 <style>
-/* Hallmark · genre: atmospheric · variant: R2 journey prototype 1 (beats 1-3)
+/* Hallmark · genre: atmospheric · variant: R2 journey prototype 1 (beats 1-7 full journey)
  * theme: custom(locked) · paper oklch(12% .008 75) · accent oklch(78% .15 72)
  * R2 compliance: progressive-enhancement base(readable no-JS) · triple-guard scroll CSS ·
  * compositor-props only · limiter chain · algorithmic reverb · no-startle · pentatonic no-wrong-notes
@@ -53,7 +53,7 @@ a{color:var(--color-ink)}
 @media (max-width:700px){.line-rail{left:20px}}
 
 /* ---------- beats ---------- */
-.beat{position:relative;z-index:1;padding-block:var(--space-3xl)}
+.beat{position:relative;z-index:1;padding-block:var(--space-3xl);scroll-margin-top:48px}
 .beat-inner{background:color-mix(in oklab,var(--color-paper) 82%,transparent);backdrop-filter:none;padding-block:var(--space-md)}
 .orient{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.12em;color:var(--color-muted);text-transform:uppercase;margin-bottom:var(--space-lg)}
 .note{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);border-left:2px solid var(--color-rule);padding:var(--space-xs) var(--space-md);margin-top:var(--space-lg);max-width:46ch;line-height:1.9}
@@ -101,8 +101,65 @@ button.cta:hover{filter:brightness(1.06)}
 .dossier-link{margin-top:var(--space-lg);font-size:var(--text-sm)}
 .dossier-link a{color:var(--color-accent);border-bottom:1px solid var(--color-rule);text-decoration:none}
 
-/* proto end marker */
-#protoend{text-align:center;color:var(--color-muted);font-family:var(--font-mono);font-size:var(--text-xs);padding-block:var(--space-2xl) 40vh}
+/* ---------- transport bar(隨時跳轉——導覽線是預設不是圍欄) ---------- */
+.transport{position:fixed;top:0;left:0;right:0;z-index:45;display:flex;gap:var(--space-md);align-items:center;flex-wrap:wrap;
+  padding:var(--space-xs) var(--space-md);font-size:10px;letter-spacing:.08em;color:var(--color-muted);
+  background:color-mix(in oklab,var(--color-paper) 78%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--color-rule-2)}
+.transport a{color:var(--color-muted);text-decoration:none;padding:2px 4px}
+.transport a:hover{color:var(--color-accent)}
+.tvol{margin-left:auto;display:flex;align-items:center;gap:var(--space-xs)}
+.tvol input{accent-color:var(--color-accent);width:80px}
+
+/* ---------- beat 4 cinema(劇場黑聚焦:從黑開始的專注) ---------- */
+#cinema{background:linear-gradient(oklch(8% 0.006 75),oklch(6% 0.005 75) 30%,oklch(8% 0.006 75))}
+.cinema-frame{margin-top:var(--space-lg);border:1px solid var(--color-rule-2);border-radius:3px;overflow:clip;background:#000}
+.cinema-frame .lb{height:clamp(18px,4vw,40px);background:oklch(4% 0 0)}
+.cinema-frame img{display:block;width:100%;height:auto;opacity:.92}
+#cinema .credit{font-size:var(--text-xs);color:var(--color-muted);margin-top:var(--space-sm)}
+@media (prefers-reduced-motion: no-preference){
+  .enhanced #cinema .cinema-frame img{animation:flicker 4.8s steps(1) infinite}
+  @keyframes flicker{0%,93%{opacity:.92}94%{opacity:.88}95%,100%{opacity:.92}}
+}
+
+/* ---------- beat 5 field(格線消散、地平線、大氣景深) ---------- */
+#field{position:relative;overflow:clip}
+#field .airgrid{position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:linear-gradient(var(--color-rule-2) 1px,transparent 1px),linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:linear-gradient(to bottom,transparent 0%,oklch(0 0 0/.5) 35%,transparent 70%)}
+#field .horizon{position:absolute;left:0;right:0;top:58%;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,color-mix(in oklab,var(--color-accent) 45%,transparent) 30%,color-mix(in oklab,var(--color-accent) 45%,transparent) 70%,transparent)}
+
+/* ---------- beat 6 control room(乾、銳利、小 LED) ---------- */
+#ctrl .gatelist{list-style:none;padding:0;margin-top:var(--space-md);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-ink-2)}
+#ctrl .gatelist li{display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-xs) var(--space-sm);border-bottom:1px solid var(--color-rule-2)}
+#ctrl .gatelist li:hover{background:var(--color-paper-2)}
+.led{display:inline-block;width:6px;height:6px;border-radius:1px;background:var(--color-accent);box-shadow:0 0 3px color-mix(in oklab,var(--color-accent) 70%,transparent)}
+
+/* ---------- beat 7 master out ---------- */
+#master{text-align:center}
+#master h2{font-weight:900;font-size:1.6rem;margin-top:var(--space-lg)}
+#master .desc{color:var(--color-ink-2);font-size:var(--text-sm);max-width:44ch;margin-inline:auto;margin-top:var(--space-md)}
+
+/* ---------- finale(謝幕:零內容,純光影;可跳過) ---------- */
+.skip-finale{text-align:center;padding-bottom:var(--space-lg)}
+.skip-finale a{color:var(--color-muted);font-size:var(--text-xs);text-decoration:none;border-bottom:1px solid var(--color-rule)}
+#finale{min-height:80vh;display:grid;place-items:center;text-align:center}
+#finale .lamps{display:flex;gap:var(--space-xl);justify-content:center;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;color:var(--color-muted);flex-wrap:wrap}
+#finale .lamp{display:flex;flex-direction:column;align-items:center;gap:var(--space-sm)}
+#finale .lamp i{display:block;width:10px;height:10px;border-radius:50%;background:var(--color-rule);transition:background var(--dur-2) var(--ease-out),box-shadow var(--dur-2) var(--ease-out)}
+#finale .lamp.on i{background:var(--color-accent);box-shadow:0 0 22px 4px color-mix(in oklab,var(--color-accent) 55%,transparent)}
+#finale .lamp.on{color:var(--color-ink-2)}
+.colophon-quote{margin-top:var(--space-2xl);font-size:1.05rem;color:var(--color-ink-2);opacity:.35;transition:opacity 1.8s var(--ease-out)}
+#finale.run .colophon-quote{opacity:1}
+
+/* ---------- exit(刻意無聲的正常流) ---------- */
+#exit{padding-bottom:20vh}
+#exit .beat-inner{max-width:60ch;margin-inline:auto;padding-inline:var(--space-lg)}
+#exit p{color:var(--color-ink-2);font-size:var(--text-sm)}
+#exit .legal{margin-top:var(--space-lg);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+#exit .loop{margin-top:var(--space-xl)}
+#exit .loop a{color:var(--color-accent);text-decoration:none;border-bottom:1px solid var(--color-rule)}
 
 /* ---------- power overlay (enhancement-only, entered by click; base never blocked) ---------- */
 .boot{position:fixed;inset:0;background:oklch(6% 0.006 75);display:grid;place-items:center;z-index:50;opacity:0;pointer-events:none;transition:opacity var(--dur-2) var(--ease-out)}
@@ -131,6 +188,11 @@ button.cta:hover{filter:brightness(1.06)}
 </style>
 </head>
 <body>
+
+<nav class="transport" aria-label="站點跳轉(隨時可離隊)">
+  <a href="#hook">開機</a><a href="#identity">身分</a><a href="#station">CH·01</a><a href="#cinema">CH·02</a><a href="#field">CH·03</a><a href="#ctrl">控制室</a><a href="#master">OUT</a><a href="#exit">出口</a>
+  <label class="tvol">VOL <input type="range" id="masterVol" min="0" max="100" value="60" disabled aria-label="全站音量" /></label>
+</nav>
 
 <div class="line-rail" aria-hidden="true"><div class="line-glow" id="lineGlow"></div></div>
 
@@ -189,7 +251,95 @@ button.cta:hover{filter:brightness(1.06)}
   </div>
 </section>
 
-<p id="protoend">— 原型 1 到此(節拍 1–3/7)。影院站、田野站、控制室、謝幕在下一段。—</p>
+<!-- BEAT 4 · STATION 2 (cinema) — 房間身分:廳堂;情緒:莊重 -->
+<section class="beat" id="cinema" data-scene="cinema">
+  <div class="wrap beat-inner">
+    <p class="orient">STATION · CH 02 — 影院站</p>
+    <div class="panel" style="border:0;background:transparent;padding:0">
+      <h2 style="font-weight:700;font-size:1.2rem">Hamlet Story MV</h2>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">AI 生成場景與配樂、本人剪輯整合的文學影音實驗——四十秒、八幕、雙語字幕,權利鏈完整可查。</p>
+      <div class="cinema-frame">
+        <div class="lb" aria-hidden="true"></div>
+        <img src="../../public/media/hamlet-story-mv-poster-1200.webp" alt="Hamlet Story MV 劇照(原型示意;正式站此處為完整播放器與雙語字幕)" loading="lazy" />
+        <div class="lb" aria-hidden="true"></div>
+      </div>
+      <p class="mono credit">Song: Blinds-Soft Lament — Suno 生成 · 00:00–00:40 · 非營利用途經 Suno 書面確認</p>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">誠實揭露一項規格差異:原提示要求純音樂,實際輸出含英語歌詞與人聲——公開版本以實際成片為準,呈現差異而非抹除。</p>
+      <p class="note">設計註記:<b>我把這一站調暗、殘響調長</b>,因為我想讓你在進場時先安靜下來。</p>
+      <p class="dossier-link">深入這件作品:<a href="../../src/content/works/hamlet-story-mv.md" onclick="return false" title="原型內連結示意,正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- BEAT 5 · STATION 3 (field) — 房間身分:開放空間;情緒:開放自然 -->
+<section class="beat" id="field" data-scene="field">
+  <div class="airgrid" aria-hidden="true"></div>
+  <div class="horizon" aria-hidden="true"></div>
+  <div class="wrap beat-inner">
+    <p class="orient">STATION · CH 03 — 田野站</p>
+    <h2 style="font-weight:700;font-size:1.2rem">導覽影片(四部)</h2>
+    <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">地方文化見習的影音成品——潭墘、糖廠(上/下)、蒜頭老街,四部合計 9 分 29 秒;分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
+    <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">見習為雙人同梯;此處列出的是工作日誌記載由本人負責的影音線。</p>
+    <p class="note">設計註記:<b>我讓格線在這裡散開</b>,因為田野沒有牆——這一站的聲音我選了濾過的風。</p>
+    <p class="dossier-link">深入這件作品:<a href="../../src/content/works/guide-videos.md" onclick="return false" title="原型內連結示意,正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
+  </div>
+</section>
+
+<!-- BEAT 6 · BACKSTAGE (control room) — 房間身分:控制室(乾);情緒:機能精確 -->
+<section class="beat" id="ctrl" data-scene="ctrl">
+  <div class="wrap beat-inner">
+    <p class="orient">BACKSTAGE — 控制室</p>
+    <div class="panel">
+      <span class="plate">CONTROL ROOM · METHOD</span>
+      <h2 style="font-weight:700;font-size:1.2rem">這一區不是理念陳述</h2>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">每一格都掛著可查核的實據。發布前的機器強制檢查——核准永遠是人,閘門只是不讓遺忘發生。你看到的本頁,就是通過全部閘門後的部署產物:</p>
+      <ul class="gatelist">
+        <li><span class="led" aria-hidden="true"></span> check:paths — 本機路徑不外洩</li>
+        <li><span class="led" aria-hidden="true"></span> check:media — 受限媒體與 GPS EXIF</li>
+        <li><span class="led" aria-hidden="true"></span> check:wording — 措辭紀律</li>
+        <li><span class="led" aria-hidden="true"></span> check:motion — 禁自動播放 · 動效降級</li>
+        <li><span class="led" aria-hidden="true"></span> check:approval — 核准 human-only</li>
+        <li><span class="led" aria-hidden="true"></span> check:obligations — 授權義務落在頁面上</li>
+      </ul>
+      <p class="note">設計註記:<b>這一站不掛殘響</b>,因為控制室要聽的是乾的訊號。</p>
+    </div>
+  </div>
+</section>
+
+<!-- BEAT 7 · MASTER OUT — payoff:與開頭光點呼應 -->
+<section class="beat" id="master">
+  <div class="wrap beat-inner">
+    <p class="orient">MASTER OUT — 訊號送出</p>
+    <p style="margin-top:var(--space-xl)"><span class="dot" aria-hidden="true"></span></p>
+    <h2>混合多聲道監聽</h2>
+    <p class="desc">開頭那顆訊號點,走過三站,在這裡送出——成為我要帶進研究所的方向:降低多聲道聆聽的建置與理解門檻。</p>
+  </div>
+</section>
+
+<!-- FINALE — 謝幕:零內容承載,純光影;可跳過(d003) -->
+<p class="skip-finale mono"><a href="#exit">跳過謝幕 ↓</a></p>
+<section class="beat" id="finale" data-scene="finale" aria-label="謝幕(純光影,無內容)">
+  <div class="wrap beat-inner">
+    <div class="lamps" aria-hidden="true">
+      <span class="lamp"><i></i>CH·01</span>
+      <span class="lamp"><i></i>CH·02</span>
+      <span class="lamp"><i></i>CH·03</span>
+      <span class="lamp"><i></i>MASTER</span>
+    </div>
+    <p class="colophon-quote">「先讓路平坦,再思考如何裝飾風景。」</p>
+  </div>
+</section>
+
+<!-- EXIT — 出口:刻意無聲的正常流;義務與重要內容一律在此(d003) -->
+<section class="beat" id="exit">
+  <div class="wrap beat-inner">
+    <p class="orient">EXIT — 出口(這裡刻意安靜)</p>
+    <p>本站提供完整與精簡兩種瀏覽方式——與我研究所關注的「降低聆聽門檻」出於同一信念。</p>
+    <p class="legal">© 2026 如願 · 本站無廣告、無付費牆、無聯盟收益</p>
+    <p class="legal">證書、佐證與聯絡——正式站出口區提供;原型不承載個資。</p>
+    <p class="loop"><a href="#hook">回到開頭,再走一次 ↺</a></p>
+  </div>
+</section>
 
 <!-- power boot overlay: enhancement entered by click; never the base state -->
 <div class="boot" id="boot" aria-hidden="true"><span class="dot" aria-hidden="true"></span><p>上電中——按任意鍵跳過</p></div>
@@ -203,7 +353,16 @@ button.cta:hover{filter:brightness(1.06)}
   const PENTA = [220, 261.63, 293.66, 329.63, 392, 440, 523.25];
   let ctx = null, master = null, limiter = null, analyser = null, buf = null;
   let padVoice = null, padOn = false, powered = false, rafId = null;
-  let reverb = null;
+  let reverb = null, room = null, sceneVoices = null, lastRoom = "", finaleDone = false;
+
+  // 房間身分(離散,場景邊界切換;d004):feedback / 低通 / send 濕度
+  const ROOMS = {
+    default:{ fb:.32, lp:2400, wet:.18 },   // 小房間(開機/身分/互動站)
+    cinema: { fb:.46, lp:1600, wet:.30 },   // 廳堂:莊重
+    field:  { fb:.24, lp:3200, wet:.22 },   // 開放空間:遠方感
+    ctrl:   { fb:.10, lp:2000, wet:.04 },   // 控制室:乾
+    finale: { fb:.55, lp:1900, wet:.36 },   // 全站最大空間感(LEV 峰值)
+  };
 
   const $ = (id) => document.getElementById(id);
   const powerBtn = $("powerBtn"), padToggle = $("padToggle"), boot = $("boot"),
@@ -228,6 +387,102 @@ button.cta:hover{filter:brightness(1.06)}
     const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2400;
     reverb.connect(d1); reverb.connect(d2); d1.connect(fb); d2.connect(fb);
     fb.connect(lp); lp.connect(d1); lp.connect(analyser);
+    room = { fb, lp };
+    sceneVoices = buildSceneVoices();
+  }
+
+  // 場景聲音身分(逐場景 voice;鄰近度連續驅動=「聲源」層,d004)
+  function buildSceneVoices(){
+    const v = {};
+    { // 影院站:低音域小調傾向 pad(莊重)+呼吸級慢演化(抗疲勞)
+      const mix = ctx.createGain(); mix.gain.value = 1;
+      [[110,"sine"],[130.81,"sine"],[164.81,"triangle"]].forEach(([f,t]) => {
+        const o = ctx.createOscillator(); o.type = t;
+        o.frequency.value = f * (1 + (Math.random() - .5) * .003);
+        const og = ctx.createGain(); og.gain.value = .3;
+        o.connect(og); og.connect(mix); o.start();
+      });
+      const breath = ctx.createGain(); breath.gain.value = .8;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = .06;
+      const lg = ctx.createGain(); lg.gain.value = .18;
+      lfo.connect(lg); lg.connect(breath.gain); lfo.start();
+      const g = ctx.createGain(); g.gain.value = 0;
+      mix.connect(breath); breath.connect(g);
+      const send = ctx.createGain(); send.gain.value = .5;
+      g.connect(analyser); g.connect(send); send.connect(reverb);
+      v.cinema = { g, base:.14 };
+    }
+    { // 田野站:濾波噪音的遠方感(開放自然)——帶通中心慢速漂移
+      const len = ctx.sampleRate * 2, nb = ctx.createBuffer(1, len, ctx.sampleRate), d = nb.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = nb; src.loop = true;
+      const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 520; bp.Q.value = .7;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = .05;
+      const lg = ctx.createGain(); lg.gain.value = 160;
+      lfo.connect(lg); lg.connect(bp.frequency); lfo.start();
+      const g = ctx.createGain(); g.gain.value = 0;
+      src.connect(bp); bp.connect(g);
+      const send = ctx.createGain(); send.gain.value = .3;
+      g.connect(analyser); g.connect(send); send.connect(reverb);
+      src.start();
+      v.field = { g, base:.09 };
+    }
+    return v;
+  }
+
+  // 鄰近度(viewport 中心距離)→ 場景 voice 增益;最近場景 → 房間身分離散切換
+  const sceneEls = () => [...document.querySelectorAll("[data-scene]")];
+  function updateScenes(){
+    if (!powered || !sceneVoices) return;
+    const vh = innerHeight; let nearest = "default", nearestD = Infinity;
+    for (const el of sceneEls()){
+      const r = el.getBoundingClientRect();
+      const c = Math.abs(r.top + r.height / 2 - vh / 2);
+      if (r.bottom > 0 && r.top < vh && c < nearestD){ nearestD = c; nearest = el.dataset.scene; }
+      const key = el.dataset.scene, v = sceneVoices[key];
+      if (v){
+        const prox = Math.max(0, 1 - c / (vh * .85));
+        v.g.gain.setTargetAtTime(v.base * prox * prox, ctx.currentTime, .12);
+      }
+    }
+    if (nearest !== lastRoom){
+      lastRoom = nearest;
+      const R = ROOMS[nearest] || ROOMS.default;
+      room.fb.gain.setTargetAtTime(R.fb, ctx.currentTime, .4);
+      room.lp.frequency.setTargetAtTime(R.lp, ctx.currentTime, .4);
+      if (nearest !== "default" || !padOn) // 互動站內 pad 的 Y 仍握有 send 濕度
+        reverb.gain.setTargetAtTime(R.wet, ctx.currentTime, .4);
+    }
+  }
+
+  function dryTick(){ // 控制室輕確認聲:乾、短、微隨機(抗煩躁)
+    if (!powered || !ctx) return;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine"; o.frequency.value = 1320 * (1 + (Math.random() - .5) * .05);
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(.09, ctx.currentTime + .008);
+    g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .09);
+    o.connect(g); g.connect(analyser); o.start(); o.stop(ctx.currentTime + .1);
+  }
+
+  function finaleChord(){ // 終止和弦:五聲內、長衰減入靜默(敬畏→釋放);全部經 limiter
+    [220, 261.63, 329.63, 440].forEach((f, i) => {
+      const o = ctx.createOscillator(); o.type = i < 2 ? "sine" : "triangle"; o.frequency.value = f;
+      const g = ctx.createGain(); g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(.2 / (i + 1) + .05, ctx.currentTime + .9 + i * .12); // 淡入(零驚嚇)
+      g.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime + 7);
+      o.connect(g); g.connect(reverb); g.connect(analyser);
+      o.start(ctx.currentTime + i * .12); o.stop(ctx.currentTime + 7.2);
+    });
+  }
+
+  function runFinale(){ // 謝幕:通道燈依序亮起;無 POWER=純視覺(d002);零內容承載(d003)
+    if (finaleDone) return; finaleDone = true;
+    const fin = $("finale");
+    fin.querySelectorAll(".lamp").forEach((l, i) =>
+      setTimeout(() => l.classList.add("on"), reduceMotion ? 0 : 450 * i));
+    setTimeout(() => fin.classList.add("run"), reduceMotion ? 0 : 1900);
+    if (powered && ctx){ finaleChord(); kick(); }
   }
 
   function softBlip(){ // UI 回饋:軟起音+微隨機失諧(抗煩躁)
@@ -269,11 +524,12 @@ button.cta:hover{filter:brightness(1.06)}
   }
 
   function meterLoop(){
+    updateScenes(); // 鄰近度→場景 voice/房間身分(僅完整體驗模式)
     analyser.getByteFrequencyData(buf);
     let s = 0; for (let i = 0; i < buf.length; i++) s += buf[i];
     const lvl = Math.min(1, (s / buf.length) / 120);
     document.documentElement.style.setProperty("--glow", lvl.toFixed(3)); // 視聽同源:analyser→光暈
-    rafId = (powered && (padOn || lvl > 0.01)) ? requestAnimationFrame(meterLoop) : null;
+    rafId = powered ? requestAnimationFrame(meterLoop) : null;
     if (rafId === null) document.documentElement.style.setProperty("--glow", "0");
   }
   const kick = () => { if (rafId == null) rafId = requestAnimationFrame(meterLoop); };
@@ -283,6 +539,7 @@ button.cta:hover{filter:brightness(1.06)}
     powerBtn.setAttribute("aria-pressed", String(on));
     powerBtn.textContent = on ? "■ 關機・回到安靜" : "▶ 開機・完整體驗(含聲音)";
     padToggle.disabled = !on;
+    $("masterVol").disabled = !on; // 音量控制常駐外露(d015)
     padToggle.textContent = on ? (padOn ? "■ 靜音" : "▶ 發聲") : "▶ 發聲(先開機)";
     modeNote.textContent = on ? "目前:完整體驗模式(聲音已開)。再按開機鈕即全站靜音。"
                               : "目前:精簡閱讀模式(無聲、無動態)。開機隨時可以,不開也什麼都不會少。";
@@ -349,6 +606,22 @@ button.cta:hover{filter:brightness(1.06)}
   });
 
   $("hintClose").addEventListener("click", () => hint.classList.remove("on"));
+
+  // 全站音量(0–100 → master gain 0–0.2;預設 60=保守初始值)
+  $("masterVol").addEventListener("input", (e) => {
+    if (master) master.gain.setTargetAtTime(0.2 * (e.target.value / 100), ctx.currentTime, 0.05);
+  });
+
+  // 控制室:閘門列輕確認聲(乾;節流抗煩躁)
+  let lastTick = 0;
+  document.querySelectorAll("#ctrl .gatelist li").forEach((li) =>
+    li.addEventListener("pointerenter", () => {
+      if (performance.now() - lastTick > 150){ lastTick = performance.now(); dryTick(); }
+    }));
+
+  // 謝幕觸發:進入視窗即演出(無 POWER=純視覺)
+  new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) runFinale(); }),
+    { threshold: 0.35 }).observe($("finale"));
 })();
 </script>
 </body>
