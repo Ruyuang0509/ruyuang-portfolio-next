@@ -1,0 +1,7 @@
+[
+  { "pattern": "插畫", "flags": "u", "scope": "src/content", "reason": "台文中心圖像必須標示為 AI 輔助合成×製圖與美術指導,不可稱插畫(簡章第七項罰則)" },
+  { "pattern": "混音", "flags": "u", "scope": "src/content", "reason": "導覽影片證據只支持後製訊號處理/音量調校,不支持混音宣稱" },
+  { "pattern": "1 ?支導覽影片|一支導覽影片", "flags": "u", "scope": "src/content", "reason": "對外一律寫「導覽影片(四部,合計 9 分 29 秒)」" },
+  { "pattern": "80\\.6%", "flags": "u", "scope": "", "reason": "已撤回數字,全站禁用" },
+  { "pattern": "背書", "flags": "u", "scope": "src/content", "reason": "成果報告表=自我陳述;唯一第三方文件是結業證書" }
+]
