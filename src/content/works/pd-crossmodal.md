@@ -9,10 +9,14 @@ summary: Pure Data 即時訊號處理與互動邏輯的聲音互動面板——�
 role: 全程本人:學習路徑設計、patch 建構、互動邏輯、操作示範。
 aiDisclosure: 以 AI 協作輔助學習與除錯;patch 邏輯經本人逆向拆解後自行重組,成品由本人操作示範。展示紀律:不宣稱為獨立完成之完整研究系統。
 evidence:
-  - { label: DEMO, value: 操作示範影片已存檔 }
+  - { label: DEMO, value: 操作示範影片 v0.2.1 }
   - { label: METHOD, value: AI 協作 + 逆向拆解(2026-07-24 起自學) }
 thirdParty: false
 obligations: [no-monetization]
+media:
+  video: /media/pd-crossmodal-mapping-v0.2.1-operation-demo.mp4
+  poster: /media/pd-crossmodal-mapping-v0.2.1-operation-demo-poster.png
+  note: 操作示範 v0.2.1 — 展示證據,非完整研究系統
 ---
 
 自 2026 年 7 月起自學 Pure Data,以「跨模態映射」為題完成聲音互動面板:把視覺與操作事件映射為即時聲音參數,練習的是訊號流思維——輸入、處理、輸出,每一步都看得見也聽得見。

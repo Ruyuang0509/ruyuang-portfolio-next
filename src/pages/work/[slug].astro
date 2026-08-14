@@ -5,13 +5,17 @@ import TransportNav from "../../components/TransportNav.astro";
 import OutputBus from "../../components/OutputBus.astro";
 
 export async function getStaticPaths() {
-  const works = await getCollection("works", ({ data }) => data.tier === "featured");
+  const works = await getCollection(
+    "works",
+    ({ data }) => data.tier === "featured" || (data.tier === "rack" && data.detail === true)
+  );
   return works.map((w) => ({ params: { slug: w.id }, props: { work: w } }));
 }
 
 const { work } = Astro.props;
 const { Content } = await render(work);
 const d = work.data;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <html lang="zh-Hant-TW">
@@ -33,6 +37,23 @@ const d = work.data;
             <p class="orient">{d.tags.join(" · ")} · {d.year}</p>
             <h1 class="dossier-title">{d.title}</h1>
             <p class="dossier-summary">{d.summary}</p>
+
+            {d.media && (
+              <figure class="dmedia">
+                <video
+                  controls
+                  preload="none"
+                  playsinline
+                  poster={d.media.poster ? `${base}${d.media.poster}` : undefined}
+                >
+                  <source src={`${base}${d.media.video}`} type="video/mp4" />
+                  {d.media.tracks.map((t) => (
+                    <track kind="captions" src={`${base}${t.src}`} srclang={t.srclang} label={t.label} />
+                  ))}
+                </video>
+                {d.media.note && <figcaption class="mono dmedia-note">{d.media.note}</figcaption>}
+              </figure>
+            )}
 
             <div class="dossier-grid">
               <section class="dfield">

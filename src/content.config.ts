@@ -20,6 +20,17 @@ const works = defineCollection({
       .optional(),
     obligations: z.array(z.enum(["suno-attribution", "no-monetization"])).default([]),
     restricted: z.array(z.string()).default([]),
+    detail: z.boolean().default(false),
+    media: z
+      .object({
+        video: z.string(),
+        poster: z.string().optional(),
+        tracks: z
+          .array(z.object({ src: z.string(), srclang: z.string(), label: z.string() }))
+          .default([]),
+        note: z.string().optional(),
+      })
+      .optional(),
   }),
 });
 

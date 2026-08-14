@@ -19,7 +19,14 @@ approval:
   scope: 四類素材(場景圖/文字/Suno 音樂/Canva)生成與使用聲明 v1.0;Suno 官方 2026-07-25 書面確認非營利用途
   evidence: 影片 SHA-256 7E50B6EB01E646FB822D6384D73C9C01A08DC9DF8D5D22A3102B777A460D2312
 obligations: [suno-attribution, no-monetization]
-restricted: [原始授權信件全文(含郵件標頭)僅存本地,永不入 repo]
+restricted: ["原始授權信件全文(含郵件標頭)僅存本地,永不入 repo"]
+media:
+  video: /media/hamlet-story-mv-clean-web-1080p.mp4
+  poster: /media/hamlet-story-mv-poster-1200.webp
+  tracks:
+    - { src: /media/hamlet-story-mv.zh-TW.vtt, srclang: zh-TW, label: 繁體中文 }
+    - { src: /media/hamlet-story-mv.en.vtt, srclang: en, label: English }
+  note: "Song: Blinds-Soft Lament — Suno 生成 · 00:00–00:40 · 非營利用途經 Suno 書面確認"
 ---
 
 四十秒、八幕:哈姆雷特在寒夜見到父親的亡靈,得知秘密,走向決鬥與終幕。場景由 ChatGPT 以純文字提示生成,角色一致性靠文字描述維持;故事文字是 GPT 依莎士比亞原始劇情的原創改寫,不取用任何現代譯本或字幕。
