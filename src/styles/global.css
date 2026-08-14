@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0e0f12;
+  --fg: #e8e6e1;
+  --accent: #57c7a3;
+}
+
+html {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* Reduced motion is the DEFAULT: base styles animate nothing.
+   Motion opts IN under no-preference; never the other way around. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
