@@ -52,14 +52,15 @@ a{color:var(--color-ink)}
 .line-glow{position:absolute;inset:0;background:linear-gradient(to bottom,transparent,var(--color-accent) 8%,var(--color-accent) 92%,transparent);
   opacity:calc(.12 + var(--glow) * .8);transition:opacity 120ms linear}
 .line-breath{position:absolute;inset:0;background:linear-gradient(to bottom,transparent,var(--color-accent) 8%,var(--color-accent) 92%,transparent);opacity:0}
-.line-cursor{position:absolute;left:-2px;top:0;width:6px;height:56px;border-radius:3px;opacity:0;
-  background:linear-gradient(to bottom,transparent,var(--color-accent),transparent)}
-@media (max-width:700px){.line-rail{left:20px}}
+@media (max-width:700px){.line-rail{left:20px}} /* 手機:rail 退居邊緣 [R3 K-30] */
 
-/* 進度絲(儀器語彙:磁帶計數器)——捲動進度的常駐視覺回饋 */
+/* 進度絲(儀器語彙:磁帶計數器)——捲動進度的唯一常駐視覺回饋 [R3 K-30] */
 .filament{position:fixed;top:0;left:0;right:0;height:2px;z-index:46;pointer-events:none;
   background:linear-gradient(90deg,var(--color-accent),color-mix(in oklab,var(--color-accent) 55%,transparent));
   transform:scaleX(0);transform-origin:left}
+/* 手機:rail 被推到邊緣且落在暗角內,進度敘事全交給 filament——故加厚。
+   此規則必須在基準宣告之後:同特異度後者勝(寫在前面時 3px 從未生效,實測抓到) */
+@media (max-width:700px){.filament{height:3px}}
 
 /* 質地層:膠片顆粒(消 banding+材質感)與暗角(景深)——皆不攔截指標 */
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:3;
@@ -197,11 +198,6 @@ button.cta:hover{filter:brightness(1.06)}
 #exit .loop a{color:var(--color-accent);text-decoration:none;border-bottom:1px solid var(--color-rule)}
 
 /* ---------- power overlay (enhancement-only, entered by click; base never blocked) ---------- */
-.boot{position:fixed;inset:0;background:oklch(6% 0.006 75);display:grid;place-items:center;z-index:50;opacity:0;pointer-events:none;transition:opacity var(--dur-2) var(--ease-out)}
-.boot.on{opacity:1;pointer-events:auto}
-.boot .dot{width:14px;height:14px}
-.boot p{position:absolute;bottom:12vh;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
-
 /* hints */
 .hint{position:fixed;right:var(--space-md);bottom:var(--space-md);max-width:34ch;background:var(--color-paper-2);border:1px solid var(--color-rule);border-radius:3px;padding:var(--space-sm) var(--space-md);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-ink-2);z-index:40;display:none}
 .hint.on{display:block}
@@ -231,11 +227,6 @@ button.cta:hover{filter:brightness(1.06)}
       animation-timeline:scroll(root);
     }
     @keyframes fill-x{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-    .js .line-cursor{opacity:.9;
-      animation-name:cursor-travel;animation-duration:1ms;animation-timing-function:linear;animation-fill-mode:both;
-      animation-timeline:scroll(root);
-    }
-    @keyframes cursor-travel{from{transform:translateY(0)}to{transform:translateY(calc(100vh - 56px))}}
   }
   /* 呼吸(獨立光層,與音訊光暈同存不打架):間歇性的活著 */
   .js .line-breath{animation:breath 5.6s ease-in-out infinite}
@@ -243,7 +234,6 @@ button.cta:hover{filter:brightness(1.06)}
   .js #hookDot{animation:dotbreath 4.8s ease-in-out infinite}
   @keyframes dotbreath{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
   .dot,.xy-dot,.line-glow{transition:box-shadow 120ms linear,opacity 120ms linear}
-  .boot .dot{animation:bloom 1.6s var(--ease-out) both}
   @keyframes bloom{0%{box-shadow:0 0 0 0 transparent;opacity:0}30%{opacity:1}100%{box-shadow:0 0 46px 9px color-mix(in oklab,var(--color-accent) 60%,transparent);opacity:1}}
 }
 
@@ -277,7 +267,7 @@ button.cta:hover{filter:brightness(1.06)}
 </nav>
 
 <div class="filament" aria-hidden="true"></div>
-<div class="line-rail" aria-hidden="true"><div class="line-breath"></div><div class="line-glow" id="lineGlow"></div><div class="line-cursor"></div></div>
+<div class="line-rail" aria-hidden="true"><div class="line-breath"></div><div class="line-glow" id="lineGlow"></div></div>
 
 <!-- 開機閘:載入儀式(JS+動效才啟用;跳過/Esc/直接捲動皆可離開,基態永不被擋) -->
 <div class="gate" id="gate" role="dialog" aria-label="開機序列" tabindex="-1" hidden>
@@ -450,9 +440,6 @@ button.cta:hover{filter:brightness(1.06)}
   </div>
 </section>
 
-<!-- power boot overlay: enhancement entered by click; never the base state -->
-<div class="boot" id="boot" aria-hidden="true"><span class="dot" aria-hidden="true"></span><p>上電中——按任意鍵跳過</p></div>
-
 <div class="hint" id="hint"><button id="hintClose" aria-label="關閉提示">✕</button>已開機。板子可發聲:左右=聲像與音高,上下=遠近。</div>
 
 <script>
@@ -465,7 +452,6 @@ button.cta:hover{filter:brightness(1.06)}
   let outMeter = null, outBuf = null, samplePeak = 0;
   let padVoice = null, padOn = false, powered = false, rafId = null;
   let reverb = null, room = null, sceneVoices = null, lastRoom = "", finaleDone = false;
-  let skipBoot = false; // 開機閘已演過儀式時,略過 POWER 的 boot overlay(不演兩次)
 
   // 房間身分(離散,場景邊界切換;d004):feedback / 低通 / send 濕度
   const ROOMS = {
@@ -477,7 +463,7 @@ button.cta:hover{filter:brightness(1.06)}
   };
 
   const $ = (id) => document.getElementById(id);
-  const powerBtn = $("powerBtn"), padToggle = $("padToggle"), boot = $("boot"),
+  const powerBtn = $("powerBtn"), padToggle = $("padToggle"),
         pad = $("xyPad"), dot = $("xyDot"), hint = $("hint"), modeNote = $("modeNote");
 
   function ensureCtx(){
@@ -677,15 +663,7 @@ button.cta:hover{filter:brightness(1.06)}
       if (ctx.state === "suspended") ctx.resume(); // 手勢內 resume(G1 驗證的可攜模式)
       master.gain.setTargetAtTime(0.2 * ($("masterVol").value / 100), ctx.currentTime, 0.05); // 回復關機前音量
       setPower(true);
-      if (!reduceMotion && !skipBoot){
-        boot.classList.add("on");
-        const skip = () => endBoot();
-        const endBoot = () => { boot.classList.remove("on"); hint.classList.add("on");
-          removeEventListener("keydown", skip); boot.removeEventListener("click", skip); };
-        addEventListener("keydown", skip, { once:true }); boot.addEventListener("click", skip, { once:true });
-        setTimeout(endBoot, 1700);
-      } else { hint.classList.add("on"); }
-      skipBoot = false;
+      hint.classList.add("on"); // [R3 K-29] 儀式只存在開機閘一處;POWER 就地回應,不接管視窗
       powerOnSound(); kick();
     } else {
       if (padVoice){ padVoice.stop(); padVoice = null; padOn = false; }
@@ -842,21 +820,19 @@ button.cta:hover{filter:brightness(1.06)}
     addEventListener("scroll", gateScrollDismiss, { passive: true });
     $("gateSkip").addEventListener("click", dismissGate);
     $("gateLite").addEventListener("click", dismissGate);
-    $("gateFull").addEventListener("click", () => { skipBoot = true; dismissGate(); if (!powered) powerBtn.click(); });
+    $("gateFull").addEventListener("click", () => { dismissGate(); if (!powered) powerBtn.click(); });
   }
   runGate();
 
   // ---- 捲動進度光:scroll() timeline 不支援時(Firefox)以被動監聽驅動同一組元素 ----
   if (!(window.CSS && CSS.supports("animation-timeline: scroll()")) && !reduceMotion){
-    const fil = document.querySelector(".filament"), cur = document.querySelector(".line-cursor");
-    cur.style.opacity = ".9";
+    const fil = document.querySelector(".filament");
     let ticking = false;
     const upd = () => {
       ticking = false;
       const max = document.documentElement.scrollHeight - innerHeight;
       const p = max > 0 ? Math.min(1, scrollY / max) : 0;
       fil.style.transform = "scaleX(" + p + ")";
-      cur.style.transform = "translateY(" + (p * (innerHeight - 56)) + "px)";
     };
     addEventListener("scroll", () => { if (!ticking){ ticking = true; requestAnimationFrame(upd); } }, { passive: true });
     upd();
