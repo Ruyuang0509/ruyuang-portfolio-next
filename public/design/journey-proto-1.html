@@ -102,6 +102,14 @@ button.cta:hover{filter:brightness(1.06)}
 #identity p{color:var(--color-ink-2)}
 .readouts{display:flex;flex-wrap:wrap;gap:var(--space-sm) var(--space-xl);margin-top:var(--space-lg);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
 .readouts b{color:var(--color-ink-2);font-weight:500}
+/* 站內地圖(甲-6):通道表語彙——快讀者兩屏內掃得到全站 */
+.sitemap{margin-top:var(--space-lg);border:1px solid var(--color-rule-2);border-radius:3px;overflow:clip;font-family:var(--font-mono)}
+.sitemap a{display:flex;justify-content:space-between;gap:var(--space-md);align-items:baseline;
+  padding:var(--space-sm) var(--space-md);border-bottom:1px solid var(--color-rule-2);text-decoration:none;font-size:var(--text-xs)}
+.sitemap a:last-child{border-bottom:0}
+.sitemap a:hover{background:var(--color-paper-2)}
+.sitemap b{color:var(--color-ink);font-weight:500;white-space:nowrap}
+.sitemap span{color:var(--color-muted);text-align:right}
 
 /* 場景亮度分場(紀念碑谷 color scripting:同色相,只動明度層級) */
 #station{background:linear-gradient(180deg,transparent,oklch(14% 0.012 75) 45%,transparent)}
@@ -268,7 +276,7 @@ button.cta:hover{filter:brightness(1.06)}
 <body>
 
 <nav class="transport" aria-label="站點跳轉(隨時可離隊)">
-  <a href="#hook">開機</a><a href="#identity">身分</a><a href="#station">CH·01</a><a href="#cinema">CH·02</a><a href="#field">CH·03</a><a href="#ctrl">控制室</a><a href="#master">OUT</a><a href="#exit">出口</a>
+  <a href="#hook">開機</a><a href="#identity">身分</a><a href="#station">XY 板</a><a href="#cinema">Hamlet</a><a href="#field">田野影片</a><a href="#ctrl">控制室</a><a href="#master">OUT</a><a href="#exit">出口</a><!-- 甲-6:標籤帶作品名,不再用 CH·01 不透明代碼 -->
   <label class="tvol">VOL <input type="range" id="masterVol" min="0" max="100" value="60" disabled aria-label="全站音量" /></label>
 </nav>
 
@@ -295,7 +303,7 @@ button.cta:hover{filter:brightness(1.06)}
     <p class="orient">MONITOR ROOM · 一場訊號的旅程</p>
     <p style="margin-top:var(--space-xl)"><span class="dot" id="hookDot" aria-hidden="true"></span></p>
     <h1>把聲學的理解門檻,<br />調到<em>人人可聽見</em>。</h1>
-    <p class="hook-sub">這是一台可以動手玩的監聽台。</p>
+    <p class="hook-sub">這台監聽台可以動手玩:每一站的聲音,都是你自己推出來的。</p>
     <div class="cta-row">
       <button class="cta" id="powerBtn" aria-pressed="false">▶ 開機・完整體驗(含聲音)</button>
       <a class="ghost" href="#identity">安靜地往下讀 ↓</a>
@@ -309,9 +317,18 @@ button.cta:hover{filter:brightness(1.06)}
   <div class="wrap beat-inner">
     <p class="orient">SIGNAL · 01 — 我是誰</p>
     <h2>用視覺與互動,降低聲學的理解門檻</h2>
-    <p>我從數位學習設計走進聲音。耳機先打開了我的知覺;後來發現,多數人說不清楚自己聽到了什麼。我想做的一直是同一件事——把聽覺經驗變成可以動手操作的東西。</p>
+    <!-- 甲-6 站內地圖:委員時間未知⇒同時服務快讀者;置於自介段之前——時間短的人先拿到地圖,
+         時間長的人往下自然接到敘事(不對稱損失:時間長則地圖無害,時間短則它是唯一被看到的東西) -->
+    <nav class="sitemap" aria-label="站內地圖:三件作品與去處">
+      <a href="#station"><b>XY 互動板</b><span>Pure Data 即時訊號處理・可動手玩</span></a>
+      <a href="#cinema"><b>Hamlet Story MV</b><span>AI 協作影音實驗・權利鏈可查</span></a>
+      <a href="#field"><b>田野導覽影片</b><span>四部外拍後製・9 分 29 秒</span></a>
+      <a href="#ctrl"><b>控制室</b><span>方法與證據</span></a>
+      <a href="#master"><b>MASTER OUT</b><span>研究方向</span></a>
+    </nav>
+    <p style="margin-top:var(--space-lg)">一副監聽耳機,把我從數位學習設計帶進聲音。和朋友比較設備聽感時,我們聽得出差異,卻說不清楚它來自頻率、空間,還是動態。我想做的一直是同一件事:把說不清楚的感受,變成可以動手操作的東西。</p>
     <div class="readouts">
-      <span>FOCUS <b>心理聲學 × 人機協作</b></span>
+      <span>FOCUS <b>聲響 × 人工智慧</b></span>
       <span>ROUTE <b>作品 → 證據 → 研究</b></span>
       <span>OUT <b>混合多聲道監聽</b></span>
     </div>
@@ -325,8 +342,8 @@ button.cta:hover{filter:brightness(1.06)}
     <p class="orient">STATION · CH 01 — 互動站</p>
     <div class="panel">
       <span class="plate">XY PAD · 跨模態映射</span>
-      <h2>跨模態映射之聲音互動面板</h2>
-      <p class="desc">Pure Data 寫的即時訊號處理:位置進來,聲音出去。這塊板子做的事,跟這個網站是同一件。</p>
+      <h2>一塊把位置變成聲音的板子</h2>
+      <p class="desc">Pure Data 寫的即時訊號處理:位置進來,聲音出去。原型先靠 AI 協作搭起來,再逆向拆解訊號路徑,拆到能自己說明、自己改。這塊板子做的事,跟這個網站是同一件。</p>
       <div class="pad-wrap">
         <div class="xy-pad" id="xyPad" role="application" aria-label="XY 合成板:發聲後,橫軸控制聲像與音高,縱軸控制遠近">
           <span class="xy-dot" id="xyDot" aria-hidden="true"></span>
@@ -411,6 +428,7 @@ button.cta:hover{filter:brightness(1.06)}
         <li><span class="led" aria-hidden="true"></span> check:obligations — 授權義務落在頁面上</li>
       </ul>
       <p class="note">設計註記:<b>控制室聽乾的訊號</b>。</p>
+      <p class="dossier-link">這套檢查,連同整個網站,原始碼都公開:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a><!-- 甲-5:認領簡章明列的「程式原始碼」類目 --></p>
     </div>
   </div>
 </section>
@@ -422,6 +440,7 @@ button.cta:hover{filter:brightness(1.06)}
     <p style="margin-top:var(--space-xl)"><span class="dot" aria-hidden="true"></span></p>
     <h2>混合多聲道監聽</h2>
     <p class="desc">開頭那顆訊號走過三站,在這裡送出。我要帶進研究所的題目就是它:把多聲道聆聽的建置與理解門檻,再調低一點。</p>
+    <p class="desc">這是聲響的那一半。人工智慧的那一半你剛走過——控制室那套機器守規則、人做核准的工作法,會跟著題目一起進來。<!-- K-33 雙軸收束:兌現 FOCUS 兩讀數;d019=方法非題目;d020=一句指回,不擴展示 --></p>
   </div>
 </section>
 
@@ -445,6 +464,8 @@ button.cta:hover{filter:brightness(1.06)}
     <p class="orient">EXIT — 出口(這裡刻意安靜)</p>
     <p>本站提供完整與精簡兩種瀏覽方式——與我研究所關注的「降低聆聽門檻」出於同一信念。</p>
     <p class="legal">© 2026 如願 · 本站無廣告、無付費牆、無聯盟收益</p>
+    <p class="legal">原始碼:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a>——網站本身,也是一件公開的程式作品。</p>
+    <p class="legal">研究筆記與方法紀錄——正式站 research 區提供。<!-- 甲-5:認領「研究報告」類目;K-35 遷移時接真連結 --></p>
     <p class="legal">證書、佐證與聯絡——正式站出口區提供;原型不承載個資。</p>
     <p class="loop"><a href="#hook" id="loopBtn">回到開頭,再走一次 ↺</a></p>
   </div>
