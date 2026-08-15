@@ -164,6 +164,11 @@ button.cta:hover{filter:brightness(1.06)}
 #field .horizon{position:absolute;left:0;right:0;top:58%;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,color-mix(in oklab,var(--color-accent) 45%,transparent) 30%,color-mix(in oklab,var(--color-accent) 45%,transparent) 70%,transparent)}
 
+/* ---------- 真休息(K-32):唯一刻意不承載任何東西的一段 ---------- */
+.rest{position:relative;z-index:1;min-height:46vh;pointer-events:none}
+.rest-horizon{position:absolute;left:0;right:0;top:52%;height:1px;
+  background:linear-gradient(90deg,transparent,color-mix(in oklab,var(--color-rule) 90%,transparent) 35%,color-mix(in oklab,var(--color-rule) 90%,transparent) 65%,transparent)}
+
 /* ---------- beat 6 control room(乾、銳利、小 LED) ---------- */
 #ctrl .gatelist{list-style:none;padding:0;margin-top:var(--space-md);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-ink-2)}
 #ctrl .gatelist li{display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-xs) var(--space-sm);border-bottom:1px solid var(--color-rule-2)}
@@ -383,6 +388,10 @@ button.cta:hover{filter:brightness(1.06)}
     <p class="dossier-link">深入這件作品:<a href="../../src/content/works/guide-videos.md" onclick="return false" title="原型內連結示意,正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
   </div>
 </section>
+
+<!-- 真休息(K-32):三站之後、後台之前的一段空白。零文字、零 CTA、無聲音場景——
+     博物館座椅的網頁版:讓 rail 獨自呼吸,不是留白失誤。刻意不掛 data-scene(不成為音場)。 -->
+<div class="rest" aria-hidden="true"><span class="rest-horizon"></span></div>
 
 <!-- BEAT 6 · BACKSTAGE (control room) — 房間身分:控制室(乾);情緒:機能精確 -->
 <section class="beat" id="ctrl" data-scene="ctrl">
