@@ -4,18 +4,18 @@
  * theme: custom · vibe: "深夜監聽室, 琥珀電平, 儀器刻度, 證據紙"
  * axes: dark / mono / chromatic-other (amber ~72°) */
 :root{
-  --color-paper:oklch(12% 0.008 75);
-  --color-paper-2:oklch(16% 0.010 75);
-  --color-paper-3:oklch(20% 0.010 75);
-  --color-ink:oklch(93% 0.010 80);
-  --color-ink-2:oklch(78% 0.010 80);
-  --color-muted:oklch(58% 0.012 75);
-  --color-rule:oklch(30% 0.012 75);
-  --color-rule-2:oklch(23% 0.010 75);
-  --color-accent:oklch(78% 0.15 72);
-  --color-accent-ink:oklch(18% 0.020 75);
-  --color-focus:oklch(80% 0.19 72);
-  --color-signal:oklch(62% 0.19 25);
+  --color-paper:#070503;
+  --color-paper-2:#100d09;
+  --color-paper-3:#191511;
+  --color-ink:#ebe7e1;
+  --color-ink-2:#bbb7b0;
+  --color-muted:#7f7973;
+  --color-rule:#312d27;
+  --color-rule-2:#201c18;
+  --color-accent:#f2a635;
+  --color-accent-ink:#171008;
+  --color-focus:#ffa500;
+  --color-signal:#e24947;
   --font-display:"Noto Sans TC",sans-serif;
   --font-body:"Noto Sans TC",sans-serif;
   --font-mono:"IBM Plex Mono",monospace;
@@ -26,4 +26,26 @@
   --dur-1:150ms;
   --rule-1:1px solid var(--color-rule);
   --radius-1:3px;
+}
+
+/* oklch upgrade — MUST stay inside @supports.
+ * A custom property is not type-checked at parse time, so an unsupported
+ * oklch() value would override the sRGB fallback and then fail at
+ * computed-value time: background-color -> transparent, color -> CanvasText.
+ * The palette would evaporate rather than degrade. Verified: delivery contract red flag #21. */
+@supports (color: oklch(0% 0 0)) {
+  :root {
+    --color-paper:oklch(12% 0.008 75);
+    --color-paper-2:oklch(16% 0.010 75);
+    --color-paper-3:oklch(20% 0.010 75);
+    --color-ink:oklch(93% 0.010 80);
+    --color-ink-2:oklch(78% 0.010 80);
+    --color-muted:oklch(58% 0.012 75);
+    --color-rule:oklch(30% 0.012 75);
+    --color-rule-2:oklch(23% 0.010 75);
+    --color-accent:oklch(78% 0.15 72);
+    --color-accent-ink:oklch(18% 0.020 75);
+    --color-focus:oklch(80% 0.19 72);
+    --color-signal:oklch(62% 0.19 25);
+  }
 }
