@@ -308,7 +308,7 @@ button.cta:hover{filter:brightness(1.06)}
       <button class="cta" id="powerBtn" aria-pressed="false">▶ 開機・完整體驗(含聲音)</button>
       <a class="ghost" href="#identity">安靜地往下讀 ↓</a>
     </div>
-    <p class="scroll-hint" id="modeNote">現在是安靜閱讀，不開機也什麼都不少。</p>
+    <p class="scroll-hint" id="modeNote">現在是安靜閱讀——不開機，內容也一樣完整。</p>
   </div>
 </section>
 
@@ -320,7 +320,7 @@ button.cta:hover{filter:brightness(1.06)}
     <!-- 甲-6 站內地圖：委員時間未知⇒同時服務快讀者；置於自介段之前——時間短的人先拿到地圖,
          時間長的人往下自然接到敘事(不對稱損失：時間長則地圖無害，時間短則它是唯一被看到的東西) -->
     <nav class="sitemap" aria-label="站內地圖：三件作品與去處">
-      <a href="#station"><b>XY 互動板</b><span>Pure Data 即時訊號處理・可動手玩</span></a>
+      <a href="#station"><b>XY 互動板</b><span>Pure Data 即時訊號處理・可親自動手</span></a>
       <a href="#cinema"><b>Hamlet Story MV</b><span>AI 協作影音實驗・權利鏈可查</span></a>
       <a href="#field"><b>田野導覽影片</b><span>四部外拍後製・9 分 29 秒</span></a>
       <a href="#ctrl"><b>控制室</b><span>方法與證據</span></a>
@@ -683,7 +683,7 @@ button.cta:hover{filter:brightness(1.06)}
     $("masterVol").disabled = !on; // 音量控制常駐外露(d015)
     padToggle.textContent = on ? (padOn ? "■ 靜音" : "▶ 發聲") : "▶ 發聲(先開機)";
     modeNote.textContent = on ? "聲音開了。再按一次，回到安靜。"
-                              : "現在是安靜閱讀，不開機也什麼都不少。";
+                              : "現在是安靜閱讀——不開機，內容也一樣完整。";
     const hb = $("haasBtn"); hb.disabled = !on; hb.textContent = on ? "▶ 播放一次" : "▶ 播放(先開機)";
     document.documentElement.classList.toggle("enhanced", on && !reduceMotion);
   }
