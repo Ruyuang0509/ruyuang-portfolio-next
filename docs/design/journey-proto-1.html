@@ -54,15 +54,15 @@ a{color:var(--color-ink)}
 .line-breath{position:absolute;inset:0;background:linear-gradient(to bottom,transparent,var(--color-accent) 8%,var(--color-accent) 92%,transparent);opacity:0}
 @media (max-width:700px){.line-rail{left:20px}} /* 手機:rail 退居邊緣 [R3 K-30] */
 
-/* 進度絲(儀器語彙:磁帶計數器)——捲動進度的唯一常駐視覺回饋 [R3 K-30] */
+/* 進度絲(儀器語彙：磁帶計數器)——捲動進度的唯一常駐視覺回饋 [R3 K-30] */
 .filament{position:fixed;top:0;left:0;right:0;height:2px;z-index:46;pointer-events:none;
-  background:linear-gradient(90deg,var(--color-accent),color-mix(in oklab,var(--color-accent) 55%,transparent));
+  background:linear-gradient(90deg,var(--color-accent)，color-mix(in oklab,var(--color-accent) 55%,transparent));
   transform:scaleX(0);transform-origin:left}
-/* 手機:rail 被推到邊緣且落在暗角內,進度敘事全交給 filament——故加厚。
-   此規則必須在基準宣告之後:同特異度後者勝(寫在前面時 3px 從未生效,實測抓到) */
+/* 手機:rail 被推到邊緣且落在暗角內，進度敘事全交給 filament——故加厚。
+   此規則必須在基準宣告之後：同特異度後者勝(寫在前面時 3px 從未生效，實測抓到) */
 @media (max-width:700px){.filament{height:3px}}
 
-/* 質地層:膠片顆粒(消 banding+材質感)與暗角(景深)——皆不攔截指標 */
+/* 質地層：膠片顆粒(消 banding+材質感)與暗角(景深)——皆不攔截指標 */
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:3;
   background:radial-gradient(120% 90% at 50% 42%,transparent 55%,oklch(0% 0 0/.32) 100%)}
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.045;mix-blend-mode:overlay;
@@ -72,12 +72,12 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opa
 /* ---------- beats ---------- */
 .beat{position:relative;z-index:1;padding-block:var(--space-3xl);scroll-margin-top:48px}
 .beat-inner{background:var(--color-paper);backdrop-filter:none;padding-block:var(--space-md)} /* 不透明:rail/光層只准在文字欄外呼吸(使用者缺陷回報 2026-08-15)[R3 K-06] */
-#cinema .beat-inner{background:oklch(7% 0.006 75)} /* 影院站維持劇場黑,但同樣不透明 */
-/* 章節牌(紀念碑谷式儀式:一枝從訊號線垂下的小刻度+置中章節碼) */
+#cinema .beat-inner{background:oklch(7% 0.006 75)} /* 影院站維持劇場黑，但同樣不透明 */
+/* 章節牌(紀念碑谷式儀式：一枝從訊號線垂下的小刻度+置中章節碼) */
 .orient{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.22em;color:var(--color-muted);text-transform:uppercase;
   text-align:center;margin-bottom:var(--space-xl)}
 .orient::before{content:"";display:block;width:1px;height:26px;margin:0 auto var(--space-md);
-  background:linear-gradient(var(--color-accent),transparent);opacity:.7}
+  background:linear-gradient(var(--color-accent)，transparent);opacity:.7}
 .note{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);border-left:2px solid var(--color-rule);padding:var(--space-xs) var(--space-md);margin-top:var(--space-lg);max-width:46ch;line-height:1.9}
 .note b{color:var(--color-accent);font-weight:500}
 
@@ -110,10 +110,10 @@ button.cta:hover{filter:brightness(1.06)}
 .sitemap b{color:var(--color-ink);font-weight:500;white-space:nowrap}
 .sitemap span{color:var(--color-muted);text-align:right}
 
-/* 場景亮度分場(紀念碑谷 color scripting:同色相,只動明度層級) */
+/* 場景亮度分場(紀念碑谷 color scripting:同色相，只動明度層級) */
 #station{background:linear-gradient(180deg,transparent,oklch(14% 0.012 75) 45%,transparent)}
 #ctrl{background:linear-gradient(180deg,transparent,oklch(12.5% 0.006 75) 50%,transparent)}
-#master{background:radial-gradient(52% 42% at 50% 46%,oklch(15.5% 0.02 75),transparent 72%)}
+#master{background:radial-gradient(52% 42% at 50% 46%,oklch(15.5% 0.02 75)，transparent 72%)}
 
 /* beat 3 station */
 #station .panel{border:1px solid var(--color-rule);border-radius:3px;background:var(--color-paper-2);padding:var(--space-lg);position:relative;margin-top:var(--space-lg)}
@@ -122,7 +122,7 @@ button.cta:hover{filter:brightness(1.06)}
 #station .desc{color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch}
 .pad-wrap{margin-top:var(--space-lg)}
 .xy-pad{position:relative;height:200px;border:1px solid var(--color-rule-2);border-radius:3px;cursor:crosshair;touch-action:none;overflow:clip;
-  background:linear-gradient(var(--color-rule-2) 1px,transparent 1px),linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);background-size:20px 20px}
+  background:linear-gradient(var(--color-rule-2) 1px,transparent 1px)，linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);background-size:20px 20px}
 .xy-dot{position:absolute;left:50%;top:50%;width:12px;height:12px;border-radius:50%;background:var(--color-accent);transform:translate(-50%,-50%);pointer-events:none;
   box-shadow:0 0 calc(4px + var(--glow) * 30px) calc(var(--glow) * 6px) color-mix(in oklab,var(--color-accent) 55%,transparent)}
 .trail{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--color-accent);opacity:.35;pointer-events:none;transform:translate(-50%,-50%)}
@@ -136,7 +136,7 @@ button.cta:hover{filter:brightness(1.06)}
 .dossier-link{margin-top:var(--space-lg);font-size:var(--text-sm)}
 .dossier-link a{color:var(--color-accent);border-bottom:1px solid var(--color-rule);text-decoration:none}
 
-/* 可發現的心理聲學實驗:先到者定位(precedence/Haas) */
+/* 可發現的心理聲學實驗：先到者定位(precedence/Haas) */
 .haas{margin-top:var(--space-xl)}
 .haas h3{font-weight:700;font-size:1rem;margin-bottom:var(--space-xs)}
 .haas-controls{display:flex;gap:var(--space-md);align-items:center;flex-wrap:wrap;margin-top:var(--space-md)}
@@ -152,8 +152,8 @@ button.cta:hover{filter:brightness(1.06)}
 .tvol{margin-left:auto;display:flex;align-items:center;gap:var(--space-xs)}
 .tvol input{accent-color:var(--color-accent);width:80px}
 
-/* ---------- beat 4 cinema(劇場黑聚焦:從黑開始的專注) ---------- */
-#cinema{background:linear-gradient(oklch(8% 0.006 75),oklch(6% 0.005 75) 30%,oklch(8% 0.006 75))}
+/* ---------- beat 4 cinema(劇場黑聚焦：從黑開始的專注) ---------- */
+#cinema{background:linear-gradient(oklch(8% 0.006 75)，oklch(6% 0.005 75) 30%,oklch(8% 0.006 75))}
 .cinema-frame{margin-top:var(--space-lg);border:1px solid var(--color-rule-2);border-radius:3px;overflow:clip;background:#000}
 .cinema-frame .lb{height:clamp(18px,4vw,40px);background:oklch(4% 0 0)}
 .cinema-frame img{display:block;width:100%;height:auto;opacity:.92}
@@ -166,7 +166,7 @@ button.cta:hover{filter:brightness(1.06)}
 /* ---------- beat 5 field(格線消散、地平線、大氣景深) ---------- */
 #field{position:relative;overflow:clip}
 #field .airgrid{position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background:linear-gradient(var(--color-rule-2) 1px,transparent 1px),linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);
+  background:linear-gradient(var(--color-rule-2) 1px,transparent 1px)，linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);
   background-size:64px 64px;
   mask-image:linear-gradient(to bottom,transparent 0%,oklch(0 0 0/.5) 35%,transparent 70%)}
 #field .horizon{position:absolute;left:0;right:0;top:58%;height:1px;pointer-events:none;
@@ -188,7 +188,7 @@ button.cta:hover{filter:brightness(1.06)}
 #master h2{font-weight:900;font-size:1.6rem;margin-top:var(--space-lg)}
 #master .desc{color:var(--color-ink-2);font-size:var(--text-sm);max-width:44ch;margin-inline:auto;margin-top:var(--space-md)}
 
-/* ---------- finale(謝幕:零內容,純光影;可跳過) ---------- */
+/* ---------- finale(謝幕：零內容，純光影；可跳過) ---------- */
 .skip-finale{text-align:center;padding-bottom:var(--space-lg);position:relative;z-index:1}
 .skip-finale a{display:inline-block;color:var(--color-muted);font-size:var(--text-xs);text-decoration:none;
   background:var(--color-paper-2);border:1px solid var(--color-rule-2);border-radius:3px;padding:var(--space-xs) var(--space-md)}
@@ -196,7 +196,7 @@ button.cta:hover{filter:brightness(1.06)}
 #finale{min-height:80vh;display:grid;place-items:center;text-align:center}
 #finale .lamps{display:flex;gap:var(--space-xl);justify-content:center;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;color:var(--color-muted);flex-wrap:wrap}
 #finale .lamp{display:flex;flex-direction:column;align-items:center;gap:var(--space-sm)}
-#finale .lamp i{display:block;width:10px;height:10px;border-radius:50%;background:var(--color-rule);transition:background var(--dur-2) var(--ease-out),box-shadow var(--dur-2) var(--ease-out)}
+#finale .lamp i{display:block;width:10px;height:10px;border-radius:50%;background:var(--color-rule);transition:background var(--dur-2) var(--ease-out)，box-shadow var(--dur-2) var(--ease-out)}
 #finale .lamp.on i{background:var(--color-accent);box-shadow:0 0 22px 4px color-mix(in oklab,var(--color-accent) 55%,transparent)}
 #finale .lamp.on{color:var(--color-ink-2)}
 .colophon-quote{margin-top:var(--space-2xl);font-size:1.05rem;color:var(--color-ink-2);opacity:.35;transition:opacity 1.8s var(--ease-out)}
@@ -224,10 +224,10 @@ button.cta:hover{filter:brightness(1.06)}
       animation-timeline:view();animation-range:entry 10% entry 60%;
     }
     @keyframes beat-in{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
-    /* 場景光:讀到哪,光亮到哪(不需開機——視覺回饋與聲音 opt-in 脫鉤) */
+    /* 場景光：讀到哪，光亮到哪(不需開機——視覺回饋與聲音 opt-in 脫鉤) */
     .js .beat{--scene-max:1}
     .js .beat::before{content:"";position:absolute;inset:-6% -14%;pointer-events:none;z-index:-1;
-      background:radial-gradient(58% 46% at 50% 38%,color-mix(in oklab,var(--color-accent) 8%,transparent),transparent 72%);
+      background:radial-gradient(58% 46% at 50% 38%,color-mix(in oklab,var(--color-accent) 8%,transparent)，transparent 72%);
       opacity:0;
       animation-name:scenelight;animation-duration:1ms;animation-timing-function:linear;animation-fill-mode:both;
       animation-timeline:view();animation-range:entry 15% exit 15%;
@@ -241,7 +241,7 @@ button.cta:hover{filter:brightness(1.06)}
     }
     @keyframes fill-x{from{transform:scaleX(0)}to{transform:scaleX(1)}}
   }
-  /* 呼吸(獨立光層,與音訊光暈同存不打架):間歇性的活著 */
+  /* 呼吸(獨立光層，與音訊光暈同存不打架):間歇性的活著 */
   .js .line-breath{animation:breath 5.6s ease-in-out infinite}
   @keyframes breath{0%,100%{opacity:.05}50%{opacity:.17}}
   .js #hookDot{animation:dotbreath 4.8s ease-in-out infinite}
@@ -250,10 +250,10 @@ button.cta:hover{filter:brightness(1.06)}
   @keyframes bloom{0%{box-shadow:0 0 0 0 transparent;opacity:0}30%{opacity:1}100%{box-shadow:0 0 46px 9px color-mix(in oklab,var(--color-accent) 60%,transparent);opacity:1}}
 }
 
-/* ---------- 開機閘(載入儀式:Bruno 式「按下開始」;JS+動效才存在,可跳過、捲動即離開) ---------- */
+/* ---------- 開機閘(載入儀式:Bruno 式「按下開始」;JS+動效才存在，可跳過、捲動即離開) ---------- */
 .gate{position:fixed;inset:0;z-index:70;background:oklch(5% 0.005 75);display:grid;place-items:center;
   opacity:0;transition:opacity .7s var(--ease-out)}
-.gate[hidden]{display:none} /* 修:author display 會蓋過 hidden 的 UA 規則,透明閘曾吃掉全頁點擊 */
+.gate[hidden]{display:none} /* 修:author display 會蓋過 hidden 的 UA 規則，透明閘曾吃掉全頁點擊 */
 .gate:not(.on){pointer-events:none}
 .gate.on{opacity:1}
 .gate-core{text-align:center;display:grid;gap:var(--space-lg);justify-items:center;padding:var(--space-lg)}
@@ -275,14 +275,14 @@ button.cta:hover{filter:brightness(1.06)}
 <body>
 
 <nav class="transport" aria-label="站點跳轉(隨時可離隊)">
-  <a href="#hook">開機</a><a href="#identity">身分</a><a href="#station">XY 板</a><a href="#cinema">Hamlet</a><a href="#field">田野影片</a><a href="#ctrl">控制室</a><a href="#master">OUT</a><a href="#exit">出口</a><!-- 甲-6:標籤帶作品名,不再用 CH·01 不透明代碼 -->
+  <a href="#hook">開機</a><a href="#identity">身分</a><a href="#station">XY 板</a><a href="#cinema">Hamlet</a><a href="#field">田野影片</a><a href="#ctrl">控制室</a><a href="#master">OUT</a><a href="#exit">出口</a><!-- 甲-6:標籤帶作品名，不再用 CH·01 不透明代碼 -->
   <label class="tvol">VOL <input type="range" id="masterVol" min="0" max="100" value="60" disabled aria-label="全站音量" /></label>
 </nav>
 
 <div class="filament" aria-hidden="true"></div>
 <div class="line-rail" aria-hidden="true"><div class="line-breath"></div><div class="line-glow" id="lineGlow"></div></div>
 
-<!-- 開機閘:載入儀式(JS+動效才啟用;跳過/Esc/直接捲動皆可離開,基態永不被擋) -->
+<!-- 開機閘：載入儀式(JS+動效才啟用；跳過/Esc/直接捲動皆可離開，基態永不被擋) -->
 <div class="gate" id="gate" role="dialog" aria-label="開機序列" tabindex="-1" hidden>
   <div class="gate-core">
     <span class="dot" aria-hidden="true"></span>
@@ -301,13 +301,13 @@ button.cta:hover{filter:brightness(1.06)}
   <div class="wrap beat-inner">
     <p class="orient">MONITOR ROOM · 一場訊號的旅程</p>
     <p style="margin-top:var(--space-xl)"><span class="dot" id="hookDot" aria-hidden="true"></span></p>
-    <h1>把聲學的理解門檻,<br />調到<em>人人可聽見</em>。</h1>
-    <p class="hook-sub">這台監聽台可以動手玩:每一站的聲音,都是你自己推出來的。</p>
+    <h1>把聲學的理解門檻，<br />調到<em>人人可聽見</em>。</h1>
+    <p class="hook-sub">這台監聽台可以親自動手：所有聲音，都與你息息相關。</p><!-- 使用者 2026-08-16 文藝向定稿句 -->
     <div class="cta-row">
       <button class="cta" id="powerBtn" aria-pressed="false">▶ 開機・完整體驗(含聲音)</button>
       <a class="ghost" href="#identity">安靜地往下讀 ↓</a>
     </div>
-    <p class="scroll-hint" id="modeNote">現在是安靜閱讀,不開機也什麼都不少。</p>
+    <p class="scroll-hint" id="modeNote">現在是安靜閱讀，不開機也什麼都不少。</p>
   </div>
 </section>
 
@@ -315,17 +315,17 @@ button.cta:hover{filter:brightness(1.06)}
 <section class="beat" id="identity">
   <div class="wrap beat-inner">
     <p class="orient">SIGNAL · 01 — 我是誰</p>
-    <h2>用視覺與互動,降低聲學的理解門檻</h2>
-    <!-- 甲-6 站內地圖:委員時間未知⇒同時服務快讀者;置於自介段之前——時間短的人先拿到地圖,
-         時間長的人往下自然接到敘事(不對稱損失:時間長則地圖無害,時間短則它是唯一被看到的東西) -->
-    <nav class="sitemap" aria-label="站內地圖:三件作品與去處">
+    <h2>用視覺與互動，降低聲學的理解門檻</h2>
+    <!-- 甲-6 站內地圖：委員時間未知⇒同時服務快讀者；置於自介段之前——時間短的人先拿到地圖,
+         時間長的人往下自然接到敘事(不對稱損失：時間長則地圖無害，時間短則它是唯一被看到的東西) -->
+    <nav class="sitemap" aria-label="站內地圖：三件作品與去處">
       <a href="#station"><b>XY 互動板</b><span>Pure Data 即時訊號處理・可動手玩</span></a>
       <a href="#cinema"><b>Hamlet Story MV</b><span>AI 協作影音實驗・權利鏈可查</span></a>
       <a href="#field"><b>田野導覽影片</b><span>四部外拍後製・9 分 29 秒</span></a>
       <a href="#ctrl"><b>控制室</b><span>方法與證據</span></a>
       <a href="#master"><b>MASTER OUT</b><span>研究方向</span></a>
     </nav>
-    <p style="margin-top:var(--space-lg)">一副監聽耳機,把我從數位學習設計帶進聲音。和朋友比較設備聽感時,我們聽得出差異,卻說不清楚它來自頻率、空間,還是動態。我想做的一直是同一件事:把說不清楚的感受,變成可以動手操作的東西。</p>
+    <p style="margin-top:var(--space-lg)">一副監聽耳機，把我從數位學習設計帶進聲音。和朋友比較設備聽感時，我們聽得出差異，卻說不清楚這差異是來自頻率、空間，還是動態。我想做的一直是同一件事：把說不清楚的感受，變成可以動手操作的東西。</p><!-- 使用者 2026-08-16 文藝向修訂句 -->
     <div class="readouts">
       <span>FOCUS <b>聲響 × 人工智慧</b></span>
       <span>ROUTE <b>作品 → 證據 → 研究</b></span>
@@ -341,10 +341,10 @@ button.cta:hover{filter:brightness(1.06)}
     <p class="orient">STATION · CH 01 — 互動站</p>
     <div class="panel">
       <span class="plate">XY PAD · 跨模態映射</span>
-      <h2>一塊把位置變成聲音的板子</h2>
-      <p class="desc">Pure Data 寫的即時訊號處理:位置進來,聲音出去。原型先靠 AI 協作搭起來,再逆向拆解訊號路徑,拆到能自己說明、自己改。這塊板子做的事,跟這個網站是同一件。</p>
+      <h2>透過本面板，我希望你仔細聆聽，感受聲音與空間的關係</h2><!-- 使用者 2026-08-16 文藝向定稿句 -->
+      <p class="desc">Pure Data 寫的即時訊號處理：位置進來，聲音出去。原型先靠 AI 協作搭起來，再逆向拆解訊號路徑，拆到能自己說明、自己改。這塊板子做的事，跟這個網站是同一件。</p>
       <div class="pad-wrap">
-        <div class="xy-pad" id="xyPad" role="application" aria-label="XY 合成板:發聲後,橫軸控制聲像與音高,縱軸控制遠近">
+        <div class="xy-pad" id="xyPad" role="application" aria-label="XY 合成板：發聲後，橫軸控制聲像與音高，縱軸控制遠近">
           <span class="xy-dot" id="xyDot" aria-hidden="true"></span>
         </div>
         <div class="pad-legend"><span>← 左(低音・聲像左)</span><span>上=遠 / 下=近</span><span>右(高音・聲像右)→</span></div>
@@ -355,69 +355,69 @@ button.cta:hover{filter:brightness(1.06)}
         </div>
       </div>
       <p class="note">設計註記:<b>探索應該是安全的</b>。</p>
-      <p class="dossier-link">深入這件作品:<a href="../../src/content/works/pd-crossmodal.md" onclick="return false" title="原型內連結示意,正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
+      <p class="dossier-link">深入這件作品:<a href="../../src/content/works/pd-crossmodal.md" onclick="return false" title="原型內連結示意，正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
     </div>
     <!-- 可發現的實驗:precedence effect(規格出自庫內空間聽覺研究) -->
     <div class="panel haas">
       <span class="plate">EXP · 先到者定位</span>
-      <h3>先到的聲音,決定你聽到的方向</h3>
-      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch">同一個聲音左右各放一次,拉開兩者的時間差,聽方向怎麼變。</p>
+      <h3>先到的聲音，決定你聽到的方向</h3>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch">同一個聲音左右各放一次，拉開兩者的時間差，聽方向怎麼變。</p>
       <div class="haas-controls">
         <button class="play-toggle" id="haasBtn" disabled>▶ 播放(先開機)</button>
         <label class="vol">時間差 <input type="range" id="haasDelay" min="0" max="80" value="12" /> <span class="mono" id="haasMs">12 ms</span></label>
-        <span class="haas-read" id="haasRead">融合:方向跟著先到的左邊</span>
+        <span class="haas-read" id="haasRead">融合：方向跟著先到的左邊</span>
       </div>
       <p class="note">設計註記:<b>≤1ms 疊加、約 2–50ms 融合、>50ms 拆成回聲</b>。</p>
     </div>
   </div>
 </section>
 
-<!-- BEAT 4 · STATION 2 (cinema) — 房間身分:廳堂;情緒:莊重 -->
+<!-- BEAT 4 · STATION 2 (cinema) — 房間身分：廳堂；情緒：莊重 -->
 <section class="beat" id="cinema" data-scene="cinema">
   <div class="wrap beat-inner">
     <p class="orient">STATION · CH 02 — 影院站</p>
     <div class="panel" style="border:0;background:transparent;padding:0">
       <h2 style="font-weight:700;font-size:1.2rem">Hamlet Story MV</h2>
-      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">AI 生成場景與配樂、本人剪輯整合的文學影音實驗——四十秒、八幕、雙語字幕,權利鏈完整可查。</p>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">AI 生成場景與配樂、本人剪輯整合的文學影音實驗——四十秒、八幕、雙語字幕，權利鏈完整可查。</p>
       <div class="cinema-frame">
         <div class="lb" aria-hidden="true"></div>
-        <img src="../../public/media/hamlet-story-mv-poster-1200.webp" alt="Hamlet Story MV 劇照(原型示意;正式站此處為完整播放器與雙語字幕)" loading="lazy" />
+        <img src="../../public/media/hamlet-story-mv-poster-1200.webp" alt="Hamlet Story MV 劇照(原型示意；正式站此處為完整播放器與雙語字幕)" loading="lazy" />
         <div class="lb" aria-hidden="true"></div>
       </div>
       <p class="mono credit">Song: Blinds-Soft Lament — Suno 生成 · 00:00–00:40 · 非營利用途經 Suno 書面確認</p>
-      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">誠實揭露一項規格差異:原提示要求純音樂,實際輸出含英語歌詞與人聲——公開版本以實際成片為準,呈現差異而非抹除。</p>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">誠實揭露一項規格差異：原提示要求純音樂，實際輸出含英語歌詞與人聲——公開版本以實際成片為準，呈現差異而非抹除。</p>
       <p class="note">設計註記:<b>專注從黑開始</b>。</p>
-      <p class="dossier-link">深入這件作品:<a href="../../src/content/works/hamlet-story-mv.md" onclick="return false" title="原型內連結示意,正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
+      <p class="dossier-link">深入這件作品:<a href="../../src/content/works/hamlet-story-mv.md" onclick="return false" title="原型內連結示意，正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
     </div>
   </div>
 </section>
 
-<!-- BEAT 5 · STATION 3 (field) — 房間身分:開放空間;情緒:開放自然 -->
+<!-- BEAT 5 · STATION 3 (field) — 房間身分：開放空間；情緒：開放自然 -->
 <section class="beat" id="field" data-scene="field">
   <div class="airgrid" aria-hidden="true"></div>
   <div class="horizon" aria-hidden="true"></div>
   <div class="wrap beat-inner">
     <p class="orient">STATION · CH 03 — 田野站</p>
     <h2 style="font-weight:700;font-size:1.2rem">導覽影片(四部)</h2>
-    <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">地方文化見習的影音成品——潭墘、糖廠(上/下)、蒜頭老街,四部合計 9 分 29 秒;分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
-    <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">見習為雙人同梯;此處列出的是工作日誌記載由本人負責的影音線。</p>
+    <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">地方文化見習的影音成品——潭墘、糖廠(上/下)、蒜頭老街，四部合計 9 分 29 秒；分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
+    <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">見習為雙人同梯；此處列出的是工作日誌記載由本人負責的影音線。</p>
     <p class="note">設計註記:<b>田野沒有牆</b>。</p>
-    <p class="dossier-link">深入這件作品:<a href="../../src/content/works/guide-videos.md" onclick="return false" title="原型內連結示意,正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
+    <p class="dossier-link">深入這件作品:<a href="../../src/content/works/guide-videos.md" onclick="return false" title="原型內連結示意，正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
   </div>
 </section>
 
 <!-- 真休息(K-32):三站之後、後台之前的一段空白。零文字、零 CTA、無聲音場景——
-     博物館座椅的網頁版:讓 rail 獨自呼吸,不是留白失誤。刻意不掛 data-scene(不成為音場)。 -->
+     博物館座椅的網頁版：讓 rail 獨自呼吸，不是留白失誤。刻意不掛 data-scene(不成為音場)。 -->
 <div class="rest" aria-hidden="true"><span class="rest-horizon"></span></div>
 
-<!-- BEAT 6 · BACKSTAGE (control room) — 房間身分:控制室(乾);情緒:機能精確 -->
+<!-- BEAT 6 · BACKSTAGE (control room) — 房間身分：控制室(乾);情緒：機能精確 -->
 <section class="beat" id="ctrl" data-scene="ctrl">
   <div class="wrap beat-inner">
     <p class="orient">BACKSTAGE — 控制室</p>
     <div class="panel">
       <span class="plate">CONTROL ROOM · METHOD</span>
       <h2 style="font-weight:700;font-size:1.2rem">這一區不是理念陳述</h2>
-      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">每一格都掛著可查核的實據。發布前的機器強制檢查——核准永遠是人,閘門只是不讓遺忘發生。你看到的本頁,就是通過全部閘門後的部署產物:</p>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">每一格都掛著可查核的實據。發布前的機器強制檢查——核准永遠是人，閘門只是不讓遺忘發生。你看到的本頁，就是通過全部閘門後的部署產物:</p>
       <ul class="gatelist">
         <li><span class="led" aria-hidden="true"></span> check:paths — 本機路徑不外洩</li>
         <li><span class="led" aria-hidden="true"></span> check:media — 受限媒體與 GPS EXIF</li>
@@ -427,7 +427,7 @@ button.cta:hover{filter:brightness(1.06)}
         <li><span class="led" aria-hidden="true"></span> check:obligations — 授權義務落在頁面上</li>
       </ul>
       <p class="note">設計註記:<b>控制室聽乾的訊號</b>。</p>
-      <p class="dossier-link">這套檢查,連同整個網站,原始碼都公開:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a><!-- 甲-5:認領簡章明列的「程式原始碼」類目 --></p>
+      <p class="dossier-link">這套檢查，連同整個網站，原始碼都公開:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a><!-- 甲-5:認領簡章明列的「程式原始碼」類目 --></p>
     </div>
   </div>
 </section>
@@ -438,14 +438,14 @@ button.cta:hover{filter:brightness(1.06)}
     <p class="orient">MASTER OUT — 訊號送出</p>
     <p style="margin-top:var(--space-xl)"><span class="dot" aria-hidden="true"></span></p>
     <h2>混合多聲道監聽</h2>
-    <p class="desc">開頭那顆訊號走過三站,在這裡送出。我要帶進研究所的題目就是它:把多聲道聆聽的建置與理解門檻,再調低一點。</p>
-    <p class="desc">這是聲響的那一半。人工智慧的那一半你剛走過——控制室那套機器守規則、人做核准的工作法,會跟著題目一起進來。<!-- K-33 雙軸收束:兌現 FOCUS 兩讀數;d019=方法非題目;d020=一句指回,不擴展示 --></p>
+    <p class="desc">開頭那顆訊號走過三站，在這裡送出。我要帶進研究所的題目就是它：把多聲道聆聽的建置與理解門檻，再調低一點。</p>
+    <p class="desc">這是聲響的那一半。人工智慧的那一半你剛走過——控制室那套機器守規則、人做核准的工作法，會跟著題目一起進來。<!-- K-33 雙軸收束：兌現 FOCUS 兩讀數;d019=方法非題目;d020=一句指回，不擴展示 --></p>
   </div>
 </section>
 
-<!-- FINALE — 謝幕:零內容承載,純光影;可跳過(d003) -->
+<!-- FINALE — 謝幕：零內容承載，純光影；可跳過(d003) -->
 <p class="skip-finale mono"><a href="#exit">跳過謝幕 ↓</a></p>
-<section class="beat" id="finale" data-scene="finale" aria-label="謝幕(純光影,無內容)">
+<section class="beat" id="finale" data-scene="finale" aria-label="謝幕(純光影，無內容)">
   <div class="wrap beat-inner">
     <div class="lamps" aria-hidden="true">
       <span class="lamp"><i></i>CH·01</span>
@@ -453,42 +453,42 @@ button.cta:hover{filter:brightness(1.06)}
       <span class="lamp"><i></i>CH·03</span>
       <span class="lamp"><i></i>MASTER</span>
     </div>
-    <p class="colophon-quote">「先讓路平坦,再思考如何裝飾風景。」</p>
+    <p class="colophon-quote">「先讓路平坦，再思考如何裝飾風景。」</p>
   </div>
 </section>
 
-<!-- EXIT — 出口:刻意無聲的正常流;義務與重要內容一律在此(d003) -->
+<!-- EXIT — 出口：刻意無聲的正常流；義務與重要內容一律在此(d003) -->
 <section class="beat" id="exit">
   <div class="wrap beat-inner">
     <p class="orient">EXIT — 出口(這裡刻意安靜)</p>
     <p>本站提供完整與精簡兩種瀏覽方式——與我研究所關注的「降低聆聽門檻」出於同一信念。</p>
     <p class="legal">© 2026 如願 · 本站無廣告、無付費牆、無聯盟收益</p>
-    <p class="legal">原始碼:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a>——網站本身,也是一件公開的程式作品。</p>
+    <p class="legal">原始碼:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a>——網站本身，也是一件公開的程式作品。</p>
     <p class="legal">研究筆記與方法紀錄——正式站 research 區提供。<!-- 甲-5:認領「研究報告」類目;K-35 遷移時接真連結 --></p>
-    <p class="legal">證書、佐證與聯絡——正式站出口區提供;原型不承載個資。</p>
-    <p class="loop"><a href="#hook" id="loopBtn">回到開頭,再走一次 ↺</a></p>
+    <p class="legal">證書、佐證與聯絡——正式站出口區提供；原型不承載個資。</p>
+    <p class="loop"><a href="#hook" id="loopBtn">回到開頭，再走一次 ↺</a></p>
   </div>
 </section>
 
-<div class="hint" id="hint"><button id="hintClose" aria-label="關閉提示">✕</button>已開機。板子可發聲:左右=聲像與音高,上下=遠近。</div>
+<div class="hint" id="hint"><button id="hintClose" aria-label="關閉提示">✕</button>已開機。板子可發聲：左右=聲像與音高，上下=遠近。</div>
 
 <script>
 // R2 audio engine v2 — 全部聲音 opt-in;安全鏈:voices → chGain → send(演算法殘響) → analyser → LIMITER → master
 (() => {
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  document.documentElement.classList.add("js"); // 增強層開關:無 JS=完整可讀基態(d018)
+  document.documentElement.classList.add("js"); // 增強層開關：無 JS=完整可讀基態(d018)
   const PENTA = [220, 261.63, 293.66, 329.63, 392, 440, 523.25];
   let ctx = null, master = null, limiter = null, analyser = null, buf = null;
   let outMeter = null, outBuf = null, samplePeak = 0;
   let padVoice = null, padOn = false, powered = false, rafId = null;
   let reverb = null, room = null, sceneVoices = null, lastRoom = "", finaleDone = false;
 
-  // 房間身分(離散,場景邊界切換;d004):feedback / 低通 / send 濕度
+  // 房間身分(離散，場景邊界切換;d004):feedback / 低通 / send 濕度
   const ROOMS = {
     default:{ fb:.32, lp:2400, wet:.18 },   // 小房間(開機/身分/互動站)
-    cinema: { fb:.46, lp:1600, wet:.30 },   // 廳堂:莊重
-    field:  { fb:.24, lp:3200, wet:.22 },   // 開放空間:遠方感
-    ctrl:   { fb:.10, lp:2000, wet:.04 },   // 控制室:乾
+    cinema: { fb:.46, lp:1600, wet:.30 },   // 廳堂：莊重
+    field:  { fb:.24, lp:3200, wet:.22 },   // 開放空間：遠方感
+    ctrl:   { fb:.10, lp:2000, wet:.04 },   // 控制室：乾
     finale: { fb:.55, lp:1900, wet:.36 },   // 全站最大空間感(LEV 峰值)
   };
 
@@ -502,8 +502,8 @@ button.cta:hover{filter:brightness(1.06)}
     // [R3 K-02] Round E 裁決:iPhone 靜音鍵下仍可發聲。Safari 16.4+ 實驗特性——feature-detect,不支援靜默略過
     try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch {}
     // [R3 K-08] 聽力安全鏈:ratio=20 是 W3C 規格上限(min 1/max 20)——規格內最接近限幅的設定,
-    // 定位=安全網,非真限幅器(真 brick-wall 需 WaveShaper/AudioWorklet,R3 減法清單:不做)。
-    // 規格明載壓縮器有固定 look-ahead 延遲;analyser 維持在 limiter 前,視覺同步不受其影響。
+    // 定位=安全網，非真限幅器(真 brick-wall 需 WaveShaper/AudioWorklet,R3 減法清單：不做)。
+    // 規格明載壓縮器有固定 look-ahead 延遲;analyser 維持在 limiter 前，視覺同步不受其影響。
     limiter = ctx.createDynamicsCompressor();
     limiter.threshold.value = -12; limiter.knee.value = 0; limiter.ratio.value = 20;
     limiter.attack.value = 0.003; limiter.release.value = 0.25;
@@ -511,12 +511,12 @@ button.cta:hover{filter:brightness(1.06)}
     analyser = ctx.createAnalyser(); analyser.fftSize = 256;
     buf = new Uint8Array(analyser.frequencyBinCount);
     analyser.connect(limiter); limiter.connect(master); master.connect(ctx.destination);
-    // [R3 K-07] d015 誠實化:輸出峰值只能在 master 之後、用 float 時域樣本量(byte 頻譜原理上量不到峰值,
-    // 僅供視覺律動)。量到的是 sample peak,非 true peak(無 4× 過取樣,密集素材可低估 1–3dB)——限制照實記。
+    // [R3 K-07] d015 誠實化：輸出峰值只能在 master 之後、用 float 時域樣本量(byte 頻譜原理上量不到峰值,
+    // 僅供視覺律動)。量到的是 sample peak,非 true peak(無 4× 過取樣，密集素材可低估 1–3dB)——限制照實記。
     outMeter = ctx.createAnalyser(); outMeter.fftSize = 2048;
     outBuf = new Float32Array(outMeter.fftSize);
     master.connect(outMeter);
-    // 演算法殘響(G1 決策:不用 IR 檔)——小房間身分:短延遲×2 + 回授 + 低通
+    // 演算法殘響(G1 決策：不用 IR 檔)——小房間身分：短延遲×2 + 回授 + 低通
     reverb = ctx.createGain(); reverb.gain.value = 0.18;
     const d1 = ctx.createDelay(); d1.delayTime.value = 0.031;
     const d2 = ctx.createDelay(); d2.delayTime.value = 0.047;
@@ -528,10 +528,10 @@ button.cta:hover{filter:brightness(1.06)}
     sceneVoices = buildSceneVoices();
   }
 
-  // 場景聲音身分(逐場景 voice;鄰近度連續驅動=「聲源」層,d004)
+  // 場景聲音身分(逐場景 voice;鄰近度連續驅動=「聲源」層，d004)
   function buildSceneVoices(){
     const v = {};
-    { // 影院站:低音域小調傾向 pad(莊重)+呼吸級慢演化(抗疲勞)
+    { // 影院站：低音域小調傾向 pad(莊重)+呼吸級慢演化(抗疲勞)
       const mix = ctx.createGain(); mix.gain.value = 1;
       [[110,"sine"],[130.81,"sine"],[164.81,"triangle"]].forEach(([f,t]) => {
         const o = ctx.createOscillator(); o.type = t;
@@ -549,7 +549,7 @@ button.cta:hover{filter:brightness(1.06)}
       g.connect(analyser); g.connect(send); send.connect(reverb);
       v.cinema = { g, base:.14 };
     }
-    { // 田野站:濾波噪音的遠方感(開放自然)——帶通中心慢速漂移
+    { // 田野站：濾波噪音的遠方感(開放自然)——帶通中心慢速漂移
       const len = ctx.sampleRate * 2, nb = ctx.createBuffer(1, len, ctx.sampleRate), d = nb.getChannelData(0);
       for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
       const src = ctx.createBufferSource(); src.buffer = nb; src.loop = true;
@@ -567,7 +567,7 @@ button.cta:hover{filter:brightness(1.06)}
     return v;
   }
 
-  // 鄰近度(viewport 中心距離)→ 場景 voice 增益;最近場景 → 房間身分離散切換
+  // 鄰近度(viewport 中心距離)→ 場景 voice 增益；最近場景 → 房間身分離散切換
   const sceneEls = () => [...document.querySelectorAll("[data-scene]")];
   function updateScenes(){
     if (!powered || !sceneVoices) return;
@@ -592,7 +592,7 @@ button.cta:hover{filter:brightness(1.06)}
     }
   }
 
-  function dryTick(){ // 控制室輕確認聲:乾、短、微隨機(抗煩躁)
+  function dryTick(){ // 控制室輕確認聲：乾、短、微隨機(抗煩躁)
     if (!powered || !ctx) return;
     const o = ctx.createOscillator(), g = ctx.createGain();
     o.type = "sine"; o.frequency.value = 1320 * (1 + (Math.random() - .5) * .05);
@@ -602,7 +602,7 @@ button.cta:hover{filter:brightness(1.06)}
     o.connect(g); g.connect(analyser); o.start(); o.stop(ctx.currentTime + .1);
   }
 
-  function finaleChord(){ // 終止和弦:五聲內、長衰減入靜默(敬畏→釋放);全部經 limiter
+  function finaleChord(){ // 終止和弦：五聲內、長衰減入靜默(敬畏→釋放);全部經 limiter
     [220, 261.63, 329.63, 440].forEach((f, i) => {
       const o = ctx.createOscillator(); o.type = i < 2 ? "sine" : "triangle"; o.frequency.value = f;
       const g = ctx.createGain(); g.gain.setValueAtTime(0, ctx.currentTime);
@@ -613,7 +613,7 @@ button.cta:hover{filter:brightness(1.06)}
     });
   }
 
-  function runFinale(){ // 謝幕:通道燈依序亮起;無 POWER=純視覺(d002);零內容承載(d003)
+  function runFinale(){ // 謝幕：通道燈依序亮起；無 POWER=純視覺(d002);零內容承載(d003)
     if (finaleDone) return; finaleDone = true;
     const fin = $("finale");
     fin.querySelectorAll(".lamp").forEach((l, i) =>
@@ -622,7 +622,7 @@ button.cta:hover{filter:brightness(1.06)}
     if (powered && ctx){ finaleChord(); kick(); }
   }
 
-  function softBlip(){ // UI 回饋:軟起音+微隨機失諧(抗煩躁)
+  function softBlip(){ // UI 回饋：軟起音+微隨機失諧(抗煩躁)
     if (!powered || !ctx) return;
     const o = ctx.createOscillator(), g = ctx.createGain();
     o.type = "sine"; o.frequency.value = 660 * (1 + (Math.random() - .5) * 0.04);
@@ -632,7 +632,7 @@ button.cta:hover{filter:brightness(1.06)}
     o.connect(g); g.connect(analyser); o.start(); o.stop(ctx.currentTime + 0.3);
   }
 
-  function powerOnSound(){ // 開機聲:暖正弦緩慢綻開+微上滑(情緒軌:甦醒;零驚嚇=長淡入)
+  function powerOnSound(){ // 開機聲：暖正弦緩慢綻開+微上滑(情緒軌：甦醒；零驚嚇=長淡入)
     const o = ctx.createOscillator(), g = ctx.createGain();
     o.type = "sine";
     o.frequency.setValueAtTime(180, ctx.currentTime);
@@ -666,7 +666,7 @@ button.cta:hover{filter:brightness(1.06)}
     let s = 0; for (let i = 0; i < buf.length; i++) s += buf[i];
     const lvl = Math.min(1, (s / buf.length) / 120);
     document.documentElement.style.setProperty("--glow", lvl.toFixed(3)); // 視聽同源:analyser→光暈
-    outMeter.getFloatTimeDomainData(outBuf); // [R3 K-07] 不 clamp:down-mix 時 |x|>1.0 合法,夾住會低報削波
+    outMeter.getFloatTimeDomainData(outBuf); // [R3 K-07] 不 clamp:down-mix 時 |x|>1.0 合法，夾住會低報削波
     for (let i = 0; i < outBuf.length; i++){ const a = Math.abs(outBuf[i]); if (a > samplePeak) samplePeak = a; }
     document.documentElement.dataset.peak = samplePeak.toFixed(3);
     rafId = powered ? requestAnimationFrame(meterLoop) : null;
@@ -681,8 +681,8 @@ button.cta:hover{filter:brightness(1.06)}
     padToggle.disabled = !on;
     $("masterVol").disabled = !on; // 音量控制常駐外露(d015)
     padToggle.textContent = on ? (padOn ? "■ 靜音" : "▶ 發聲") : "▶ 發聲(先開機)";
-    modeNote.textContent = on ? "聲音開了。再按一次,回到安靜。"
-                              : "現在是安靜閱讀,不開機也什麼都不少。";
+    modeNote.textContent = on ? "聲音開了。再按一次，回到安靜。"
+                              : "現在是安靜閱讀，不開機也什麼都不少。";
     const hb = $("haasBtn"); hb.disabled = !on; hb.textContent = on ? "▶ 播放一次" : "▶ 播放(先開機)";
     document.documentElement.classList.toggle("enhanced", on && !reduceMotion);
   }
@@ -693,13 +693,13 @@ button.cta:hover{filter:brightness(1.06)}
       if (ctx.state === "suspended") ctx.resume(); // 手勢內 resume(G1 驗證的可攜模式)
       master.gain.setTargetAtTime(0.2 * ($("masterVol").value / 100), ctx.currentTime, 0.05); // 回復關機前音量
       setPower(true);
-      hint.classList.add("on"); // [R3 K-29] 儀式只存在開機閘一處;POWER 就地回應,不接管視窗
+      hint.classList.add("on"); // [R3 K-29] 儀式只存在開機閘一處;POWER 就地回應，不接管視窗
       powerOnSound(); kick();
     } else {
       if (padVoice){ padVoice.stop(); padVoice = null; padOn = false; }
       setPower(false);
       hint.classList.remove("on");
-      // [R3 K-04] 關機不咔嗒:零驚嚇是對稱的——先 150ms 淡出,靜了再 suspend(原本 suspend() 硬切)
+      // [R3 K-04] 關機不咔嗒：零驚嚇是對稱的——先 150ms 淡出，靜了再 suspend(原本 suspend() 硬切)
       if (ctx){
         master.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
         setTimeout(() => { if (!powered && ctx.state === "running") ctx.suspend(); }, 300);
@@ -707,8 +707,8 @@ button.cta:hover{filter:brightness(1.06)}
     }
   });
 
-  // [R3 K-05] 回到開頭=可以真的再走一次:重置謝幕狀態(原本 finaleDone 永不重置,第二輪走到底沒有謝幕);
-  // reduced-motion 瞬移,否則平滑倒帶
+  // [R3 K-05] 回到開頭=可以真的再走一次：重置謝幕狀態(原本 finaleDone 永不重置，第二輪走到底沒有謝幕);
+  // reduced-motion 瞬移，否則平滑倒帶
   $("loopBtn").addEventListener("click", (e) => {
     e.preventDefault();
     finaleDone = false;
@@ -765,14 +765,14 @@ button.cta:hover{filter:brightness(1.06)}
     if (master) master.gain.setTargetAtTime(0.2 * (e.target.value / 100), ctx.currentTime, 0.05);
   });
 
-  // 控制室:閘門列輕確認聲(乾;節流抗煩躁)
+  // 控制室：閘門列輕確認聲(乾；節流抗煩躁)
   let lastTick = 0;
   document.querySelectorAll("#ctrl .gatelist li").forEach((li) =>
     li.addEventListener("pointerenter", () => {
       if (performance.now() - lastTick > 150){ lastTick = performance.now(); dryTick(); }
     }));
 
-  // 先到者定位實驗:同一 click 左右各一發,時間差由推桿決定(規格:≤1ms 疊加/≤50ms 融合/>50ms 回聲)
+  // 先到者定位實驗：同一 click 左右各一發，時間差由推桿決定(規格:≤1ms 疊加/≤50ms 融合/>50ms 回聲)
   function haasClick(pan, when){
     const o = ctx.createOscillator(), g = ctx.createGain(), p = ctx.createStereoPanner();
     o.type = "triangle"; o.frequency.value = 1100;
@@ -784,9 +784,9 @@ button.cta:hover{filter:brightness(1.06)}
     o.start(when); o.stop(when + .08);
   }
   function haasZone(ms){
-    if (ms <= 1)  return "疊加:兩發合成一聲";
-    if (ms <= 50) return "融合:方向跟著先到的左邊";
-    return "拆開:右邊變成回聲";
+    if (ms <= 1)  return "疊加：兩發合成一聲";
+    if (ms <= 50) return "融合：方向跟著先到的左邊";
+    return "拆開：右邊變成回聲";
   }
   $("haasDelay").addEventListener("input", (e) => {
     $("haasMs").textContent = e.target.value + " ms";
@@ -799,11 +799,11 @@ button.cta:hover{filter:brightness(1.06)}
     kick();
   });
 
-  // 謝幕觸發:進入視窗即演出(無 POWER=純視覺)
+  // 謝幕觸發：進入視窗即演出(無 POWER=純視覺)
   new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) runFinale(); }),
     { threshold: 0.35 }).observe($("finale"));
 
-  // ---- 開機閘:載入儀式(Bruno 式「按下開始」)。跳過/Esc/直接捲動皆離開;讀數是真實就緒訊號 ----
+  // ---- 開機閘：載入儀式(Bruno 式「按下開始」)。跳過/Esc/直接捲動皆離開；讀數是真實就緒訊號 ----
   const gate = $("gate");
   let gateDismissed = false;
   function gateScrollDismiss(){ if (scrollY > 40) dismissGate(); }
@@ -815,7 +815,7 @@ button.cta:hover{filter:brightness(1.06)}
     if (gate.contains(document.activeElement)) powerBtn.focus({ preventScroll: true }); // [R3 K-09] 焦點歸還對應控制
   }
   function runGate(){
-    if (reduceMotion) return; // 動效低敏模式:不演,直接可讀
+    if (reduceMotion) return; // 動效低敏模式：不演，直接可讀
     gate.hidden = false; requestAnimationFrame(() => { gate.classList.add("on"); gate.focus(); }); // [R3 K-09] focus 入閘
     gate.addEventListener("keydown", (e) => { // [R3 K-09] APG dialog:Tab 圈內(只在可見鈕之間)
       if (e.key !== "Tab") return;
@@ -855,9 +855,9 @@ button.cta:hover{filter:brightness(1.06)}
   runGate();
 
   // ---- 捲動進度:CSS timeline 不可用時(Firefox / reduced-motion)由被動監聽直寫 ----
-  // reduced-motion 也必須跑這條:K-30 讓 filament 成為唯一進度指示後,兩條路徑都關掉會使
+  // reduced-motion 也必須跑這條:K-30 讓 filament 成為唯一進度指示後，兩條路徑都關掉會使
   // 低敏使用者完全失去進度回饋(R2 回饋 3 未滿足)。直寫是「位置映射」不是動畫——無過渡、
-  // 無插值,捲到哪畫到哪,正是 reduced-motion 該有的形狀。
+  // 無插值，捲到哪畫到哪，正是 reduced-motion 該有的形狀。
   if (reduceMotion || !(window.CSS && CSS.supports("animation-timeline: scroll()"))){
     const fil = document.querySelector(".filament");
     let ticking = false;
