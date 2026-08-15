@@ -58,7 +58,7 @@ a{color:var(--color-ink)}
 
 /* 進度絲(儀器語彙：磁帶計數器)——捲動進度的唯一常駐視覺回饋 [R3 K-30] */
 .filament{position:fixed;top:0;left:0;right:0;height:2px;z-index:46;pointer-events:none;
-  background:linear-gradient(90deg,var(--color-accent)，color-mix(in oklab,var(--color-accent) 55%,transparent));
+  background:linear-gradient(90deg,var(--color-accent),color-mix(in oklab,var(--color-accent) 55%,transparent));
   transform:scaleX(0);transform-origin:left}
 /* 手機:rail 被推到邊緣且落在暗角內，進度敘事全交給 filament——故加厚。
    此規則必須在基準宣告之後：同特異度後者勝(寫在前面時 3px 從未生效，實測抓到) */
@@ -73,13 +73,14 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
 /* ---------- beats ---------- */
 .beat{position:relative;z-index:1;padding-block:var(--space-3xl);scroll-margin-top:48px}
+.beat-inner{scroll-margin-top:15vh} /* JS 置中跳轉的 start 模式用:內容頂留呼吸空間 */
 .beat-inner{background:var(--color-paper);backdrop-filter:none;padding-block:var(--space-md)} /* 不透明:rail/光層只准在文字欄外呼吸(使用者缺陷回報 2026-08-15)[R3 K-06] */
 #cinema .beat-inner{background:oklch(7% 0.006 75)} /* 影院站維持劇場黑，但同樣不透明 */
 /* 章節牌(紀念碑谷式儀式：一枝從訊號線垂下的小刻度+置中章節碼) */
 .orient{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.22em;color:var(--color-muted);text-transform:uppercase;
   text-align:center;margin-bottom:var(--space-xl)}
 .orient::before{content:"";display:block;width:1px;height:26px;margin:0 auto var(--space-md);
-  background:linear-gradient(var(--color-accent)，transparent);opacity:.7}
+  background:linear-gradient(var(--color-accent),transparent);opacity:.7}
 .note{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);border-left:2px solid var(--color-rule);padding:var(--space-xs) var(--space-md);margin-top:var(--space-lg);max-width:46ch;line-height:1.9}
 .note b{color:var(--color-accent);font-weight:500}
 
@@ -116,7 +117,7 @@ button.cta:hover{filter:brightness(1.06)}
 /* 場景亮度分場(紀念碑谷 color scripting:同色相，只動明度層級) */
 #station{background:linear-gradient(180deg,transparent,oklch(14% 0.012 75) 45%,transparent)}
 #ctrl{background:linear-gradient(180deg,transparent,oklch(12.5% 0.006 75) 50%,transparent)}
-#master{background:radial-gradient(52% 42% at 50% 46%,oklch(15.5% 0.02 75)，transparent 72%)}
+#master{background:radial-gradient(52% 42% at 50% 46%,oklch(15.5% 0.02 75),transparent 72%)}
 
 /* beat 3 station */
 #station .panel{border:1px solid var(--color-rule);border-radius:3px;background:var(--color-paper-2);padding:var(--space-lg);position:relative;margin-top:var(--space-lg)}
@@ -125,7 +126,7 @@ button.cta:hover{filter:brightness(1.06)}
 #station .desc{color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch}
 .pad-wrap{margin-top:var(--space-lg)}
 .xy-pad{position:relative;height:200px;border:1px solid var(--color-rule-2);border-radius:3px;cursor:crosshair;touch-action:none;overflow:clip;
-  background:linear-gradient(var(--color-rule-2) 1px,transparent 1px)，linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);background-size:20px 20px}
+  background:linear-gradient(var(--color-rule-2) 1px,transparent 1px),linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);background-size:20px 20px}
 .xy-dot{position:absolute;left:50%;top:50%;width:12px;height:12px;border-radius:50%;background:var(--color-accent);transform:translate(-50%,-50%);pointer-events:none;
   box-shadow:0 0 calc(4px + var(--glow) * 30px) calc(var(--glow) * 6px) color-mix(in oklab,var(--color-accent) 55%,transparent)}
 .trail{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--color-accent);opacity:.35;pointer-events:none;transform:translate(-50%,-50%)}
@@ -156,7 +157,7 @@ button.cta:hover{filter:brightness(1.06)}
 .tvol input{accent-color:var(--color-accent);width:80px}
 
 /* ---------- beat 4 cinema(劇場黑聚焦：從黑開始的專注) ---------- */
-#cinema{background:linear-gradient(oklch(8% 0.006 75)，oklch(6% 0.005 75) 30%,oklch(8% 0.006 75))}
+#cinema{background:linear-gradient(oklch(8% 0.006 75),oklch(6% 0.005 75) 30%,oklch(8% 0.006 75))}
 .cinema-frame{margin-top:var(--space-lg);border:1px solid var(--color-rule-2);border-radius:3px;overflow:clip;background:#000}
 .cinema-frame .lb{height:clamp(18px,4vw,40px);background:oklch(4% 0 0)}
 .cinema-frame img{display:block;width:100%;height:auto;opacity:.92}
@@ -169,7 +170,7 @@ button.cta:hover{filter:brightness(1.06)}
 /* ---------- beat 5 field(格線消散、地平線、大氣景深) ---------- */
 #field{position:relative;overflow:clip}
 #field .airgrid{position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background:linear-gradient(var(--color-rule-2) 1px,transparent 1px)，linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);
+  background:linear-gradient(var(--color-rule-2) 1px,transparent 1px),linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);
   background-size:64px 64px;
   mask-image:linear-gradient(to bottom,transparent 0%,oklch(0 0 0/.5) 35%,transparent 70%)}
 #field .horizon{position:absolute;left:0;right:0;top:58%;height:1px;pointer-events:none;
@@ -191,18 +192,21 @@ button.cta:hover{filter:brightness(1.06)}
 #master h2{font-weight:900;font-size:1.6rem;margin-top:var(--space-lg)}
 #master .desc{color:var(--color-ink-2);font-size:var(--text-sm);max-width:44ch;margin-inline:auto;margin-top:var(--space-md)}
 
-/* ---------- finale(謝幕：零內容，純光影；可跳過) ---------- */
-.skip-finale{text-align:center;padding-bottom:var(--space-lg);position:relative;z-index:1}
-.skip-finale a{display:inline-block;color:var(--color-muted);font-size:var(--text-xs);text-decoration:none;
-  background:var(--color-paper-2);border:1px solid var(--color-rule-2);border-radius:3px;padding:var(--space-xs) var(--space-md)}
-.skip-finale a:hover{color:var(--color-ink)}
-#finale{min-height:80vh;display:grid;place-items:center;text-align:center}
+/* ---------- finale v2(謝幕:零內容,純光影;跳過=自然捲動) ---------- */
+#finale{min-height:80vh;display:grid;place-items:center;text-align:center;position:relative;overflow:clip}
+/* 謝幕舞台:華麗預算唯一獲准的揮霍處(R2:震撼感預算集中在謝幕;光量峰值只留這裡) */
+.f-stage{position:absolute;inset:0;pointer-events:none}
+.f-core{position:absolute;left:50%;top:44%;width:16px;height:16px;border-radius:50%;background:var(--color-accent);transform:translate(-50%,-50%)}
+.f-spark{position:absolute;left:50%;top:44%;border-radius:50%;background:var(--color-accent);pointer-events:none}
+#finale .lamp{position:relative}
+.f-ring{position:absolute;left:50%;top:5px;width:10px;height:10px;border-radius:50%;border:1px solid var(--color-accent);transform:translate(-50%,-50%);pointer-events:none}
 #finale .lamps{display:flex;gap:var(--space-xl);justify-content:center;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;color:var(--color-muted);flex-wrap:wrap}
 #finale .lamp{display:flex;flex-direction:column;align-items:center;gap:var(--space-sm)}
-#finale .lamp i{display:block;width:10px;height:10px;border-radius:50%;background:var(--color-rule);transition:background var(--dur-2) var(--ease-out)，box-shadow var(--dur-2) var(--ease-out)}
+#finale .lamp i{display:block;width:10px;height:10px;border-radius:50%;background:var(--color-rule);transition:background var(--dur-2) var(--ease-out),box-shadow var(--dur-2) var(--ease-out)}
 #finale .lamp.on i{background:var(--color-accent);box-shadow:0 0 22px 4px color-mix(in oklab,var(--color-accent) 55%,transparent)}
 #finale .lamp.on{color:var(--color-ink-2)}
-.colophon-quote{margin-top:var(--space-2xl);font-size:1.05rem;color:var(--color-ink-2);opacity:.35;transition:opacity 1.8s var(--ease-out)}
+.colophon-quote{margin-top:var(--space-2xl);font-size:1.05rem;color:var(--color-ink-2);opacity:1;transition:opacity 1.8s var(--ease-out)}
+.js #finale:not(.run) .colophon-quote{opacity:0} /* JS 在場才候場;無 JS 全亮(d018)。演出前不得半亮劇透 */
 #finale.run .colophon-quote{opacity:1}
 
 /* ---------- exit(刻意無聲的正常流) ---------- */
@@ -230,7 +234,7 @@ button.cta:hover{filter:brightness(1.06)}
     /* 場景光：讀到哪，光亮到哪(不需開機——視覺回饋與聲音 opt-in 脫鉤) */
     .js .beat{--scene-max:1}
     .js .beat::before{content:"";position:absolute;inset:-6% -14%;pointer-events:none;z-index:-1;
-      background:radial-gradient(58% 46% at 50% 38%,color-mix(in oklab,var(--color-accent) 8%,transparent)，transparent 72%);
+      background:radial-gradient(58% 46% at 50% 38%,color-mix(in oklab,var(--color-accent) 8%,transparent),transparent 72%);
       opacity:0;
       animation-name:scenelight;animation-duration:1ms;animation-timing-function:linear;animation-fill-mode:both;
       animation-timeline:view();animation-range:entry 15% exit 15%;
@@ -453,9 +457,10 @@ button.cta:hover{filter:brightness(1.06)}
   </div>
 </section>
 
-<!-- FINALE — 謝幕：零內容承載，純光影；可跳過(d003) -->
-<p class="skip-finale mono"><a href="#exit">跳過謝幕 ↓</a></p>
-<section class="beat" id="finale" data-scene="finale" aria-label="謝幕(純光影，無內容)">
+<!-- FINALE v2 — 謝幕:零內容承載,純光影(d003)。跳過鍵依使用者 2026-08-16 裁定移除:
+     「刻意感太重」——謝幕在正常流、無 pin,自然捲動即離開,不需要按鈕宣告這件事。 -->
+<section class="beat" id="finale" data-scene="finale" aria-label="謝幕(純光影,無內容)">
+  <div class="f-stage" aria-hidden="true"></div>
   <div class="wrap beat-inner">
     <div class="lamps" aria-hidden="true">
       <span class="lamp"><i></i>CH·01</span>
@@ -470,7 +475,7 @@ button.cta:hover{filter:brightness(1.06)}
 <!-- EXIT — 出口：刻意無聲的正常流；義務與重要內容一律在此(d003) -->
 <section class="beat" id="exit">
   <div class="wrap beat-inner">
-    <p class="orient">EXIT — 出口(這裡刻意安靜)</p>
+    <p class="orient">EXIT — 出口</p>
     <p>本站提供完整與精簡兩種瀏覽方式——與我研究所關注的「降低聆聽門檻」出於同一信念。</p>
     <p class="legal">© 2026 如願 · 本站無廣告、無付費牆、無聯盟收益</p>
     <p class="legal">原始碼:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a>——網站本身，也是一件公開的程式作品。</p>
@@ -623,13 +628,66 @@ button.cta:hover{filter:brightness(1.06)}
     });
   }
 
-  function runFinale(){ // 謝幕：通道燈依序亮起；無 POWER=純視覺(d002);零內容承載(d003)
-    if (finaleDone) return; finaleDone = true;
+  function ringPulse(lamp){ // 燈點亮的擴散環(WAAPI,自清)
+    const r = document.createElement("span"); r.className = "f-ring";
+    lamp.appendChild(r);
+    r.animate([
+      { opacity:.9, transform:"translate(-50%,-50%) scale(1)" },
+      { opacity:0,  transform:"translate(-50%,-50%) scale(7)" }
+    ], { duration:900, easing:"cubic-bezier(.22,1,.36,1)" }).onfinish = () => r.remove();
+  }
+  function burst(fin){ // 主爆發:中央光點綻開+琥珀粒子場(全站唯一的華麗時刻)
+    const stage = fin.querySelector(".f-stage");
+    const core = document.createElement("span"); core.className = "f-core";
+    stage.appendChild(core);
+    core.animate([
+      { opacity:0, boxShadow:"0 0 0 0 transparent", transform:"translate(-50%,-50%) scale(.4)" },
+      { opacity:1, boxShadow:"0 0 90px 30px color-mix(in oklab, var(--color-accent) 55%, transparent)", transform:"translate(-50%,-50%) scale(1)", offset:.35 },
+      { opacity:0, boxShadow:"0 0 140px 10px transparent", transform:"translate(-50%,-50%) scale(1.6)" }
+    ], { duration:2200, easing:"cubic-bezier(.22,1,.36,1)" }).onfinish = () => core.remove();
+    for (let i = 0; i < 26; i++){
+      const sp = document.createElement("span"); sp.className = "f-spark";
+      const ang = Math.random() * Math.PI * 2, dist = 60 + Math.random() * 180;
+      const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 40;
+      sp.style.width = sp.style.height = (2 + Math.random() * 3) + "px";
+      stage.appendChild(sp);
+      sp.animate([
+        { opacity:0, transform:"translate(-50%,-50%)" },
+        { opacity:.9, offset:.15 },
+        { opacity:0, transform:"translate(calc(-50% + " + dx + "px), calc(-50% + " + dy + "px))" }
+      ], { duration:1100 + Math.random() * 900, delay:Math.random() * 250,
+           easing:"cubic-bezier(.22,1,.36,1)", fill:"both" }).onfinish = () => sp.remove();
+    }
+  }
+  function glowSurge(){ // 未開機的光湧:手動推 --glow 再放掉。開機時不走這裡——
+    // 和弦經 analyser 驅動同一組光,才是「同源」;兩套並跑=假動作(R2 同源法)
+    const t0 = performance.now(), dur = 5000; // 與開機路徑的 7s 和弦衰減同級:未開機者也拿得到「長衰減入靜默」
+    (function step(now){
+      const p = Math.min(1, (now - t0) / dur);
+      const v = p < .13 ? p / .13 : Math.pow(1 - (p - .13) / .87, 2.5); // 峰後指數型衰減,非線性掐斷
+      document.documentElement.style.setProperty("--glow", (v * .9).toFixed(3));
+      if (p < 1) requestAnimationFrame(step);
+      else document.documentElement.style.setProperty("--glow", "0");
+    })(performance.now());
+  }
+  let rewinding = false; // 倒帶途中穿越謝幕不得開演:幽靈和弦+把第二輪的謝幕燒掉(批判實證)
+  function runFinale(){ // 謝幕 v2:燈序→環→主爆發(+和弦同拍)→字卡。仍零內容(d003);未開機=純視覺(d002)
+    if (finaleDone || rewinding) return; finaleDone = true;
     const fin = $("finale");
-    fin.querySelectorAll(".lamp").forEach((l, i) =>
-      setTimeout(() => l.classList.add("on"), reduceMotion ? 0 : 450 * i));
-    setTimeout(() => fin.classList.add("run"), reduceMotion ? 0 : 1900);
-    if (powered && ctx){ finaleChord(); kick(); }
+    const lamps = [...fin.querySelectorAll(".lamp")];
+    if (reduceMotion){
+      lamps.forEach((l) => l.classList.add("on"));
+      fin.classList.add("run");
+      if (powered && ctx){ finaleChord(); kick(); }
+      return;
+    }
+    lamps.forEach((l, i) => setTimeout(() => { l.classList.add("on"); ringPulse(l); }, 420 * i));
+    setTimeout(() => { // 主爆發在末環(2160ms)收完之後——注意力單焦點,環不與爆發同臺
+      burst(fin);
+      if (powered && ctx){ finaleChord(); kick(); } else { glowSurge(); }
+    }, 2200);
+    // 字卡=釋放拍:等爆發收束、粒子自清(~4450ms)之後,從靜默裡浮現——敬畏與釋放是兩拍,不同臺
+    setTimeout(() => fin.classList.add("run"), 4600);
   }
 
   function softBlip(){ // UI 回饋：軟起音+微隨機失諧(抗煩躁)
@@ -721,10 +779,13 @@ button.cta:hover{filter:brightness(1.06)}
   // reduced-motion 瞬移，否則平滑倒帶
   $("loopBtn").addEventListener("click", (e) => {
     e.preventDefault();
-    finaleDone = false;
+    rewinding = true; // finaleDone 等倒帶結束才解鎖——立刻解鎖會在穿越謝幕時被幽靈觸發吃掉
     const fin = $("finale");
     fin.classList.remove("run");
     fin.querySelectorAll(".lamp").forEach((l) => l.classList.remove("on"));
+    const done = () => { if (!rewinding) return; rewinding = false; finaleDone = false; };
+    addEventListener("scrollend", done, { once: true });
+    setTimeout(done, 2600); // Safari 無 scrollend 的後備
     scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
     history.replaceState(null, "", "#hook");
     powerBtn.focus({ preventScroll: true });
@@ -770,6 +831,23 @@ button.cta:hover{filter:brightness(1.06)}
 
   $("hintClose").addEventListener("click", () => hint.classList.remove("on"));
 
+  // 置中跳轉(使用者回饋 2026-08-16):index 鍵把「內容」帶到畫面中央,而非把
+  // 區塊頂(含 30vh 留白)貼到視窗頂、內容擠在下緣。內容比視窗矮=置中;
+  // 高於 80vh=從頭開始(置中會把開頭推出畫面)。無 JS 時原生錨點跳轉仍在(d018)。
+  document.querySelectorAll('a[href^="#"]').forEach((a) => {
+    const id = a.getAttribute("href").slice(1);
+    if (!id || a.id === "loopBtn") return; // loopBtn 有自己的重置流程
+    a.addEventListener("click", (e) => {
+      const t = document.getElementById(id);
+      if (!t) return;
+      e.preventDefault();
+      const inner = t.querySelector(".beat-inner") || t;
+      const block = inner.getBoundingClientRect().height < innerHeight * 0.8 ? "center" : "start";
+      inner.scrollIntoView({ block, behavior: reduceMotion ? "auto" : "smooth" });
+      history.pushState(null, "", "#" + id);
+    });
+  });
+
   // 全站音量(0–100 → master gain 0–0.2;預設 60=保守初始值)
   $("masterVol").addEventListener("input", (e) => {
     if (master) master.gain.setTargetAtTime(0.2 * (e.target.value / 100), ctx.currentTime, 0.05);
@@ -810,8 +888,10 @@ button.cta:hover{filter:brightness(1.06)}
   });
 
   // 謝幕觸發：進入視窗即演出(無 POWER=純視覺)
+  // 幕啟必須在台上:觀察燈列本體(threshold 1)——0.35 觀察整節時,觸發瞬間可見的
+  // 幾乎全是 30vh 上留白,第一盞燈在台下就演掉了
   new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) runFinale(); }),
-    { threshold: 0.35 }).observe($("finale"));
+    { threshold: 1 }).observe(document.querySelector("#finale .lamps"));
 
   // ---- 開機閘：載入儀式(Bruno 式「按下開始」)。跳過/Esc/直接捲動皆離開；讀數是真實就緒訊號 ----
   const gate = $("gate");

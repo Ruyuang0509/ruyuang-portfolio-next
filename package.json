@@ -15,6 +15,7 @@
     "check:motion": "node scripts/checks/motion.mjs",
     "check:approval": "node scripts/checks/approval.mjs",
     "check:obligations": "node scripts/checks/obligations.mjs",
+    "check:csspunct": "node scripts/checks/csspunct.mjs src docs/design",
     "check:submission": "node scripts/checks/submission.mjs"
   },
   "dependencies": {
