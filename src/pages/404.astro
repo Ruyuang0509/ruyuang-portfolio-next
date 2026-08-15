@@ -1,0 +1,54 @@
+---
+import "../styles/global.css";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>NO SIGNAL — 如願</title>
+  </head>
+  <body>
+    <main class="nosignal">
+      <p class="lamp" aria-hidden="true"></p>
+      <h1>NO SIGNAL</h1>
+      <p class="explain">這個位址沒有訊號——頁面可能已移動,或網址少了一段。</p>
+      <p><a href={base + "/"}>回到監聽室 →</a></p>
+    </main>
+  </body>
+</html>
+
+<style>
+  .nosignal {
+    min-height: 92vh;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    gap: var(--space-md);
+  }
+  .lamp {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-inline: auto;
+    background: var(--color-signal);
+    box-shadow: 0 0 12px 2px color-mix(in oklab, var(--color-signal) 55%, transparent);
+  }
+  h1 {
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    letter-spacing: 0.18em;
+  }
+  .explain {
+    color: var(--color-ink-2);
+    font-size: var(--text-sm);
+    max-width: 36ch;
+  }
+  a {
+    color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-rule);
+  }
+</style>
