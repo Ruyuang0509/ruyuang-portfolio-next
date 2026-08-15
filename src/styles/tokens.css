@@ -30,6 +30,7 @@
   --dur-1:150ms;
   --rule-1:1px solid var(--color-rule);
   --radius-1:3px;
+  color-scheme:dark;
 }
 
 /* oklch upgrade — MUST stay inside @supports.
@@ -51,5 +52,47 @@
     --color-accent-ink:oklch(18% 0.020 75);
     --color-focus:oklch(80% 0.19 72);
     --color-signal:oklch(62% 0.19 25);
+  }
+}
+
+/* ─── 房間=paper(K-27 證據紙:dossier 深讀內頁)[R3 K-38] ───────────────
+ * 兩個房間,不是明暗偏好:極性是編輯決定、綁定路由,不綁裝置——
+ * 刻意不加任何 @media (prefers-color-scheme),請勿「順手補上」。
+ * 房間在建置期烘進 html 屬性(無 JS、無儲存),結構上不存在 flash of wrong theme。
+ * 選擇器必須是 :root[data-room="paper"](權重 0,2,0)且本塊位於上方 @supports 之後
+ * ——寫成 [data-room] 或放前面,會在「支援 oklch 的瀏覽器」上被蓋回暗色;
+ * 失效方向與直覺相反(越新的瀏覽器越壞),實測 2026-08-16 技術棧審查。
+ * accent 色相 72→62:暗琥珀在低明度會讀成橄欖綠,62 保住赭黃識別。
+ * accent 與 accent-ink 必須成對反轉(亮底暗字←→暗底亮字),只改一半會在
+ * 按鈕(accent-ink on accent)上爆低對比,且要到 K-31 才發作。 */
+:root[data-room="paper"]{
+  color-scheme:light;
+  --color-paper:#f7f5f1;
+  --color-paper-2:#efece7;
+  --color-paper-3:#e4e1da;
+  --color-ink:#211c16;
+  --color-ink-2:#423c35;
+  --color-muted:#68625b;
+  --color-rule:#bbb7af;
+  --color-rule-2:#dad7d2;
+  --color-accent:#905100;
+  --color-accent-ink:#faf8f5;
+  --color-focus:#894c06;
+  --color-signal:#b00a1d;
+}
+@supports (color: oklch(0% 0 0)) {
+  :root[data-room="paper"]{
+    --color-paper:oklch(97% 0.006 85);
+    --color-paper-2:oklch(94.5% 0.008 85);
+    --color-paper-3:oklch(91% 0.010 85);
+    --color-ink:oklch(23% 0.014 75);
+    --color-ink-2:oklch(36% 0.014 75);
+    --color-muted:oklch(50% 0.014 75);
+    --color-rule:oklch(78% 0.012 80);
+    --color-rule-2:oklch(88% 0.008 80);
+    --color-accent:oklch(50% 0.115 62);
+    --color-accent-ink:oklch(98% 0.004 85);
+    --color-focus:oklch(48% 0.11 60);
+    --color-signal:oklch(48% 0.19 25);
   }
 }
