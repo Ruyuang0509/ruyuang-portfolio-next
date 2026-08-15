@@ -355,7 +355,7 @@ button.cta:hover{filter:brightness(1.06)}
     <div class="panel">
       <span class="plate">XY PAD · 跨模態映射</span>
       <h2>透過本面板，我希望你仔細聆聽，感受聲音與空間的關係</h2><!-- 使用者 2026-08-16 文藝向定稿句 -->
-      <p class="desc">Pure Data 寫的即時訊號處理：位置進來，聲音出去。原型先靠 AI 協作搭起來，再逆向拆解訊號路徑，拆到能自己說明、自己改。這塊板子做的事，跟這個網站是同一件。</p>
+      <p class="desc">Pure Data 寫的即時訊號處理：位置進來，聲音出去。原型先靠 AI 協作搭起來，再逆向拆解訊號路徑，拆到能自己說明、自己改。</p>
       <div class="pad-wrap">
         <div class="xy-pad" id="xyPad" role="application" aria-label="XY 合成板：發聲後，橫軸控制聲像與音高，縱軸控制遠近">
           <span class="xy-dot" id="xyDot" aria-hidden="true"></span>
@@ -399,7 +399,7 @@ button.cta:hover{filter:brightness(1.06)}
       </div>
       <p class="mono credit">Song: Blinds-Soft Lament — Suno 生成 · 00:00–00:40 · 非營利用途經 Suno 書面確認</p>
       <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">誠實揭露一項規格差異：原提示要求純音樂，實際輸出含英語歌詞與人聲——公開版本以實際成片為準，呈現差異而非抹除。</p>
-      <p class="note">設計註記：這一站的底色壓到全站最暗，黑邊收攏視線——<b>專注從黑開始</b>。</p>
+      <p class="note">設計註記：這一站的底色壓到全站最暗，黑邊收攏視線——<b>燈暗下來，戲才開始</b>。</p>
       <p class="dossier-link">深入這件作品:<a href="../../src/content/works/hamlet-story-mv.md" onclick="return false" title="原型內連結示意，正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
     </div>
   </div>
@@ -414,7 +414,7 @@ button.cta:hover{filter:brightness(1.06)}
     <h2 style="font-weight:700;font-size:1.2rem">導覽影片(四部)</h2>
     <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">地方文化見習的影音成品——潭墘、糖廠(上/下)、蒜頭老街，四部合計 9 分 29 秒；分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
     <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">見習為雙人同梯；此處列出的，是工作日誌記載由本人負責的影音線。</p>
-    <p class="note">設計註記：格線在這裡逐漸消散，只留一條地平線——<b>田野沒有牆</b>。</p>
+    <p class="note">設計註記：格線在這裡逐漸消散，只留一條地平線——<b>片子在哪裡拍，房間就長成那裡的樣子</b>。</p>
     <p class="dossier-link">深入這件作品:<a href="../../src/content/works/guide-videos.md" onclick="return false" title="原型內連結示意，正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
   </div>
 </section>
@@ -545,7 +545,8 @@ button.cta:hover{filter:brightness(1.06)}
   // 場景聲音身分(逐場景 voice;鄰近度連續驅動=「聲源」層，d004)
   function buildSceneVoices(){
     const v = {};
-    { // 影院站：低音域小調傾向 pad(莊重)+呼吸級慢演化(抗疲勞)
+    { // 影院站:低音域小調傾向 pad(莊重)。抗煩躁三改(使用者 2026-08-16:長時間觀看產生煩躁)——
+      // 靜態頻譜+淺呼吸=疲勞源;改為 (a) 呼吸加深到近靜默休止 (b) 音色極慢演化 (c) 基準增益調低
       const mix = ctx.createGain(); mix.gain.value = 1;
       [[110,"sine"],[130.81,"sine"],[164.81,"triangle"]].forEach(([f,t]) => {
         const o = ctx.createOscillator(); o.type = t;
@@ -553,15 +554,19 @@ button.cta:hover{filter:brightness(1.06)}
         const og = ctx.createGain(); og.gain.value = .3;
         o.connect(og); og.connect(mix); o.start();
       });
-      const breath = ctx.createGain(); breath.gain.value = .8;
-      const lfo = ctx.createOscillator(); lfo.frequency.value = .06;
-      const lg = ctx.createGain(); lg.gain.value = .18;
+      const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 650; lp.Q.value = .5;
+      const lfoF = ctx.createOscillator(); lfoF.frequency.value = .03; // 音色呼吸:約 33 秒一輪
+      const lgF = ctx.createGain(); lgF.gain.value = 220;              // 掃 430–870Hz,頻譜不再靜止
+      lfoF.connect(lgF); lgF.connect(lp.frequency); lfoF.start();
+      const breath = ctx.createGain(); breath.gain.value = .5;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = .045;  // 約 22 秒一息
+      const lg = ctx.createGain(); lg.gain.value = .42;                // 谷值≈.08=近靜默的休止,聲音「間歇性地活著」
       lfo.connect(lg); lg.connect(breath.gain); lfo.start();
       const g = ctx.createGain(); g.gain.value = 0;
-      mix.connect(breath); breath.connect(g);
+      mix.connect(lp); lp.connect(breath); breath.connect(g);
       const send = ctx.createGain(); send.gain.value = .5;
       g.connect(analyser); g.connect(send); send.connect(reverb);
-      v.cinema = { g, base:.14 };
+      v.cinema = { g, base:.10 };
     }
     { // 田野站：濾波噪音的遠方感(開放自然)——帶通中心慢速漂移
       const len = ctx.sampleRate * 2, nb = ctx.createBuffer(1, len, ctx.sampleRate), d = nb.getChannelData(0);
