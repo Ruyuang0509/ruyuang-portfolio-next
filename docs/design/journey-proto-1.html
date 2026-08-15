@@ -833,8 +833,11 @@ button.cta:hover{filter:brightness(1.06)}
   }
   runGate();
 
-  // ---- 捲動進度光:scroll() timeline 不支援時(Firefox)以被動監聽驅動同一組元素 ----
-  if (!(window.CSS && CSS.supports("animation-timeline: scroll()")) && !reduceMotion){
+  // ---- 捲動進度:CSS timeline 不可用時(Firefox / reduced-motion)由被動監聽直寫 ----
+  // reduced-motion 也必須跑這條:K-30 讓 filament 成為唯一進度指示後,兩條路徑都關掉會使
+  // 低敏使用者完全失去進度回饋(R2 回饋 3 未滿足)。直寫是「位置映射」不是動畫——無過渡、
+  // 無插值,捲到哪畫到哪,正是 reduced-motion 該有的形狀。
+  if (reduceMotion || !(window.CSS && CSS.supports("animation-timeline: scroll()"))){
     const fil = document.querySelector(".filament");
     let ticking = false;
     const upd = () => {

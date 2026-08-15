@@ -1,4 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap");
+/* 字型不在這裡載入 —— 走各頁 <head> 的 <link rel="stylesheet">。
+ * 原因(實測):global.css 先 @import "tailwindcss" 再 @import 本檔,遠端 url @import
+ * 於是不在扁平化後的表首,被打包器整條丟棄——dist CSS 內 googleapis 與 @font-face 皆為 0,
+ * 線上站宣告了字型家族卻從未下載任何字型檔。開發機裝有 Noto Sans TC,所以看起來一直正常。
+ * K-21 自架落地後,這裡改放 @font-face,頁面改 preload。 */
 
 /* Hallmark · design system tokens — approved baseline: docs/design/monitor-room-v1-max.html
  * theme: custom · vibe: "深夜監聽室, 琥珀電平, 儀器刻度, 證據紙"

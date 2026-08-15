@@ -10,7 +10,7 @@
     "test": "vitest run",
     "check:paths": "node scripts/checks/paths.mjs src public scripts docs dist",
     "check:media": "node scripts/checks/media.mjs public src dist",
-    "check:wording": "node scripts/checks/wording.mjs src dist",
+    "check:wording": "node scripts/checks/wording.mjs src dist docs/design",
     "check:motion": "node scripts/checks/motion.mjs",
     "check:approval": "node scripts/checks/approval.mjs",
     "check:obligations": "node scripts/checks/obligations.mjs",

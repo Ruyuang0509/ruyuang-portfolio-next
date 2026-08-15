@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 const GATES = [
   { name: "check:paths", cmd: ["node", "scripts/checks/paths.mjs", "src", "public", "scripts", "docs", "dist"] },
   { name: "check:media", cmd: ["node", "scripts/checks/media.mjs", "public", "src", "dist"] },
-  { name: "check:wording", cmd: ["node", "scripts/checks/wording.mjs", "src", "dist"] },
+  { name: "check:wording", cmd: ["node", "scripts/checks/wording.mjs", "src", "dist", "docs/design"] },
   { name: "check:motion", cmd: ["node", "scripts/checks/motion.mjs"] },
   { name: "check:approval", cmd: ["node", "scripts/checks/approval.mjs"] },
   { name: "check:obligations", cmd: ["node", "scripts/checks/obligations.mjs"] },
