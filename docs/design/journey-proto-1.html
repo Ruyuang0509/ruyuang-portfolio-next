@@ -70,7 +70,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
 /* ---------- beats ---------- */
 .beat{position:relative;z-index:1;padding-block:var(--space-3xl);scroll-margin-top:48px}
-.beat-inner{background:color-mix(in oklab,var(--color-paper) 93%,transparent);backdrop-filter:none;padding-block:var(--space-md)}
+.beat-inner{background:var(--color-paper);backdrop-filter:none;padding-block:var(--space-md)} /* 不透明:rail/光層只准在文字欄外呼吸(使用者缺陷回報 2026-08-15)[R3 K-06] */
+#cinema .beat-inner{background:oklch(7% 0.006 75)} /* 影院站維持劇場黑,但同樣不透明 */
 /* 章節牌(紀念碑谷式儀式:一枝從訊號線垂下的小刻度+置中章節碼) */
 .orient{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.22em;color:var(--color-muted);text-transform:uppercase;
   text-align:center;margin-bottom:var(--space-xl)}
@@ -261,8 +262,8 @@ button.cta:hover{filter:brightness(1.06)}
 .gate-lines div.show{opacity:1}
 .gate-meter{width:200px;height:2px;background:var(--color-rule-2);overflow:clip}
 .gate-meter i{display:block;height:100%;background:var(--color-accent);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease-out)}
-.gate-choice{display:flex;gap:var(--space-md);flex-wrap:wrap;justify-content:center;opacity:0;pointer-events:none;transition:opacity .6s var(--ease-out)}
-.gate-choice.show{opacity:1;pointer-events:auto}
+.gate-choice{display:flex;gap:var(--space-md);flex-wrap:wrap;justify-content:center;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .6s var(--ease-out)}
+.gate-choice.show{opacity:1;pointer-events:auto;visibility:visible} /* visibility:隱形時不得可 Tab [R3 K-09] */
 .gate-skip{position:absolute;right:var(--space-md);bottom:var(--space-md);background:none;border:0;cursor:pointer;
   font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
 .gate-skip:hover{color:var(--color-ink)}
@@ -279,7 +280,7 @@ button.cta:hover{filter:brightness(1.06)}
 <div class="line-rail" aria-hidden="true"><div class="line-breath"></div><div class="line-glow" id="lineGlow"></div><div class="line-cursor"></div></div>
 
 <!-- 開機閘:載入儀式(JS+動效才啟用;跳過/Esc/直接捲動皆可離開,基態永不被擋) -->
-<div class="gate" id="gate" role="dialog" aria-label="開機序列" hidden>
+<div class="gate" id="gate" role="dialog" aria-label="開機序列" tabindex="-1" hidden>
   <div class="gate-core">
     <span class="dot" aria-hidden="true"></span>
     <pre class="gate-lines" id="gateLines" aria-hidden="true"></pre>
@@ -445,7 +446,7 @@ button.cta:hover{filter:brightness(1.06)}
     <p>本站提供完整與精簡兩種瀏覽方式——與我研究所關注的「降低聆聽門檻」出於同一信念。</p>
     <p class="legal">© 2026 如願 · 本站無廣告、無付費牆、無聯盟收益</p>
     <p class="legal">證書、佐證與聯絡——正式站出口區提供;原型不承載個資。</p>
-    <p class="loop"><a href="#hook">回到開頭,再走一次 ↺</a></p>
+    <p class="loop"><a href="#hook" id="loopBtn">回到開頭,再走一次 ↺</a></p>
   </div>
 </section>
 
@@ -461,6 +462,7 @@ button.cta:hover{filter:brightness(1.06)}
   document.documentElement.classList.add("js"); // 增強層開關:無 JS=完整可讀基態(d018)
   const PENTA = [220, 261.63, 293.66, 329.63, 392, 440, 523.25];
   let ctx = null, master = null, limiter = null, analyser = null, buf = null;
+  let outMeter = null, outBuf = null, samplePeak = 0;
   let padVoice = null, padOn = false, powered = false, rafId = null;
   let reverb = null, room = null, sceneVoices = null, lastRoom = "", finaleDone = false;
   let skipBoot = false; // 開機閘已演過儀式時,略過 POWER 的 boot overlay(不演兩次)
@@ -481,7 +483,11 @@ button.cta:hover{filter:brightness(1.06)}
   function ensureCtx(){
     if (ctx) return;
     ctx = new (window.AudioContext || window.webkitAudioContext)();
-    // 聽力安全鏈(R2 硬規則):limiter 在 master 前,參數保守;輸出峰值可由 analyser 實測
+    // [R3 K-02] Round E 裁決:iPhone 靜音鍵下仍可發聲。Safari 16.4+ 實驗特性——feature-detect,不支援靜默略過
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch {}
+    // [R3 K-08] 聽力安全鏈:ratio=20 是 W3C 規格上限(min 1/max 20)——規格內最接近限幅的設定,
+    // 定位=安全網,非真限幅器(真 brick-wall 需 WaveShaper/AudioWorklet,R3 減法清單:不做)。
+    // 規格明載壓縮器有固定 look-ahead 延遲;analyser 維持在 limiter 前,視覺同步不受其影響。
     limiter = ctx.createDynamicsCompressor();
     limiter.threshold.value = -12; limiter.knee.value = 0; limiter.ratio.value = 20;
     limiter.attack.value = 0.003; limiter.release.value = 0.25;
@@ -489,6 +495,11 @@ button.cta:hover{filter:brightness(1.06)}
     analyser = ctx.createAnalyser(); analyser.fftSize = 256;
     buf = new Uint8Array(analyser.frequencyBinCount);
     analyser.connect(limiter); limiter.connect(master); master.connect(ctx.destination);
+    // [R3 K-07] d015 誠實化:輸出峰值只能在 master 之後、用 float 時域樣本量(byte 頻譜原理上量不到峰值,
+    // 僅供視覺律動)。量到的是 sample peak,非 true peak(無 4× 過取樣,密集素材可低估 1–3dB)——限制照實記。
+    outMeter = ctx.createAnalyser(); outMeter.fftSize = 2048;
+    outBuf = new Float32Array(outMeter.fftSize);
+    master.connect(outMeter);
     // 演算法殘響(G1 決策:不用 IR 檔)——小房間身分:短延遲×2 + 回授 + 低通
     reverb = ctx.createGain(); reverb.gain.value = 0.18;
     const d1 = ctx.createDelay(); d1.delayTime.value = 0.031;
@@ -639,6 +650,9 @@ button.cta:hover{filter:brightness(1.06)}
     let s = 0; for (let i = 0; i < buf.length; i++) s += buf[i];
     const lvl = Math.min(1, (s / buf.length) / 120);
     document.documentElement.style.setProperty("--glow", lvl.toFixed(3)); // 視聽同源:analyser→光暈
+    outMeter.getFloatTimeDomainData(outBuf); // [R3 K-07] 不 clamp:down-mix 時 |x|>1.0 合法,夾住會低報削波
+    for (let i = 0; i < outBuf.length; i++){ const a = Math.abs(outBuf[i]); if (a > samplePeak) samplePeak = a; }
+    document.documentElement.dataset.peak = samplePeak.toFixed(3);
     rafId = powered ? requestAnimationFrame(meterLoop) : null;
     if (rafId === null) document.documentElement.style.setProperty("--glow", "0");
   }
@@ -661,6 +675,7 @@ button.cta:hover{filter:brightness(1.06)}
     if (!powered){
       ensureCtx();
       if (ctx.state === "suspended") ctx.resume(); // 手勢內 resume(G1 驗證的可攜模式)
+      master.gain.setTargetAtTime(0.2 * ($("masterVol").value / 100), ctx.currentTime, 0.05); // 回復關機前音量
       setPower(true);
       if (!reduceMotion && !skipBoot){
         boot.classList.add("on");
@@ -675,8 +690,26 @@ button.cta:hover{filter:brightness(1.06)}
     } else {
       if (padVoice){ padVoice.stop(); padVoice = null; padOn = false; }
       setPower(false);
-      if (ctx) ctx.suspend();
+      hint.classList.remove("on");
+      // [R3 K-04] 關機不咔嗒:零驚嚇是對稱的——先 150ms 淡出,靜了再 suspend(原本 suspend() 硬切)
+      if (ctx){
+        master.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
+        setTimeout(() => { if (!powered && ctx.state === "running") ctx.suspend(); }, 300);
+      }
     }
+  });
+
+  // [R3 K-05] 回到開頭=可以真的再走一次:重置謝幕狀態(原本 finaleDone 永不重置,第二輪走到底沒有謝幕);
+  // reduced-motion 瞬移,否則平滑倒帶
+  $("loopBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    finaleDone = false;
+    const fin = $("finale");
+    fin.classList.remove("run");
+    fin.querySelectorAll(".lamp").forEach((l) => l.classList.remove("on"));
+    scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    history.replaceState(null, "", "#hook");
+    powerBtn.focus({ preventScroll: true });
   });
 
   padToggle.addEventListener("click", () => {
@@ -771,10 +804,19 @@ button.cta:hover{filter:brightness(1.06)}
     gate.classList.remove("on");
     setTimeout(() => { gate.hidden = true; }, 750);
     removeEventListener("scroll", gateScrollDismiss);
+    if (gate.contains(document.activeElement)) powerBtn.focus({ preventScroll: true }); // [R3 K-09] 焦點歸還對應控制
   }
   function runGate(){
     if (reduceMotion) return; // 動效低敏模式:不演,直接可讀
-    gate.hidden = false; requestAnimationFrame(() => gate.classList.add("on"));
+    gate.hidden = false; requestAnimationFrame(() => { gate.classList.add("on"); gate.focus(); }); // [R3 K-09] focus 入閘
+    gate.addEventListener("keydown", (e) => { // [R3 K-09] APG dialog:Tab 圈內(只在可見鈕之間)
+      if (e.key !== "Tab") return;
+      const f = [...gate.querySelectorAll("button")].filter((b) => b.checkVisibility ? b.checkVisibility() : b.offsetParent !== null);
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (document.activeElement === last || document.activeElement === gate)){ e.preventDefault(); first.focus(); }
+    });
     const checks = [
       ["SIGNAL PATH", document.fonts ? document.fonts.ready : Promise.resolve()],
       ["MONITORS",    new Promise((res) => { const im = new Image(); im.onload = im.onerror = res;
@@ -792,7 +834,8 @@ button.cta:hover{filter:brightness(1.06)}
         done++;
         $("gateFill").style.transform = "scaleX(" + (done / checks.length) + ")";
         if (done === checks.length)
-          setTimeout(() => { $("gateChoice").classList.add("show"); $("gateFull").focus(); }, 350);
+          setTimeout(() => { if (gateDismissed) return; // [R3 K-09] 已解除的閘不得回頭偷焦點(背景分頁 rAF 節流下實測到)
+            $("gateChoice").classList.add("show"); $("gateFull").focus(); }, 350);
       });
     });
     addEventListener("keydown", (e) => { if (e.key === "Escape") dismissGate(); });
