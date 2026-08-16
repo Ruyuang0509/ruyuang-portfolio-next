@@ -91,7 +91,6 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opa
 #hook h1{font-weight:900;font-size:var(--text-display);line-height:1.3;margin-top:var(--space-lg);letter-spacing:.01em}
 #hook h1 em{font-style:normal;color:var(--color-accent);border-bottom:3px solid var(--color-accent)}
 .hook-sub{margin-top:var(--space-md);color:var(--color-muted);font-size:var(--text-sm)}
-.cta-row{display:flex;gap:var(--space-md);justify-content:center;margin-top:var(--space-xl);flex-wrap:wrap}
 button.cta{border:0;cursor:pointer;font-family:var(--font-mono);font-size:var(--text-sm);color:var(--color-accent-ink);background:var(--color-accent);padding:var(--space-sm) var(--space-lg);border-radius:3px}
 button.cta:hover{filter:brightness(1.06)}
 .ghost{display:inline-block;background:transparent;color:var(--color-ink-2);border:1px solid var(--color-rule);padding:var(--space-sm) var(--space-lg);border-radius:3px;font-family:var(--font-mono);font-size:var(--text-sm);text-decoration:none;cursor:pointer}
@@ -153,8 +152,19 @@ button.cta:hover{filter:brightness(1.06)}
   background:color-mix(in oklab,var(--color-paper) 78%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--color-rule-2)}
 .transport a{color:var(--color-muted);text-decoration:none;padding:2px 4px}
 .transport a:hover{color:var(--color-accent)}
-.tvol{margin-left:auto;display:flex;align-items:center;gap:var(--space-xs)}
+.tpwr{margin-left:auto;background:transparent;border:1px solid var(--color-rule);border-radius:3px;color:var(--color-ink-2);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;padding:2px 8px;cursor:pointer;white-space:nowrap}
+.tpwr:hover{border-color:var(--color-accent);color:var(--color-ink)}
+.tpwr[aria-pressed="true"]{background:var(--color-accent);color:var(--color-accent-ink);border-color:var(--color-accent)}
+.tvol{display:flex;align-items:center;gap:var(--space-xs);margin-right:30px}
 .tvol input{accent-color:var(--color-accent);width:80px}
+/* 導覽列可收放(回饋4)。visibility:hidden=收合後不可聚焦(K-09 同規則);
+   過渡只在非低敏模式(批判 F5:這曾是全檔唯一不受 reduced-motion 閘的位移) */
+.transport.collapsed{transform:translateY(-100%);visibility:hidden}
+.tfold{position:fixed;top:5px;right:6px;z-index:48;background:color-mix(in oklab,var(--color-paper) 82%,transparent);
+  border:1px solid var(--color-rule-2);border-radius:3px;color:var(--color-muted);font-family:var(--font-mono);
+  font-size:10px;padding:2px 7px;cursor:pointer}
+.tfold:hover{color:var(--color-ink)}
 
 /* ---------- beat 4 cinema(劇場黑聚焦：從黑開始的專注) ---------- */
 #cinema{background:linear-gradient(oklch(8% 0.006 75),oklch(6% 0.005 75) 30%,oklch(8% 0.006 75))}
@@ -163,6 +173,8 @@ button.cta:hover{filter:brightness(1.06)}
 .cinema-frame img{display:block;width:100%;height:auto;opacity:.92}
 #cinema .credit{font-size:var(--text-xs);color:var(--color-muted);margin-top:var(--space-sm)}
 @media (prefers-reduced-motion: no-preference){
+  .transport{transition:transform .35s var(--ease-out),visibility 0s}
+  .transport.collapsed{transition:transform .35s var(--ease-out),visibility 0s .35s}
   .enhanced #cinema .cinema-frame img{animation:flicker 4.8s steps(1) infinite}
   @keyframes flicker{0%,93%{opacity:.92}94%{opacity:.88}95%,100%{opacity:.92}}
 }
@@ -277,14 +289,21 @@ button.cta:hover{filter:brightness(1.06)}
 .gate-skip{position:absolute;right:var(--space-md);bottom:var(--space-md);background:none;border:0;cursor:pointer;
   font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
 .gate-skip:hover{color:var(--color-ink)}
+.gate-ear{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);margin:0}
+/* 選擇後的離場:閘體上飄淡出,光點以 FLIP 飛入 hook(Bruno 式銜接;bail 路徑維持簡單淡出) */
+.gate.lift{opacity:0;pointer-events:none;transition:opacity .8s var(--ease-out)} /* 升場中不得攔截點擊(透明閘吃點擊的同類回歸,批判抓到) */
+.gate.lift .gate-core{transform:translateY(-46px);opacity:0;transition:transform .8s var(--ease-out),opacity .55s linear}
+.gate-core{transition:transform .8s var(--ease-out),opacity .55s linear}
 </style>
 </head>
 <body>
 
-<nav class="transport" aria-label="站點跳轉(隨時可離隊)">
-  <a href="#hook">開機</a><a href="#identity">身分</a><a href="#station">XY 板</a><a href="#cinema">Hamlet</a><a href="#field">田野影片</a><a href="#ctrl">控制室</a><a href="#master">OUT</a><a href="#exit">出口</a><!-- 甲-6:標籤帶作品名，不再用 CH·01 不透明代碼 -->
+<nav class="transport" id="transportNav" aria-label="站點跳轉(隨時可離隊)">
+  <a href="#hook">開場</a><a href="#identity">身分</a><a href="#station">互動站</a><a href="#cinema">影院站</a><a href="#field">田野站</a><a href="#ctrl">控制室</a><a href="#master">OUT</a><a href="#exit">出口</a><!-- 回饋4:站點名稱;作品名歸 beat2 站內地圖 -->
+  <button class="tpwr" id="powerBtn" aria-pressed="false" aria-label="開機——完整體驗(含聲音)">▶ PWR</button>
   <label class="tvol">VOL <input type="range" id="masterVol" min="0" max="100" value="60" disabled aria-label="全站音量" /></label>
 </nav>
+<button class="tfold" id="navFold" aria-expanded="true" aria-controls="transportNav" aria-label="收合導覽列">▴</button>
 
 <div class="filament" aria-hidden="true"></div>
 <div class="line-rail" aria-hidden="true"><div class="line-breath"></div><div class="line-glow" id="lineGlow"></div></div>
@@ -295,6 +314,7 @@ button.cta:hover{filter:brightness(1.06)}
     <span class="dot" aria-hidden="true"></span>
     <pre class="gate-lines" id="gateLines" aria-hidden="true"></pre>
     <div class="gate-meter" aria-hidden="true"><i id="gateFill"></i></div>
+    <p class="gate-ear">戴上耳機，聲音的方位與遠近會更清楚</p><!-- 回饋5 -->
     <div class="gate-choice" id="gateChoice">
       <button class="cta" id="gateFull">▶ 開機・完整體驗(含聲音)</button>
       <button class="ghost" id="gateLite">安靜地往下讀</button>
@@ -310,11 +330,7 @@ button.cta:hover{filter:brightness(1.06)}
     <p style="margin-top:var(--space-xl)"><span class="dot" id="hookDot" aria-hidden="true"></span></p>
     <h1>把聲學的理解門檻，<br />調到<em>人人可聽見</em>。</h1>
     <p class="hook-sub">這台監聽台可以親自動手：所有聲音，都與你息息相關。</p><!-- 使用者 2026-08-16 文藝向定稿句 -->
-    <div class="cta-row">
-      <button class="cta" id="powerBtn" aria-pressed="false">▶ 開機・完整體驗(含聲音)</button>
-      <a class="ghost" href="#identity">安靜地往下讀 ↓</a>
-    </div>
-    <p class="scroll-hint" id="modeNote">現在是安靜閱讀——不開機，內容也一樣完整。</p>
+    <p class="scroll-hint" id="modeNote">現在是安靜閱讀——內容一樣完整。</p>
   </div>
 </section>
 
@@ -339,13 +355,6 @@ button.cta:hover{filter:brightness(1.06)}
       <a href="#ctrl"><b>控制室</b><span>方法與證據</span></a>
       <a href="#master"><b>MASTER OUT</b><span>研究方向</span></a>
     </nav>
-    <p style="margin-top:var(--space-lg)">一副監聽耳機，把我從數位學習設計帶進聲音。和朋友比較設備聽感時，我們聽得出差異，卻說不清楚這差異是來自頻率、空間，還是動態。我想做的一直是同一件事：把說不清楚的感受，變成可以動手操作的東西。</p><!-- 使用者 2026-08-16 文藝向修訂句 -->
-    <div class="readouts">
-      <span>FOCUS <b>聲響 × 人工智慧</b></span>
-      <span>ROUTE <b>作品 → 證據 → 研究</b></span>
-      <span>OUT <b>混合多聲道監聽</b></span>
-    </div>
-    <p class="note">設計註記：聲音全程 opt-in，預設安靜——<b>靜默是材料</b>。</p>
   </div>
 </section>
 
@@ -363,12 +372,12 @@ button.cta:hover{filter:brightness(1.06)}
         </div>
         <div class="pad-legend"><span>← 左(低音・聲像左)</span><span>上=遠 / 下=近</span><span>右(高音・聲像右)→</span></div>
         <div class="pad-controls">
-          <button class="play-toggle" id="padToggle" aria-pressed="false" disabled>▶ 發聲(先開機)</button>
+          <button class="play-toggle" id="padToggle" aria-pressed="false" disabled>▶ 發聲(上方 PWR 開機)</button>
           <label class="vol">音量 <input type="range" id="padVol" min="0" max="100" value="60" /></label>
           <span class="mono" style="font-size:var(--text-xs);color:var(--color-muted)">五聲音階 · 無錯音</span>
         </div>
       </div>
-      <p class="note">設計註記：以軟起音與 limiter 壓住爆音——<b>探索應該是安全的</b>。</p>
+      <p class="note">設計註記：以軟起音與 limiter 壓住爆音。</p>
       <p class="dossier-link">深入這件作品:<a href="../../src/content/works/pd-crossmodal.md" onclick="return false" title="原型內連結示意，正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
     </div>
     <!-- 可發現的實驗:precedence effect(規格出自庫內空間聽覺研究) -->
@@ -377,7 +386,7 @@ button.cta:hover{filter:brightness(1.06)}
       <h3>先到的聲音，決定你聽到的方向</h3>
       <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch">同一個聲音左右各放一次，拉開兩者的時間差，聽方向怎麼變。</p>
       <div class="haas-controls">
-        <button class="play-toggle" id="haasBtn" disabled>▶ 播放(先開機)</button>
+        <button class="play-toggle" id="haasBtn" disabled>▶ 播放(上方 PWR 開機)</button>
         <label class="vol">時間差 <input type="range" id="haasDelay" min="0" max="80" value="12" /> <span class="mono" id="haasMs">12 ms</span></label>
         <span class="haas-read" id="haasRead">融合：方向跟著先到的左邊</span>
       </div>
@@ -415,7 +424,7 @@ button.cta:hover{filter:brightness(1.06)}
     <h2 style="font-weight:700;font-size:1.2rem">導覽影片(四部)</h2>
     <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">地方文化見習的影音成品——潭墘、糖廠(上/下)、蒜頭老街，四部合計 9 分 29 秒；分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
     <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">見習為雙人同梯；此處列出的，是工作日誌記載由本人負責的影音線。</p>
-    <p class="note">設計註記：格線在這裡逐漸消散，只留一條地平線——<b>片子在哪裡拍，房間就長成那裡的樣子</b>。</p>
+    <p class="note">設計註記：格線在這裡逐漸消散，只留一條地平線。</p>
     <p class="dossier-link">深入這件作品:<a href="../../src/content/works/guide-videos.md" onclick="return false" title="原型內連結示意，正式站連往 dossier 內頁">作品檔案(dossier)→</a></p>
   </div>
 </section>
@@ -440,8 +449,8 @@ button.cta:hover{filter:brightness(1.06)}
         <li><span class="led" aria-hidden="true"></span> check:approval — 核准 human-only</li>
         <li><span class="led" aria-hidden="true"></span> check:obligations — 授權義務落在頁面上</li>
       </ul>
-      <p class="note">設計註記：這一站的殘響全站最低，回饋聲又乾又短——<b>控制室聽乾的訊號</b>。</p>
-      <p class="dossier-link">這套檢查，連同整個網站，原始碼都公開:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a><!-- 甲-5:認領簡章明列的「程式原始碼」類目 --></p>
+      <p class="note">設計註記：這一站的殘響全站最低，回饋聲又乾又短。</p>
+      <p class="dossier-link">這套檢查，連同整個網站，原始碼都公開:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a>。站台本身走過兩代，每一步修正都留在 git 歷史裡。<!-- 甲-5 程式原始碼類目+回饋6 兩代經歷;完整版=K-35 把網站立為 dossier 條目 --></p>
     </div>
   </div>
 </section>
@@ -750,14 +759,26 @@ button.cta:hover{filter:brightness(1.06)}
   function setPower(on){
     powered = on;
     powerBtn.setAttribute("aria-pressed", String(on));
-    powerBtn.textContent = on ? "■ 關機・回到安靜" : "▶ 開機・完整體驗(含聲音)";
+    powerBtn.textContent = on ? "■ PWR" : "▶ PWR"; // 回饋2:入站已在閘選過,hook 不再重問;PWR 移入導覽列
+    powerBtn.setAttribute("aria-label", on ? "關機——回到安靜" : "開機——完整體驗(含聲音)");
     padToggle.disabled = !on;
     $("masterVol").disabled = !on; // 音量控制常駐外露(d015)
-    padToggle.textContent = on ? (padOn ? "■ 靜音" : "▶ 發聲") : "▶ 發聲(先開機)";
-    modeNote.textContent = on ? "聲音開了。再按一次，回到安靜。"
-                              : "現在是安靜閱讀——不開機，內容也一樣完整。";
-    const hb = $("haasBtn"); hb.disabled = !on; hb.textContent = on ? "▶ 播放一次" : "▶ 播放(先開機)";
+    padToggle.textContent = on ? (padOn ? "■ 靜音" : "▶ 發聲") : "▶ 發聲(上方 PWR 開機)";
+    modeNote.textContent = on ? "聲音開了。右上角可調音量" + String.fromCharCode(0xFF0C) + "或按 PWR 關機。"
+                              : "現在是安靜閱讀——內容一樣完整。";
+    const hb = $("haasBtn"); hb.disabled = !on; hb.textContent = on ? "▶ 播放一次" : "▶ 播放(上方 PWR 開機)";
     document.documentElement.classList.toggle("enhanced", on && !reduceMotion);
+  }
+
+  // 導覽列收放(回饋4)
+  {
+    const nav = document.querySelector(".transport"), fold = $("navFold");
+    fold.addEventListener("click", () => {
+      const c = nav.classList.toggle("collapsed");
+      fold.setAttribute("aria-expanded", String(!c));
+      fold.textContent = c ? "▾" : "▴";
+      fold.setAttribute("aria-label", c ? "展開導覽列" : "收合導覽列");
+    });
   }
 
   powerBtn.addEventListener("click", () => {
@@ -770,6 +791,7 @@ button.cta:hover{filter:brightness(1.06)}
       powerOnSound(); kick();
     } else {
       if (padVoice){ padVoice.stop(); padVoice = null; padOn = false; }
+      padToggle.setAttribute("aria-pressed", "false"); // 批判 F7:關機後殘留 true
       setPower(false);
       hint.classList.remove("on");
       // [R3 K-04] 關機不咔嗒：零驚嚇是對稱的——先 150ms 淡出，靜了再 suspend(原本 suspend() 硬切)
@@ -793,7 +815,7 @@ button.cta:hover{filter:brightness(1.06)}
     setTimeout(done, 2600); // Safari 無 scrollend 的後備
     scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
     history.replaceState(null, "", "#hook");
-    powerBtn.focus({ preventScroll: true });
+    focusPower();
   });
 
   padToggle.addEventListener("click", () => {
@@ -902,12 +924,56 @@ button.cta:hover{filter:brightness(1.06)}
   const gate = $("gate");
   let gateDismissed = false;
   function gateScrollDismiss(){ if (scrollY > 40) dismissGate(); }
-  function dismissGate(){
+  function flipDotToHook(){ // 閘的光點飛去 hook 落位(FLIP):同一顆訊號,從儀式接進頁面
+    const gd = gate.querySelector(".gate-core .dot"), hd = $("hookDot");
+    if (!gd || !hd) return;
+    // 批判修正三件:bloom 的 fill 蓋得住 inline opacity(先 cancel);量測前停掉呼吸
+    // (相位會烙進快照,±1.5px);目的地在飛行中先藏起來(否則兩顆 dot 同屏)
+    gd.getAnimations().forEach((an) => an.cancel());
+    gd.style.opacity = "0";
+    hd.style.animation = "none";
+    const a = gd.getBoundingClientRect(), b = hd.getBoundingClientRect();
+    hd.style.opacity = "0";
+    const c = document.createElement("span");
+    c.className = "dot";
+    c.style.cssText = "position:fixed;left:" + a.left + "px;top:" + a.top + "px;width:" + a.width + "px;height:" + a.height + "px;z-index:71;margin:0;pointer-events:none;transform-origin:top left";
+    document.body.appendChild(c);
+    const restore = () => { hd.style.opacity = ""; hd.style.animation = ""; };
+    const anim = c.animate([
+      { transform: "translate(0,0) scale(1)" },
+      { transform: "translate(" + (b.left - a.left) + "px," + (b.top - a.top) + "px) scale(" + (b.width / a.width) + ")" }
+    ], { duration: 680, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" });
+    const onScroll = () => { anim.cancel(); c.remove(); restore(); }; // 飛行中捲動=目標座標過期,中止不硬著陸
+    addEventListener("scroll", onScroll, { once: true, passive: true });
+    anim.onfinish = () => {
+      removeEventListener("scroll", onScroll);
+      c.remove(); restore();
+      hd.animate([{ transform: "scale(1)" }, { transform: "scale(1.45)" }, { transform: "scale(1)" }],
+        { duration: 520, easing: "ease-out" });
+    };
+  }
+  function hookEntrance(){ // hook 內容依序浮起,接住飛來的光點
+    [...document.querySelectorAll("#hook .beat-inner > *")].forEach((el, i) =>
+      el.animate([{ opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "none" }],
+        { duration: 520, delay: 140 + i * 90, easing: "cubic-bezier(.22,1,.36,1)", fill: "backwards" }));
+  }
+  function dismissGate(mode){ // mode="choice"=按鈕選擇(演轉場);其餘(捲動/Esc/跳過)=簡單淡出
     if (gateDismissed) return; gateDismissed = true;
-    gate.classList.remove("on");
-    setTimeout(() => { gate.hidden = true; }, 750);
     removeEventListener("scroll", gateScrollDismiss);
-    if (gate.contains(document.activeElement)) powerBtn.focus({ preventScroll: true }); // [R3 K-09] 焦點歸還對應控制
+    if (mode === "choice" && !reduceMotion){
+      flipDotToHook(); hookEntrance();
+      gate.classList.add("lift");
+      setTimeout(() => { gate.hidden = true; }, 900);
+    } else {
+      gate.classList.remove("on");
+      setTimeout(() => { gate.hidden = true; }, 750);
+    }
+    if (gate.contains(document.activeElement)) focusPower(); // [R3 K-09] 焦點歸還對應控制
+  }
+  function focusPower(){ // 歸還目標在收合列內時先展開,否則焦點落在畫面外(批判 F2)
+    const nav = document.querySelector(".transport");
+    if (nav.classList.contains("collapsed")) $("navFold").click();
+    powerBtn.focus({ preventScroll: true });
   }
   function runGate(){
     if (reduceMotion) return; // 動效低敏模式：不演，直接可讀
@@ -917,7 +983,7 @@ button.cta:hover{filter:brightness(1.06)}
       const f = [...gate.querySelectorAll("button")].filter((b) => b.checkVisibility ? b.checkVisibility() : b.offsetParent !== null);
       if (!f.length) return;
       const first = f[0], last = f[f.length - 1];
-      if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === gate)){ e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && (document.activeElement === last || document.activeElement === gate)){ e.preventDefault(); first.focus(); }
     });
     const checks = [
@@ -943,9 +1009,9 @@ button.cta:hover{filter:brightness(1.06)}
     });
     addEventListener("keydown", (e) => { if (e.key === "Escape") dismissGate(); });
     addEventListener("scroll", gateScrollDismiss, { passive: true });
-    $("gateSkip").addEventListener("click", dismissGate);
-    $("gateLite").addEventListener("click", dismissGate);
-    $("gateFull").addEventListener("click", () => { dismissGate(); if (!powered) powerBtn.click(); });
+    $("gateSkip").addEventListener("click", () => dismissGate());
+    $("gateLite").addEventListener("click", () => dismissGate("choice"));
+    $("gateFull").addEventListener("click", () => { dismissGate("choice"); if (!powered) powerBtn.click(); });
   }
   runGate();
 
