@@ -66,34 +66,36 @@
  * accent 與 accent-ink 必須成對反轉(亮底暗字←→暗底亮字),只改一半會在
  * 按鈕(accent-ink on accent)上爆低對比,且要到 K-31 才發作。 */
 :root[data-room="paper"]{
-  color-scheme:light;
-  --color-paper:#e5e1d9;
-  --color-paper-2:#dbd7cf;
-  --color-paper-3:#d0ccc3;
-  --color-ink:#1e1a13;
-  --color-ink-2:#3c3730;
-  --color-muted:#57524a;
-  --color-rule:#a6a198;
-  --color-rule-2:#bfbcb5;
-  --color-accent:#905100;
-  --color-accent-ink:#f7f5f1;
-  --color-focus:#894c06;
-  --color-signal:#b00a1d;
+  color-scheme:dark; /* v4 暖暗閱讀室 */
+  --color-paper:#14100b;
+  --color-paper-2:#1c1711;
+  --color-paper-3:#252019;
+  --color-ink:#e9e4dc;
+  --color-ink-2:#c2bdb5;
+  --color-muted:#8e8880;
+  --color-rule:#3c3730;
+  --color-rule-2:#2a2620;
+  --color-accent:#f2a635;
+  --color-accent-ink:#171008;
+  --color-focus:#ffa500;
+  --color-signal:#e24947;
 }
 @supports (color: oklch(0% 0 0)) {
   :root[data-room="paper"]{
-    /* 2026-08-16 使用者兩輪:純白刺眼→94% 仍亮→91% 深米紙(v3),全 ramp 隨動、muted 再深保 AA */
-    --color-paper:oklch(91% 0.011 85);
-    --color-paper-2:oklch(88% 0.012 85);
-    --color-paper-3:oklch(84.5% 0.013 85);
-    --color-ink:oklch(22% 0.014 75);
-    --color-ink-2:oklch(34% 0.014 75);
-    --color-muted:oklch(44% 0.014 75);
-    --color-rule:oklch(71% 0.014 80);
-    --color-rule-2:oklch(79.5% 0.010 80);
-    --color-accent:oklch(50% 0.115 62);
-    --color-accent-ink:oklch(97% 0.005 85);
-    --color-focus:oklch(48% 0.11 60);
-    --color-signal:oklch(48% 0.19 25);
+    /* v4(2026-08-16 使用者:淺紙三修仍割裂→改「暖暗閱讀室」求一體感,覆寫裁決①極性分離):
+     * 監聽室同族深調——亮一階、暖一度,accent 回歸主站琥珀=一體感的錨;
+     * 可讀性改由字級(16px 層)與行距承擔。attribute 名 "paper" 沿革保留。 */
+    --color-paper:oklch(17.5% 0.012 75);
+    --color-paper-2:oklch(21% 0.014 75);
+    --color-paper-3:oklch(24.5% 0.015 75);
+    --color-ink:oklch(92% 0.012 80);
+    --color-ink-2:oklch(80% 0.012 80);
+    --color-muted:oklch(63% 0.014 75);
+    --color-rule:oklch(34% 0.014 75);
+    --color-rule-2:oklch(27% 0.012 75);
+    --color-accent:oklch(78% 0.15 72);
+    --color-accent-ink:oklch(18% 0.020 75);
+    --color-focus:oklch(80% 0.19 72);
+    --color-signal:oklch(62% 0.19 25);
   }
 }

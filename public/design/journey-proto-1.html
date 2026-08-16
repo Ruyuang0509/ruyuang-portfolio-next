@@ -1023,6 +1023,11 @@ button.cta:hover{filter:brightness(1.06)}
   }
   function runGate(){
     if (reduceMotion) return; // 動效低敏模式：不演，直接可讀
+    // 每 session 只演一次(K-14 守則;回饋:頂端重整重看動畫、中段重整卻沒有——統一為僅首次)
+    let seen = false;
+    try { seen = sessionStorage.getItem("gate-shown") === "1"; } catch {}
+    if (seen) return;
+    try { sessionStorage.setItem("gate-shown", "1"); } catch {}
     gate.hidden = false; requestAnimationFrame(() => { gate.classList.add("on"); gate.focus(); }); // [R3 K-09] focus 入閘
     gate.addEventListener("keydown", (e) => { // [R3 K-09] APG dialog:Tab 圈內(只在可見鈕之間)
       if (e.key !== "Tab") return;

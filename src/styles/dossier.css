@@ -24,7 +24,5 @@
   :root[data-room="paper"]{animation:paper-lamp .85s cubic-bezier(.22,1,.36,1) both}
   [data-room="paper"] .dossier{animation:d-rise .6s .2s cubic-bezier(.22,1,.36,1) both}
 }
-@keyframes paper-lamp{from{background-color:#0b0906}to{background-color:var(--color-paper)}}
+@keyframes paper-lamp{from{background-color:#070503}to{background-color:var(--color-paper)}} /* 從旅程的黑亮到閱讀室的暖褐:同一棟房子裡開了盞燈 */
 @keyframes d-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-/* 銘牌是儀器的一部分,跨房間維持暗色——兩個房間的共同 DNA(割裂感的橋;刻意的跨房常數,非漏改) */
-[data-room="paper"] .plate{background:#171008;color:#f2a635;border-color:#3a2c12}
