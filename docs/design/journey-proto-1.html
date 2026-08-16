@@ -223,6 +223,9 @@ button.cta:hover{filter:brightness(1.06)}
 #finale .lamp i{display:block;width:10px;height:10px;border-radius:50%;background:var(--color-rule);transition:background var(--dur-2) var(--ease-out),box-shadow var(--dur-2) var(--ease-out)}
 #finale .lamp.on i{background:var(--color-accent);box-shadow:0 0 22px 4px color-mix(in oklab,var(--color-accent) 55%,transparent)}
 #finale .lamp.on{color:var(--color-ink-2)}
+.colophon-thanks{display:block;margin-top:var(--space-md);font-family:var(--font-mono);font-size:var(--text-xs);
+  letter-spacing:.22em;color:var(--color-muted);opacity:0;transition:opacity 1.2s var(--ease-out) 1s} /* 最後一拍:引言落定後才現身 */
+#finale.run .colophon-thanks{opacity:1}
 .colophon-quote{margin-top:var(--space-xl);font-size:1.05rem;color:var(--color-ink-2);opacity:1;transition:opacity 1.8s var(--ease-out);text-align:center;margin-inline:auto;white-space:nowrap} /* 16 全形字一行到底(375px 實寬 269px 放得下);30ch 上限曾逼斷句——ch 是半形字寬 */
 .js #finale:not(.run) .colophon-quote{opacity:0} /* JS 在場才候場;無 JS 全亮(d018)。演出前不得半亮劇透 */
 #finale.run .colophon-quote{opacity:1}
@@ -523,7 +526,7 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
       <span class="lamp"><i></i>CH·03</span>
       <span class="lamp"><i></i>MASTER</span>
     </div>
-    <p class="colophon-quote">「先讓路途平坦，再思考如何裝飾風景。」</p>
+    <p class="colophon-quote">「先讓路途平坦，再思考如何裝飾風景。」<span class="colophon-thanks">Thanks for watching.</span></p>
   </div>
 </section>
 
