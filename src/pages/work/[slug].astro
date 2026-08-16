@@ -55,6 +55,20 @@ const fx = fxMap[work.id] ?? "stamp";
             <h1 class="dossier-title">{d.title}</h1>
             <p class="dossier-summary">{d.summary}</p>
 
+            {d.ytVideos.length > 0 && (
+              <div class="ytgrid"><!-- K-70:縮圖卡=純外連(本地 webp 縮圖,零第三方請求)。站內 iframe 內嵌經審查撤下:
+                round-e 裁決「影片交付=in-repo 自架定案」——未營利頻道仍可能被投放廣告,點播後會污染本站「無廣告」宣示;
+                外連把廣告留在 YouTube 站上。站內播放依 K-03 自架路線,或使用者明令改判後再裝回 -->
+                {d.ytVideos.map((v) => (
+                  <a class="ytcard" href={`https://youtu.be/${v.id}`} target="_blank" rel="noopener">
+                    <img src={`${base}${v.poster}`} alt={v.title} width="640" height="360" />
+                    <span class="ytplay" aria-hidden="true">▶</span>
+                    <span class="ytname">{v.title} · YouTube ↗</span>
+                  </a>
+                ))}
+              </div>
+            )}
+
             {d.media && (
               <figure class="dmedia">
                 <video

@@ -18,6 +18,11 @@ evidence:
   - { label: PERIOD, value: 2025 年 7–11 月（證書載明） }
 thirdParty: false
 obligations: ["no-monetization"]
+ytVideos:
+  - { id: U-fnCh9uB4c, title: 潭墘, poster: /media/guide-tanchien-yt-poster-640.webp }
+  - { id: Ed3SVK1_a74, title: 糖廠（上）, poster: /media/guide-sugar-1-yt-poster-640.webp }
+  - { id: oPMs9QRtgkI, title: 糖廠（下）, poster: /media/guide-sugar-2-yt-poster-640.webp }
+  - { id: iH0MUey2GcY, title: 蒜頭老街, poster: /media/guide-suantou-yt-poster-640.webp }
 ---
 
 二〇二五年下半年，在教育部青年壯遊見習期間走進嘉義的地方現場：潭墘、糖廠、蒜頭老街。四部影片各約兩分鐘，合計 9 分 29 秒，是完成片而非素材——分鏡、外拍、剪輯，到後製的音量調校、壓縮與跨裝置播放驗證。

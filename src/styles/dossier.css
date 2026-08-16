@@ -3,6 +3,18 @@
 .dmedia{margin-top:var(--space-xl);border:1px solid var(--color-rule);border-radius:var(--radius-1);background:var(--color-paper-2);padding:var(--space-sm)}
 .dmedia video{display:block;width:100%;height:auto;border-radius:2px;background:var(--color-paper)}
 .dmedia-note{margin-top:var(--space-sm);font-size:var(--text-body);color:var(--color-muted);padding-inline:var(--space-xs)} /* 媒體註記承載揭露性 caveat=完整中文句,受 16px 閱讀下限管(K-28 升 sm 仍不足,K-67 稽核定案) */
+/* K-70 影片縮圖卡:純外連(round-e 裁決擋站內內嵌——廣告留在 YouTube 站上);16:9 網格,560 以下單欄 */
+.ytgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-md);margin-top:var(--space-xl)}
+.ytcard{position:relative;display:block;border:1px solid var(--color-rule);border-radius:var(--radius-1);overflow:hidden;background:var(--color-paper-2)}
+.ytcard img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.ytcard .ytplay{position:absolute;inset:0;display:grid;place-items:center;font-size:2.2rem;color:var(--color-accent);
+  background:color-mix(in oklab,var(--color-paper) 34%,transparent);transition:background var(--dur-1) linear}
+.ytcard:hover .ytplay,.ytcard:focus-visible .ytplay{background:color-mix(in oklab,var(--color-paper) 10%,transparent)}
+.ytcard .ytname{position:absolute;left:0;right:0;bottom:0;padding:var(--space-xs) var(--space-sm);
+  font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;color:var(--color-ink);
+  background:linear-gradient(transparent,color-mix(in oklab,var(--color-paper) 92%,transparent))}
+@media (max-width:560px){.ytgrid{grid-template-columns:minmax(0,1fr)}}
+
 .dossier-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-md);margin-top:var(--space-xl)}
 .dfield{border:1px solid var(--color-rule-2);border-radius:var(--radius-1);background:var(--color-paper-2);padding:var(--space-md);margin-top:var(--space-md)}
 .dossier-grid .dfield{margin-top:0}

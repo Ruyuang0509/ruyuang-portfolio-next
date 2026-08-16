@@ -31,6 +31,10 @@ const works = defineCollection({
         note: z.string().optional(),
       })
       .optional(),
+    // K-70 facade 內嵌:點擊前只有本地縮圖(零第三方請求),點擊才載 youtube-nocookie;無 JS=純連結(d018)
+    ytVideos: z
+      .array(z.object({ id: z.string(), title: z.string(), poster: z.string() }))
+      .default([]),
   }),
 });
 
