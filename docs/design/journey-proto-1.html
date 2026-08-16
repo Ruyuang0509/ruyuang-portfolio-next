@@ -292,9 +292,13 @@ button.cta:hover{filter:brightness(1.06)}
 /* 選擇後的離場:閘體上飄淡出,光點以 FLIP 飛入 hook(Bruno 式銜接;bail 路徑維持簡單淡出) */
 /* 幕啟(使用者:轉場再盛大——開場獲第二個華麗預算,與謝幕並列):
    閘底改為上下兩片布幕,選擇後向兩側拉開露出頁面;core 同步上飄。bail 路徑整體淡出不變 */
-.gate-curtain{position:absolute;left:0;right:0;height:50.5%;background:oklch(5% 0.005 75)}
+.gate-curtain{position:absolute;left:0;right:0;height:50.5%;background:oklch(5% 0.005 75);z-index:0}
 .gc-top{top:0}
 .gc-bottom{bottom:0}
+/* 布幕是定位元素,static 的 core 會被畫在其下(定位>static,不看 DOM 順序)——
+   core 必須自己入棧,否則按鈕被幕蓋住、指標點不到(使用者實測回報;合成 click 繞過命中測試所以自動驗證漏抓) */
+.gate-core{position:relative;z-index:1}
+.gate-skip{z-index:1}
 .gate.lift{pointer-events:none}
 .gate.lift .gc-top{transform:translateY(-101%)}
 .gate.lift .gc-bottom{transform:translateY(101%)}
