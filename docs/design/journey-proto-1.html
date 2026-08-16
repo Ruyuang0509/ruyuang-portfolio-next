@@ -905,17 +905,20 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
   }
 
   powerBtn.addEventListener("click", () => {
+    restorePending = false; // 批判A:親手按 PWR=作廢恢復認領,懸置的 resume promise 不得半路翻轉本次按壓
     if (!powered){
       ensureCtx();
       if (ctx.state === "suspended") ctx.resume(); // 手勢內 resume(G1 驗證的可攜模式)
       master.gain.setTargetAtTime(0.2 * ($("masterVol").value / 100), ctx.currentTime, 0.05); // 回復關機前音量
       setPower(true);
+      try { sessionStorage.setItem("pwr", "on"); } catch {} // 回饋3:選擇入 session,內頁回歸讀回
       // [R3 K-29] 儀式只存在開機閘一處;POWER 就地回應——右下提示依使用者裁定刪除(pad 圖例已在現場)
       powerOnSound(); kick();
     } else {
       if (padVoice){ padVoice.stop(); padVoice = null; padOn = false; }
       padToggle.setAttribute("aria-pressed", "false"); // 批判 F7:關機後殘留 true
       setPower(false);
+      try { sessionStorage.setItem("pwr", "off"); } catch {} // 親手關機=明確選擇
       // [R3 K-04] 關機不咔嗒：零驚嚇是對稱的——先 150ms 淡出，靜了再 suspend(原本 suspend() 硬切)
       if (ctx){
         master.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
@@ -1000,6 +1003,7 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
   // 全站音量(0–100 → master gain 0–0.2;預設 60=保守初始值)
   $("masterVol").addEventListener("input", (e) => {
     if (master) master.gain.setTargetAtTime(0.2 * (e.target.value / 100), ctx.currentTime, 0.05);
+    try { sessionStorage.setItem("pwrvol", e.target.value); } catch {}
   });
 
   // 控制室：閘門列輕確認聲(乾；節流抗煩躁)
@@ -1205,8 +1209,9 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
     // 重演規則(使用者 2026-08-16,取代 session-once):重整=必演;
     // 唯「從站內內頁(dossier/research)回歸」不演。reload 判定優先——回歸後再重整仍算重整。
     const navType = (performance.getEntriesByType("navigation")[0] || {}).type || "navigate";
-    if (navType !== "reload" && /\/(work|research)\//.test(document.referrer)){ ensureSignal(); return; } // 內頁回歸:不重演,但訊號回到手上
+    if (navType !== "reload" && FROM_INNER){ ensureSignal(); return; } // 內頁回歸(連結或 Back 皆算):不重演,但訊號回到手上
     gateT0 = performance.now();
+    try { sessionStorage.removeItem("pwr"); } catch {} // 批判B:閘門重問=舊答案作廢——Esc/跳過/捲動離場不得讓過期的「on」在下次回歸還魂
     gate.hidden = false; requestAnimationFrame(() => { if (gateDismissed) return; gate.classList.add("on"); gate.focus(); }); // [R3 K-09] focus 入閘;守衛防「解除後補 .on」殭屍態
     gate.addEventListener("keydown", (e) => { // [R3 K-09] APG dialog:Tab 圈內(只在可見鈕之間)
       if (e.key !== "Tab") return;
@@ -1240,9 +1245,49 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
     addEventListener("keydown", (e) => { if (e.key === "Escape") dismissGate(); });
     addEventListener("scroll", gateScrollDismiss, { passive: true });
     $("gateSkip").addEventListener("click", () => dismissGate());
-    $("gateLite").addEventListener("click", () => dismissGate("choice"));
+    $("gateLite").addEventListener("click", () => { dismissGate("choice");
+      try { sessionStorage.setItem("pwr", "off"); } catch {} }); // 安靜進站=明確選擇(回饋3)
     $("gateFull").addEventListener("click", () => { dismissGate("choice"); if (!powered) powerBtn.click(); });
   }
+  let restorePending = false; // 批判A:恢復是「可取消的認領」,不是既成事實——PWR 按壓的當下就要贏過任何懸置 promise
+  const FROM_INNER = (() => { // 批判E:歷史回退(Back)不更新 referrer——內頁寫麵包屑,回歸判定=referrer ∪ 麵包屑;讀後即銷
+    let bc = null; try { bc = sessionStorage.getItem("inner"); sessionStorage.removeItem("inner"); } catch {}
+    return /\/(work|research)\//.test(document.referrer) || bc === "1";
+  })();
+  function restorePowerFromSession(){ // 回饋3(2026-08-16):內頁回歸=延續音效選擇。reload 走閘門重問,不在此列
+    const navType = (performance.getEntriesByType("navigation")[0] || {}).type || "navigate";
+    if (navType === "reload" || !FROM_INNER) return;
+    let st = null, v = null;
+    try { st = sessionStorage.getItem("pwr"); v = sessionStorage.getItem("pwrvol"); } catch {}
+    if (v !== null && +v >= 0 && +v <= 100) $("masterVol").value = v; // 批判C:音量先還原——關機回歸後再開機,也該用你選過的音量(d015 驚嚇軸)
+    if (st !== "on") return; // off/未選擇:維持安靜,現狀即正解
+    restorePending = true;
+    const offGesture = () => {
+      removeEventListener("pointerdown", onGesture); removeEventListener("pointerup", onGesture);
+      removeEventListener("keydown", onGesture);
+    };
+    const tryOn = () => {
+      if (!restorePending || powered) return;
+      ensureCtx();
+      ctx.resume().then(() => {
+        if (!restorePending || powered || ctx.state !== "running") return; // 批判A:被取消的認領不得回頭開機(pointerdown 授權會喚醒懸置 promise)
+        restorePending = false; offGesture();
+        master.gain.setTargetAtTime(0.2 * ($("masterVol").value / 100), ctx.currentTime, 0.05);
+        setPower(true); kick(); // 無 powerOnSound:回歸是延續,不是再開機(K-29 儀式只在閘)
+      }).catch(() => {});
+    };
+    const onGesture = (e) => { // 批判D:非一次性——Esc 與觸控 pointerdown 不授權自動播放,一次性監聽會被它們白白吃掉
+      if (powered || !restorePending){ offGesture(); return; }
+      if (e.target && e.target.closest && e.target.closest("#powerBtn")){ restorePending = false; offGesture(); return; } // 讓位給按鈕語意=取消認領
+      if (e.type === "keydown" && e.key === "Escape") return; // 非授權鍵:不消耗、不觸發
+      tryOn(); // 成功才自我拆除(見 then);失敗留著等下一個手勢
+    };
+    tryOn(); // 政策放行的環境(已互動過的 origin 等)直接恢復
+    addEventListener("pointerdown", onGesture);
+    addEventListener("pointerup", onGesture); // 觸控在 pointerup 才取得授權
+    addEventListener("keydown", onGesture);
+  }
+  restorePowerFromSession(); // reduced-motion 也適用:電源是狀態,不是儀式
   runGate();
 
   // ---- 捲動進度:CSS timeline 不可用時(Firefox / reduced-motion)由被動監聽直寫 ----
