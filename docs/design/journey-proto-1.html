@@ -207,6 +207,7 @@ button.cta:hover{filter:brightness(1.06)}
 #master .desc{color:var(--color-ink-2);font-size:var(--text-sm);max-width:44ch;margin-inline:auto;margin-top:var(--space-md)}
 
 /* ---------- finale v2(謝幕:零內容,純光影;跳過=自然捲動) ---------- */
+#finale .beat-inner{background:transparent} /* 黑方塊=K-06 不透明背景殘留在舞台上——「文字在方塊下方」的方塊根本不該存在(使用者三度指認) */
 #finale{min-height:80vh;display:grid;place-items:center;text-align:center;position:relative;overflow:clip;
   padding-block:var(--space-lg)} /* 覆蓋 .beat 的 30vh:舞台置中要算整個 80vh,不是被留白吃剩的縫(使用者選取實證:內容沉到下緣) */
 /* 謝幕舞台:華麗預算唯一獲准的揮霍處(R2:震撼感預算集中在謝幕;光量峰值只留這裡) */
@@ -233,10 +234,6 @@ button.cta:hover{filter:brightness(1.06)}
 #exit .loop a{color:var(--color-accent);text-decoration:none;border-bottom:1px solid var(--color-rule)}
 
 /* ---------- power overlay (enhancement-only, entered by click; base never blocked) ---------- */
-/* hints */
-.hint{position:fixed;right:var(--space-md);bottom:var(--space-md);max-width:34ch;background:var(--color-paper-2);border:1px solid var(--color-rule);border-radius:3px;padding:var(--space-sm) var(--space-md);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-ink-2);z-index:40;display:none}
-.hint.on{display:block}
-.hint button{float:right;background:none;border:0;color:var(--color-muted);cursor:pointer;font-family:inherit}
 
 /* ---------- enhanced scene choreography (triple guard: @supports + separate longhand + 1ms) ---------- */
 @media (prefers-reduced-motion: no-preference){
@@ -498,8 +495,8 @@ button.cta:hover{filter:brightness(1.06)}
     <p class="orient">MASTER OUT — 訊號送出</p>
     <p style="margin-top:var(--space-xl)"><span class="dot" aria-hidden="true"></span></p>
     <h2>混合多聲道監聽</h2>
-    <p class="desc">開頭那顆訊號走過三站，在這裡送出。我要帶進研究所的題目就是它：把多聲道聆聽的建置與理解門檻，再調低一點。</p>
-    <p class="desc">這是聲響的那一半。人工智慧的那一半你剛走過——控制室那套機器守規則、人做核准的工作法，會跟著題目一起進來。<!-- K-33 雙軸收束：兌現 FOCUS 兩讀數;d019=方法非題目;d020=一句指回，不擴展示 --></p>
+    <p class="desc">開頭那顆訊號，走過三站，在這裡送出。它做的始終是同一件事：把聽覺經驗，變成可以動手的東西。我要帶進研究所的題目，就是讓多聲道監聽也走這條路——建置與理解的門檻，再低一點。</p>
+    <p class="desc">方法你剛剛走過：機器守規則，核准的永遠是人。這套工作法，跟著題目一起進來。<!-- K-33 雙軸收束：兌現 FOCUS 兩讀數;d019=方法非題目;d020=一句指回，不擴展示 --></p>
   </div>
 </section>
 
@@ -531,7 +528,6 @@ button.cta:hover{filter:brightness(1.06)}
   </div>
 </section>
 
-<div class="hint" id="hint"><button id="hintClose" aria-label="關閉提示">✕</button>已開機。板子可發聲：左右=聲像與音高，上下=遠近。</div>
 
 <script>
 // R2 audio engine v2 — 全部聲音 opt-in;安全鏈:voices → chGain → send(演算法殘響) → analyser → LIMITER → master
@@ -555,7 +551,7 @@ button.cta:hover{filter:brightness(1.06)}
 
   const $ = (id) => document.getElementById(id);
   const powerBtn = $("powerBtn"), padToggle = $("padToggle"),
-        pad = $("xyPad"), dot = $("xyDot"), hint = $("hint"), modeNote = $("modeNote");
+        pad = $("xyPad"), dot = $("xyDot"), modeNote = $("modeNote");
 
   function ensureCtx(){
     if (ctx) return;
@@ -843,13 +839,12 @@ button.cta:hover{filter:brightness(1.06)}
       if (ctx.state === "suspended") ctx.resume(); // 手勢內 resume(G1 驗證的可攜模式)
       master.gain.setTargetAtTime(0.2 * ($("masterVol").value / 100), ctx.currentTime, 0.05); // 回復關機前音量
       setPower(true);
-      hint.classList.add("on"); // [R3 K-29] 儀式只存在開機閘一處;POWER 就地回應，不接管視窗
+      // [R3 K-29] 儀式只存在開機閘一處;POWER 就地回應——右下提示依使用者裁定刪除(pad 圖例已在現場)
       powerOnSound(); kick();
     } else {
       if (padVoice){ padVoice.stop(); padVoice = null; padOn = false; }
       padToggle.setAttribute("aria-pressed", "false"); // 批判 F7:關機後殘留 true
       setPower(false);
-      hint.classList.remove("on");
       // [R3 K-04] 關機不咔嗒：零驚嚇是對稱的——先 150ms 淡出，靜了再 suspend(原本 suspend() 硬切)
       if (ctx){
         master.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
@@ -911,8 +906,6 @@ button.cta:hover{filter:brightness(1.06)}
       reverb.gain.setTargetAtTime(0.08 + y * 0.3, ctx.currentTime, 0.05);              // Y=遠(殘響比升)
     }
   });
-
-  $("hintClose").addEventListener("click", () => hint.classList.remove("on"));
 
   // 置中跳轉(使用者回饋 2026-08-16):index 鍵把「內容」帶到畫面中央,而非把
   // 區塊頂(含 30vh 留白)貼到視窗頂、內容擠在下緣。內容比視窗矮=置中;
@@ -1051,9 +1044,9 @@ button.cta:hover{filter:brightness(1.06)}
     }
     if (gate.contains(document.activeElement)) focusPower(); // [R3 K-09] 焦點歸還對應控制
   }
-  function focusPower(){ // 歸還目標在收合列內時先展開,否則焦點落在畫面外(批判 F2)
+  function focusPower(){ // 收合時聚焦「可見的把手」而非展開整列——預設收起是裁定,過閘不得偷偷展開(回饋2)
     const nav = document.querySelector(".transport");
-    if (nav.classList.contains("collapsed")) $("navFold").click();
+    if (nav.classList.contains("collapsed")) { $("navFold").focus({ preventScroll: true }); return; }
     powerBtn.focus({ preventScroll: true });
   }
   function runGate(){
