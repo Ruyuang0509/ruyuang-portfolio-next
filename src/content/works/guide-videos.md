@@ -11,12 +11,15 @@ aiDisclosure: 本作無生成式 AI 參與；後製為傳統 NLE 流程（三軌
 evidence:
   - { label: CERT, value: 教育部青年發展署結業證書 臺教青署學字第1142315380號 }
   - { label: MASTER, value: 三軌 NLE 輸出母檔 · 合計 9 分 29 秒 }
+  - { label: VIDEO, value: "潭墘 youtu.be/U-fnCh9uB4c · 糖廠（上）youtu.be/Ed3SVK1_a74 · 糖廠（下）youtu.be/oPMs9QRtgkI · 蒜頭老街 youtu.be/iH0MUey2GcY（2026-08-16 公開）" }
   - { label: PERIOD, value: 2025 年 7–11 月（證書載明） }
 thirdParty: false
 obligations: ["no-monetization"]
 ---
 
 二〇二五年下半年，在教育部青年壯遊見習期間走進嘉義的地方現場：潭墘、糖廠、蒜頭老街。四部影片各約兩分鐘，合計 9 分 29 秒，是完成片而非素材——分鏡、外拍、剪輯，到後製的音量調校、壓縮與跨裝置播放驗證。
+
+四部全片已公開上架：[潭墘](https://youtu.be/U-fnCh9uB4c)、[糖廠（上）](https://youtu.be/Ed3SVK1_a74)、[糖廠（下）](https://youtu.be/oPMs9QRtgkI)、[蒜頭老街](https://youtu.be/iH0MUey2GcY)。
 
 聲音上做的是後製訊號處理：音量一致性、壓縮比、字幕呈現與多裝置播放測試。這是聲音工作的工程面——不是創作宣稱，是可以被檢查的執行紀律。
 
