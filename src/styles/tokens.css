@@ -67,31 +67,32 @@
  * 按鈕(accent-ink on accent)上爆低對比,且要到 K-31 才發作。 */
 :root[data-room="paper"]{
   color-scheme:light;
-  --color-paper:#f7f5f1;
-  --color-paper-2:#efece7;
-  --color-paper-3:#e4e1da;
-  --color-ink:#211c16;
-  --color-ink-2:#423c35;
-  --color-muted:#68625b;
-  --color-rule:#bbb7af;
-  --color-rule-2:#dad7d2;
+  --color-paper:#eeebe5;
+  --color-paper-2:#e5e1d9;
+  --color-paper-3:#d9d5cd;
+  --color-ink:#1e1a13;
+  --color-ink-2:#3f3a33;
+  --color-muted:#5d5750;
+  --color-rule:#afaaa1;
+  --color-rule-2:#cbc7c0;
   --color-accent:#905100;
-  --color-accent-ink:#faf8f5;
+  --color-accent-ink:#f7f5f1;
   --color-focus:#894c06;
   --color-signal:#b00a1d;
 }
 @supports (color: oklch(0% 0 0)) {
   :root[data-room="paper"]{
-    --color-paper:oklch(97% 0.006 85);
-    --color-paper-2:oklch(94.5% 0.008 85);
-    --color-paper-3:oklch(91% 0.010 85);
-    --color-ink:oklch(23% 0.014 75);
-    --color-ink-2:oklch(36% 0.014 75);
-    --color-muted:oklch(50% 0.014 75);
-    --color-rule:oklch(78% 0.012 80);
-    --color-rule-2:oklch(88% 0.008 80);
+    /* 2026-08-16 使用者:純白刺眼 → 降為暖米紙階(97%→94%),全 ramp 隨動、muted 加深保 AA */
+    --color-paper:oklch(94% 0.009 85);
+    --color-paper-2:oklch(91% 0.011 85);
+    --color-paper-3:oklch(87.5% 0.012 85);
+    --color-ink:oklch(22% 0.014 75);
+    --color-ink-2:oklch(35% 0.014 75);
+    --color-muted:oklch(46% 0.014 75);
+    --color-rule:oklch(74% 0.014 80);
+    --color-rule-2:oklch(83% 0.010 80);
     --color-accent:oklch(50% 0.115 62);
-    --color-accent-ink:oklch(98% 0.004 85);
+    --color-accent-ink:oklch(97% 0.005 85);
     --color-focus:oklch(48% 0.11 60);
     --color-signal:oklch(48% 0.19 25);
   }

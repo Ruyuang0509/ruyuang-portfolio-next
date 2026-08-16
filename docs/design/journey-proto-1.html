@@ -269,7 +269,7 @@ button.cta:hover{filter:brightness(1.06)}
 }
 
 /* ---------- 開機閘(載入儀式:Bruno 式「按下開始」;JS+動效才存在，可跳過、捲動即離開) ---------- */
-.gate{position:fixed;inset:0;z-index:70;background:oklch(5% 0.005 75);display:grid;place-items:center;
+.gate{position:fixed;inset:0;z-index:70;background:transparent;display:grid;place-items:center;
   opacity:0;transition:opacity .7s var(--ease-out)}
 .gate[hidden]{display:none} /* 修:author display 會蓋過 hidden 的 UA 規則，透明閘曾吃掉全頁點擊 */
 .gate:not(.on){pointer-events:none}
@@ -288,9 +288,20 @@ button.cta:hover{filter:brightness(1.06)}
 .gate-skip{position:absolute;right:var(--space-md);bottom:var(--space-md);background:none;border:0;cursor:pointer;
   font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
 .gate-skip:hover{color:var(--color-ink)}
-.gate-ear{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);margin:0}
+.gate-ear{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-ink-2);margin:0;display:flex;align-items:center;gap:7px;justify-content:center}
 /* 選擇後的離場:閘體上飄淡出,光點以 FLIP 飛入 hook(Bruno 式銜接;bail 路徑維持簡單淡出) */
-.gate.lift{opacity:0;pointer-events:none;transition:opacity .8s var(--ease-out)} /* 升場中不得攔截點擊(透明閘吃點擊的同類回歸,批判抓到) */
+/* 幕啟(使用者:轉場再盛大——開場獲第二個華麗預算,與謝幕並列):
+   閘底改為上下兩片布幕,選擇後向兩側拉開露出頁面;core 同步上飄。bail 路徑整體淡出不變 */
+.gate-curtain{position:absolute;left:0;right:0;height:50.5%;background:oklch(5% 0.005 75)}
+.gc-top{top:0}
+.gc-bottom{bottom:0}
+.gate.lift{pointer-events:none}
+.gate.lift .gc-top{transform:translateY(-101%)}
+.gate.lift .gc-bottom{transform:translateY(101%)}
+@media (prefers-reduced-motion: no-preference){
+  .gate-curtain{transition:transform .95s var(--ease-out)}
+}
+.ear-ic{flex:none;vertical-align:-2px} /* 升場中不得攔截點擊(透明閘吃點擊的同類回歸,批判抓到) */
 .gate.lift .gate-core{transform:translateY(-46px);opacity:0;transition:transform .8s var(--ease-out),opacity .55s linear}
 .gate-core{transition:transform .8s var(--ease-out),opacity .55s linear}
 </style>
@@ -309,11 +320,13 @@ button.cta:hover{filter:brightness(1.06)}
 
 <!-- 開機閘：載入儀式(JS+動效才啟用；跳過/Esc/直接捲動皆可離開，基態永不被擋) -->
 <div class="gate" id="gate" role="dialog" aria-label="開機序列" tabindex="-1" hidden>
+  <div class="gate-curtain gc-top" aria-hidden="true"></div>
+  <div class="gate-curtain gc-bottom" aria-hidden="true"></div>
   <div class="gate-core">
     <span class="dot" aria-hidden="true"></span>
     <pre class="gate-lines" id="gateLines" aria-hidden="true"></pre>
     <div class="gate-meter" aria-hidden="true"><i id="gateFill"></i></div>
-    <p class="gate-ear">戴上耳機，聲音的方位與遠近會更清楚</p><!-- 回饋5 -->
+    <p class="gate-ear"><svg class="ear-ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 14a8 8 0 0 1 16 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="3" y="13.5" width="4.4" height="7" rx="1.8" fill="currentColor"/><rect x="16.6" y="13.5" width="4.4" height="7" rx="1.8" fill="currentColor"/></svg>戴上耳機，聲音的方位與遠近會更清楚</p><!-- 回饋5+圖樣 -->
     <div class="gate-choice" id="gateChoice">
       <button class="cta" id="gateFull">▶ 開機・完整體驗(含聲音)</button>
       <button class="ghost" id="gateLite">安靜地往下讀</button>
@@ -672,9 +685,9 @@ button.cta:hover{filter:brightness(1.06)}
            easing:"cubic-bezier(.22,1,.36,1)", fill:"both" }).onfinish = () => sp.remove();
     }
   }
-  function glowSurge(){ // 未開機的光湧:手動推 --glow 再放掉。開機時不走這裡——
+  function glowSurge(dur){ // 未開機的光湧:手動推 --glow 再放掉。開機時不走這裡——
     // 和弦經 analyser 驅動同一組光,才是「同源」;兩套並跑=假動作(R2 同源法)
-    const t0 = performance.now(), dur = 5000; // 與開機路徑的 7s 和弦衰減同級:未開機者也拿得到「長衰減入靜默」
+    dur = dur || 5000; // 謝幕=5s(長衰減入靜默);開場落地=1.6s(短亮一下,預告有光)
     (function step(now){
       const p = Math.min(1, (now - t0) / dur);
       const v = p < .13 ? p / .13 : Math.pow(1 - (p - .13) / .87, 2.5); // 峰後指數型衰減,非線性掐斷
@@ -942,13 +955,34 @@ button.cta:hover{filter:brightness(1.06)}
       { transform: "translate(0,0) scale(1)" },
       { transform: "translate(" + (b.left - a.left) + "px," + (b.top - a.top) + "px) scale(" + (b.width / a.width) + ")" }
     ], { duration: 680, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" });
-    const onScroll = () => { anim.cancel(); c.remove(); restore(); }; // 飛行中捲動=目標座標過期,中止不硬著陸
+    // 火花尾跡:訊號劃過黑場(沿 clone 即時位置生成,結束自清)
+    const trail = setInterval(() => {
+      const r = c.getBoundingClientRect();
+      const sp = document.createElement("span");
+      sp.className = "dot";
+      sp.style.cssText = "position:fixed;left:" + r.left + "px;top:" + r.top + "px;width:4px;height:4px;z-index:70;margin:0;pointer-events:none;box-shadow:none";
+      document.body.appendChild(sp);
+      sp.animate([{ opacity: .8, transform: "scale(1)" }, { opacity: 0, transform: "scale(.3)" }],
+        { duration: 480, easing: "ease-out" }).onfinish = () => sp.remove();
+    }, 70);
+    const onScroll = () => { clearInterval(trail); anim.cancel(); c.remove(); restore(); }; // 目標座標過期,中止不硬著陸
     addEventListener("scroll", onScroll, { once: true, passive: true });
     anim.onfinish = () => {
       removeEventListener("scroll", onScroll);
+      clearInterval(trail);
       c.remove(); restore();
-      hd.animate([{ transform: "scale(1)" }, { transform: "scale(1.45)" }, { transform: "scale(1)" }],
-        { duration: 520, easing: "ease-out" });
+      // 落地:光點脈衝+擴散環+訊號線點亮(開機時由 powerOnSound 經 analyser 點亮=同源;安靜路徑手動短湧)
+      hd.animate([{ transform: "scale(1)" }, { transform: "scale(1.6)" }, { transform: "scale(1)" }],
+        { duration: 560, easing: "ease-out" });
+      const hb = hd.getBoundingClientRect();
+      const ring = document.createElement("span");
+      ring.style.cssText = "position:fixed;left:" + (hb.left + hb.width / 2) + "px;top:" + (hb.top + hb.height / 2) + "px;width:10px;height:10px;border-radius:50%;border:1px solid var(--color-accent);transform:translate(-50%,-50%);z-index:69;pointer-events:none";
+      document.body.appendChild(ring);
+      ring.animate([
+        { opacity: .95, transform: "translate(-50%,-50%) scale(1)" },
+        { opacity: 0, transform: "translate(-50%,-50%) scale(14)" }
+      ], { duration: 850, easing: "cubic-bezier(.22,1,.36,1)" }).onfinish = () => ring.remove();
+      if (!powered) glowSurge(1600);
     };
   }
   function hookEntrance(){ // hook 內容依序浮起,接住飛來的光點
