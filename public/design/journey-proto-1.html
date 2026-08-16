@@ -316,6 +316,10 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
     background .18s var(--ease-out),border .18s var(--ease-out),opacity .25s linear}
 .sig-cursor.ring{width:26px;height:26px;margin:-13px 0 0 -13px;background:transparent;border:1.5px solid var(--color-accent)}
 .sig-cursor.hidden{opacity:0}
+.sig-trail{position:fixed;left:0;top:0;width:5px;height:5px;border-radius:50%;background:var(--color-accent);
+  pointer-events:none;z-index:71;margin:-2.5px 0 0 -2.5px}
+.sig-click{position:fixed;left:0;top:0;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;
+  border:1.5px solid var(--color-accent);pointer-events:none;z-index:71}
 .gate.lift{pointer-events:none}
 .gate.lift .gc-top{transform:translateY(-101%)}
 .gate.lift .gc-bottom{transform:translateY(101%)}
@@ -720,18 +724,31 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
       { opacity:1, boxShadow:"0 0 90px 30px color-mix(in oklab, var(--color-accent) 55%, transparent)", transform:"translate(-50%,-50%) scale(1)", offset:.35 },
       { opacity:0, boxShadow:"0 0 140px 10px transparent", transform:"translate(-50%,-50%) scale(1.6)" }
     ], { duration:2200, easing:"cubic-bezier(.22,1,.36,1)" }).onfinish = () => core.remove();
-    for (let i = 0; i < 42; i++){
+    // 數位訊號煙火(使用者令):物理=煙火(初速散開→頂點→垂降+殘餘橫移);
+    // 視覺=數位訊號(方形位元+短劃線,零圓角,步進式閃爍=取樣感)
+    for (let i = 0; i < 46; i++){
       const sp = document.createElement("span"); sp.className = "f-spark";
-      const ang = Math.random() * Math.PI * 2, dist = 60 + Math.random() * 260;
-      const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 40;
-      sp.style.width = sp.style.height = (2 + Math.random() * 4) + "px";
+      const dash = Math.random() < .38;
+      const w = dash ? 7 + Math.random() * 4 : 2 + Math.random() * 3;
+      sp.style.width = w + "px"; sp.style.height = (dash ? 2 : w) + "px";
+      sp.style.borderRadius = "0";
+      if (Math.random() < .25) sp.style.background = "var(--color-focus)";
+      const ang = Math.random() * Math.PI * 2;
+      const v = 70 + Math.random() * 190;
+      const ax = Math.cos(ang) * v, ay = Math.sin(ang) * v * .75 - 30;
+      const fall = 110 + Math.random() * 170, drift = ax * (.12 + Math.random() * .18);
+      const rot = Math.random() * 160 - 80;
+      const dur = 1500 + Math.random() * 800, dly = Math.random() * 220;
       stage.appendChild(sp);
       sp.animate([
-        { opacity:0, transform:"translate(-50%,-50%)" },
-        { opacity:.9, offset:.15 },
-        { opacity:0, transform:"translate(calc(-50% + " + dx + "px), calc(-50% + " + dy + "px))" }
-      ], { duration:1100 + Math.random() * 900, delay:Math.random() * 250,
-           easing:"cubic-bezier(.22,1,.36,1)", fill:"both" }).onfinish = () => sp.remove();
+        { transform: "translate(-50%,-50%) rotate(0deg)", easing: "cubic-bezier(.16,.84,.44,1)" },
+        { transform: "translate(calc(-50% + " + ax + "px), calc(-50% + " + ay + "px)) rotate(" + rot + "deg)", offset: .42, easing: "cubic-bezier(.55,.06,.68,.19)" },
+        { transform: "translate(calc(-50% + " + (ax + drift) + "px), calc(-50% + " + (ay + fall) + "px)) rotate(" + (rot * 1.6) + "deg)" }
+      ], { duration: dur, delay: dly, fill: "both" });
+      sp.animate([
+        { opacity: 0 }, { opacity: 1, offset: .08 }, { opacity: .35, offset: .5 },
+        { opacity: .85, offset: .64 }, { opacity: 0 }
+      ], { duration: dur, delay: dly, easing: "steps(5, jump-none)", fill: "both" }).onfinish = () => sp.remove();
     }
   }
   function glowSurge(dur){ // 未開機的光湧:手動推 --glow 再放掉。開機時不走這裡——
@@ -1029,10 +1046,22 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
   // ---- 訊號游標(K-62):附著/跟隨/讓位/脫離 ----
   const FINE = matchMedia("(pointer: fine)").matches;
   let sig = null, sigOn = false, sigX = 0, sigY = 0, tX = 0, tY = 0, sigRaf = null, ptrSeen = false;
+  let trailTick = 0;
   function sigLoop(){
     if (!sigOn || !sig) return; // 脫離瞬間仍有一幀已排入佇列(實測抓到的競態)
+    const px = sigX, py = sigY;
     sigX += (tX - sigX) * .2; sigY += (tY - sigY) * .2;
     sig.style.transform = "translate(" + sigX + "px," + sigY + "px)";
+    // 拖尾(回饋2):速度感應的彗尾——靜止無痕,快移才留殘點;與開場飛行尾跡同語彙
+    if (Math.hypot(sigX - px, sigY - py) > 5 && (++trailTick & 1) === 0 && !sig.classList.contains("hidden")){
+      const t = document.createElement("span");
+      t.className = "sig-trail";
+      document.body.appendChild(t);
+      t.animate([
+        { transform: "translate(" + sigX + "px," + sigY + "px) scale(1)", opacity: .5 },
+        { transform: "translate(" + sigX + "px," + sigY + "px) scale(.25)", opacity: 0 }
+      ], { duration: 380, easing: "ease-out", fill: "both" }).onfinish = () => t.remove();
+    }
     sigRaf = sigOn ? requestAnimationFrame(sigLoop) : null;
   }
   function attachSignal(x, y){
@@ -1063,6 +1092,17 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
     sig.classList.toggle("hidden", overPad); // 板上讓位:板內光點=訊號上了儀器
     sig.classList.toggle("ring", !overPad && !!(t && t.closest && t.closest("a,button,input,select,textarea")));
   }, { passive: true });
+  addEventListener("pointerdown", (e) => { // 左鍵回饋(回饋4):游標短促減光+觸發環盪開——儀器的「按下」感
+    if (!sigOn || !sig || sig.classList.contains("hidden")) return;
+    sig.animate([{ opacity: 1 }, { opacity: .3 }, { opacity: 1 }], { duration: 170, easing: "ease-out" });
+    const ring = document.createElement("span");
+    ring.className = "sig-click";
+    document.body.appendChild(ring);
+    ring.animate([
+      { transform: "translate(" + e.clientX + "px," + e.clientY + "px) scale(.4)", opacity: .9 },
+      { transform: "translate(" + e.clientX + "px," + e.clientY + "px) scale(3.4)", opacity: 0 }
+    ], { duration: 400, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" }).onfinish = () => ring.remove();
+  });
   document.documentElement.addEventListener("mouseleave", () => { if (sig) sig.classList.add("hidden"); });
   document.documentElement.addEventListener("mouseenter", () => { if (sig) sig.classList.remove("hidden"); });
   function ensureSignal(){ // 回饋2:bail、入站秒滾、深處重整——訊號都要吸附上手;唯「已送出」不回頭

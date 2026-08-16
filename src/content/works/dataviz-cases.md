@@ -3,7 +3,7 @@ title: 資料視覺化實際案例與數位學習應用探討
 kind: data
 tier: rack
 year: "2026"
-tags: [資料視覺化, 數位學習, 解說影片]
+tags: [資料視覺化， 數位學習， 解說影片]
 summary: 以 Spotify Wrapped 為主要案例的動態簡報與解說影片——資料視覺化如何在數位學習情境裡降低理解成本。
 role: 個人獨立完成：案例研究、動態簡報(Canva)、影片錄製(OBS)與解說。
 aiDisclosure: 生成式 AI(Gemini/ChatGPT)用於前期資料收集與頭腦風暴階段的創意發想；案例判斷、論述架構、動態簡報與解說影片皆本人完成。

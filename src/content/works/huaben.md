@@ -3,7 +3,7 @@ title: 短劇《畫本》
 kind: film
 tier: rack
 year: "2024"
-tags: [短劇, 攝影, 剪輯]
+tags: [短劇， 攝影， 剪輯]
 summary: 第 15 屆「感動久久」參賽短劇——故事構思、攝影、剪輯一手完成，Samsung S24U 拍攝、DaVinci Resolve 後製。
 role: 故事構思、攝影、剪輯皆本人。
 aiDisclosure: 本作無生成式 AI 參與。

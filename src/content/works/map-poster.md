@@ -3,16 +3,16 @@ title: 壯遊地圖與雙語海報
 kind: graphic
 tier: rack
 year: "2025"
-tags: [製圖, 視覺設計, 見習]
+tags: [製圖， 視覺設計， 見習]
 summary: 地方文化見習期間的製圖與視覺輸出——AI 輔助合成 × 製圖與美術指導，從單一母檔輸出多種規格。
-role: 見習產出(雙人同梯脈絡):製圖、版面構成、標籤系統與多規格輸出由本人負責。
+role: 見習產出(雙人同梯脈絡)：製圖、版面構成、標籤系統與多規格輸出由本人負責。
 aiDisclosure: 建物與圖示由 ChatGPT 生成、去背工具處理；道路、河道與引線為描圖繪製；版面構成、標籤系統與輸出紀律由本人設計。正確定位是「AI 輔助合成 × 製圖與美術指導」。
 evidence:
   - { label: SYSTEM, value: 單一 A4 母檔 → 三種輸出規格 }
   - { label: ITERATION, value: 海報三配色迭代序列留存 }
 thirdParty: false
 obligations: [no-monetization]
-restricted: [原始 .clip 檔與中間版不公開, 圖檔本體待去識別化清洗後方可上站]
+restricted: [原始 .clip 檔與中間版不公開， 圖檔本體待去識別化清洗後方可上站]
 detail: true
 ---
 

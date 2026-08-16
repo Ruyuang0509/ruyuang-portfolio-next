@@ -3,7 +3,7 @@ title: 線上學習互動行為之資料視覺化分析
 kind: data
 tier: rack
 year: "2026"
-tags: [Power BI, 資料倫理, 自我稽核]
+tags: [Power BI, 資料倫理， 自我稽核]
 summary: Power BI 儀表板呈現線上學習互動紀錄——含一次公開的自我稽核與結論撤回，資料倫理紅線全程在崗。
 role: 原為小組專題形式，選擇以一人一組完成：資料清理、儀表板建置、分析與稽核皆本人。
 aiDisclosure: 本作無生成式 AI 參與紀錄；分析與儀表板建置由本人完成。
@@ -12,7 +12,7 @@ evidence:
   - { label: ETHICS, value: 原始資料與完整操作影片不公開(再識別風險) }
 thirdParty: false
 obligations: [no-monetization]
-restricted: [原始 Excel/CSV/PBIX 永不公開, 完整操作影片不上公開網站, 截圖不得顯示可辨識學習者代碼]
+restricted: [原始 Excel/CSV/PBIX 永不公開， 完整操作影片不上公開網站， 截圖不得顯示可辨識學習者代碼]
 detail: true
 ---
 

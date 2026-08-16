@@ -6,7 +6,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 <footer class="outbus">
   <div class="inner">
     <div class="panel-body">
-      <p class="statement">「先讓路途平坦,<br />再思考如何裝飾風景。」</p>
+      {!subpage && <p class="statement">「先讓路途平坦,<br />再思考如何裝飾風景。」</p>}<!-- 回饋:內頁頁尾不掛 slogan -->
       <!-- 原本是純裝飾卻長著推桿的臉(使用者回饋:誤導有互動)——改成真控制:訊號送出後,回到源頭 -->
       <button class="busline" type="button" data-bus-top aria-label="回到頁面頂端">
         <span>OUTPUT BUS</span><span class="rail" aria-hidden="true"></span><span>RETURN ↑</span>

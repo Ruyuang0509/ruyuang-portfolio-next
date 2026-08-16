@@ -10,14 +10,14 @@ aiDisclosure: 第二代開發採 AI 協作工作流；設計方向、逐項裁�
 evidence:
   - { label: GEN-1, value: "蕭智仁|聲響、互動與數位學習作品集 · ruyuang0509.github.io/ruyuang-portfolio(線上)" }
   - { label: GEN-2, value: "訊號的旅程 · 本站(repo ruyuang-portfolio-next,git 歷史公開)" }
-  - { label: GATES, value: "七道發布檢查:paths / media / wording / motion / approval / obligations / csspunct" }
+  - { label: GATES, value: "七道發布檢查：paths / media / wording / motion / approval / obligations / csspunct" }
 thirdParty: false
 detail: true
 ---
 
 這份檔案記的不是一件作品，是這個網站自己——它走過兩代。
 
-第一代先把門打開：一個聲響、互動與數位學習的作品集，上線佔住正式網址，讓「作品要附證據」從想法變成頁面慣例。它現在仍在線上,[原樣保存](https://ruyuang0509.github.io/ruyuang-portfolio/)。
+第一代先把門打開：一個聲響、互動與數位學習的作品集，上線佔住正式網址，讓「作品要附證據」從想法變成頁面慣例。它現在仍在線上，[原樣保存](https://ruyuang0509.github.io/ruyuang-portfolio/)。
 
 第二代不是換皮。重製由研究驅動——繁體中文排版、無障礙、聽力安全、交付合規，逐項查證後才落成設計；發布前有七道機器檢查把關，措辭、授權義務、媒體與路徑一項一項擋。機器守規則，核准永遠是人。
 
