@@ -17,3 +17,14 @@
 @media (max-width:720px){
   .dossier-grid{grid-template-columns:minmax(0,1fr)}
 }
+
+/* 開燈過渡(使用者:切換突兀+割裂感)——從暗房走進紙房,燈是慢慢亮起來的;
+   內容隨後浮起。reduced-motion 直接可讀。 */
+@media (prefers-reduced-motion: no-preference){
+  :root[data-room="paper"]{animation:paper-lamp .85s cubic-bezier(.22,1,.36,1) both}
+  [data-room="paper"] .dossier{animation:d-rise .6s .2s cubic-bezier(.22,1,.36,1) both}
+}
+@keyframes paper-lamp{from{background-color:#0b0906}to{background-color:var(--color-paper)}}
+@keyframes d-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* 銘牌是儀器的一部分,跨房間維持暗色——兩個房間的共同 DNA(割裂感的橋;刻意的跨房常數,非漏改) */
+[data-room="paper"] .plate{background:#171008;color:#f2a635;border-color:#3a2c12}

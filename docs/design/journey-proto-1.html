@@ -164,6 +164,7 @@ button.cta:hover{filter:brightness(1.06)}
   border:1px solid var(--color-rule-2);border-radius:3px;color:var(--color-muted);font-family:var(--font-mono);
   font-size:10px;padding:2px 7px;cursor:pointer}
 .tfold:hover{color:var(--color-ink)}
+.nav-hotzone{position:fixed;top:0;left:0;right:0;height:14px;z-index:46} /* 頂端感應帶:hover 展開導覽列 */
 
 /* ---------- beat 4 cinema(劇場黑聚焦：從黑開始的專注) ---------- */
 #cinema{background:linear-gradient(oklch(8% 0.006 75),oklch(6% 0.005 75) 30%,oklch(8% 0.006 75))}
@@ -312,12 +313,13 @@ button.cta:hover{filter:brightness(1.06)}
 </head>
 <body>
 
-<nav class="transport" id="transportNav" aria-label="站點跳轉(隨時可離隊)">
+<nav class="transport collapsed" id="transportNav" aria-label="站點跳轉(隨時可離隊)">
   <a href="#hook">開場</a><a href="#identity">身分</a><a href="#station">互動站</a><a href="#cinema">影院站</a><a href="#field">田野站</a><a href="#ctrl">控制室</a><a href="#master">OUT</a><a href="#exit">出口</a><!-- 回饋4:站點名稱;作品名歸 beat2 站內地圖 -->
   <button class="tpwr" id="powerBtn" aria-pressed="false" aria-label="開機——完整體驗(含聲音)">▶ PWR</button>
   <label class="tvol">VOL <input type="range" id="masterVol" min="0" max="100" value="60" disabled aria-label="全站音量" /></label>
 </nav>
-<button class="tfold" id="navFold" aria-expanded="true" aria-controls="transportNav" aria-label="收合導覽列">▴</button>
+<button class="tfold" id="navFold" aria-expanded="false" aria-controls="transportNav" aria-label="展開導覽列">▾</button>
+<div class="nav-hotzone" aria-hidden="true"></div><!-- 滑鼠移頂自動展開(回饋3) -->
 
 <div class="filament" aria-hidden="true"></div>
 <div class="line-rail" aria-hidden="true"><div class="line-breath"></div><div class="line-glow" id="lineGlow"></div></div>
@@ -335,8 +337,8 @@ button.cta:hover{filter:brightness(1.06)}
       <button class="cta" id="gateFull">▶ 開機・完整體驗(含聲音)</button>
       <button class="ghost" id="gateLite">安靜地往下讀</button>
     </div>
-    <button class="gate-skip" id="gateSkip">跳過 esc</button>
   </div>
+  <button class="gate-skip" id="gateSkip">跳過 esc</button><!-- 錨定 .gate 角落;放 core 內會跟著 core 入棧改錨點(使用者回報的擠壓) -->
 </div>
 
 <!-- BEAT 1 · HOOK — base state is fully readable; 完整體驗 is an invitation, never a gate -->
@@ -780,20 +782,26 @@ button.cta:hover{filter:brightness(1.06)}
     padToggle.disabled = !on;
     $("masterVol").disabled = !on; // 音量控制常駐外露(d015)
     padToggle.textContent = on ? (padOn ? "■ 靜音" : "▶ 發聲") : "▶ 發聲(上方 PWR 開機)";
-    modeNote.textContent = on ? "聲音開了。右上角可調音量" + String.fromCharCode(0xFF0C) + "或按 PWR 關機。"
+    modeNote.textContent = on ? "聲音開了。滑到頁面頂端展開控制列" + String.fromCharCode(0xFF0C) + "可調音量或關機。"
                               : "現在是安靜閱讀——內容一樣完整。";
     const hb = $("haasBtn"); hb.disabled = !on; hb.textContent = on ? "▶ 播放一次" : "▶ 播放(上方 PWR 開機)";
     document.documentElement.classList.toggle("enhanced", on && !reduceMotion);
   }
 
-  // 導覽列收放(回饋4)
+  // 導覽列:預設收起,滑鼠移頂自動展開、離開自動收回;把手鈕=鍵盤/觸控的後備(回饋:按鈕切換→感應)
   {
     const nav = document.querySelector(".transport"), fold = $("navFold");
-    fold.addEventListener("click", () => {
-      const c = nav.classList.toggle("collapsed");
-      fold.setAttribute("aria-expanded", String(!c));
-      fold.textContent = c ? "▾" : "▴";
-      fold.setAttribute("aria-label", c ? "展開導覽列" : "收合導覽列");
+    const setNav = (open) => {
+      nav.classList.toggle("collapsed", !open);
+      fold.setAttribute("aria-expanded", String(open));
+      fold.textContent = open ? "▴" : "▾";
+      fold.setAttribute("aria-label", open ? "收合導覽列" : "展開導覽列");
+    };
+    fold.addEventListener("click", () => setNav(nav.classList.contains("collapsed")));
+    document.querySelector(".nav-hotzone").addEventListener("mouseenter", () => setNav(true));
+    nav.addEventListener("mouseleave", (e) => {
+      if (e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".tfold,.nav-hotzone")) return;
+      setNav(false);
     });
   }
 

@@ -60,9 +60,13 @@
 .outbus{border-top:var(--rule-1);margin-top:var(--space-xl)}
 .outbus .panel-body{display:flex;flex-direction:column;gap:var(--space-lg)}
 .statement{font-family:var(--font-display);font-weight:700;font-size:clamp(1.2rem,2.6vw,1.7rem);line-height:1.6;max-width:26ch}
-.busline{display:flex;align-items:center;gap:var(--space-md);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
+.busline{display:flex;align-items:center;gap:var(--space-md);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);
+  width:100%;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.busline:hover{color:var(--color-ink)}
 .busline .rail{flex:1;height:1px;background:var(--color-rule);position:relative}
-.busline .rail::after{content:"";position:absolute;left:72%;top:-4px;width:9px;height:9px;background:var(--color-ink-2);border-radius:2px}
+.busline .rail::after{content:"";position:absolute;left:72%;top:-4px;width:9px;height:9px;background:var(--color-ink-2);border-radius:2px;transition:left .45s var(--ease-out),background var(--dur-1) var(--ease-out)}
+.busline:hover .rail::after{background:var(--color-accent);left:2%} /* 推桿歸零=回到源頭的預告 */
+a.wordmark{color:inherit;text-decoration:none}
 .foot-row{display:flex;flex-wrap:wrap;gap:var(--space-md) var(--space-lg);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted)}
 .foot-row a{color:var(--color-ink-2);white-space:nowrap}
 .foot-row a:hover{color:var(--color-ink)}

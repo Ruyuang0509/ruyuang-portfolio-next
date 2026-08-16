@@ -1,7 +1,19 @@
+---
+// subpage 模式(dossier/research 內頁):錨點連回首頁區塊、wordmark 變回家連結、
+// POWER 不渲染——內頁沒有音訊引擎,一顆按不出聲音的電源鍵=誤導(使用者回饋;K-36 不維護第二引擎)
+const { subpage = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const h = (hash: string) => (subpage ? `${base}/${hash}` : hash);
+---
+
 <nav class="transport" aria-label="主導覽">
-  <span class="wordmark"><b>●</b> 如願 RUYUAN</span>
-  <div class="t-links"><a href="#console">訊號路徑</a><a href="#rack">機櫃</a><a href="#ctrl">控制室</a><a href="#prov">佐證</a></div>
-  <button class="pw" data-power aria-pressed="false" title="全站聲音總開關(預設關閉)">
-    <span class="led" aria-hidden="true"></span> <span class="pw-label">POWER</span>
-  </button>
+  {subpage
+    ? <a class="wordmark" href={`${base}/`}><b>●</b> 如願 RUYUAN</a>
+    : <span class="wordmark"><b>●</b> 如願 RUYUAN</span>}
+  <div class="t-links"><a href={h("#console")}>訊號路徑</a><a href={h("#rack")}>機櫃</a><a href={h("#ctrl")}>控制室</a><a href={h("#prov")}>佐證</a></div>
+  {!subpage && (
+    <button class="pw" data-power aria-pressed="false" title="全站聲音總開關(預設關閉)">
+      <span class="led" aria-hidden="true"></span> <span class="pw-label">POWER</span>
+    </button>
+  )}
 </nav>
