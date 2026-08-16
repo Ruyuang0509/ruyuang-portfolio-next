@@ -301,6 +301,16 @@ button.cta:hover{filter:brightness(1.06)}
    core 必須自己入棧,否則按鈕被幕蓋住、指標點不到(使用者實測回報;合成 click 繞過命中測試所以自動驗證漏抓) */
 .gate-core{position:relative;z-index:1}
 .gate-skip{z-index:1}
+/* 訊號游標(K-62,使用者設計思路):開場那顆訊號變成你的游標,走完旅程,謝幕時脫離參演。
+   僅 pointer:fine+非低敏;cursor:none 只在 JS 活著且附著時掛上,脫離即還原生游標 */
+html.signal-cursor, html.signal-cursor *{cursor:none !important}
+.sig-cursor{position:fixed;left:0;top:0;width:10px;height:10px;border-radius:50%;background:var(--color-accent);
+  pointer-events:none;z-index:72;margin:-5px 0 0 -5px;
+  box-shadow:0 0 calc(6px + var(--glow) * 30px) calc(1px + var(--glow) * 6px) color-mix(in oklab,var(--color-accent) 60%,transparent);
+  transition:width .18s var(--ease-out),height .18s var(--ease-out),margin .18s var(--ease-out),
+    background .18s var(--ease-out),border .18s var(--ease-out),opacity .25s linear}
+.sig-cursor.ring{width:26px;height:26px;margin:-13px 0 0 -13px;background:transparent;border:1.5px solid var(--color-accent)}
+.sig-cursor.hidden{opacity:0}
 .gate.lift{pointer-events:none}
 .gate.lift .gc-top{transform:translateY(-101%)}
 .gate.lift .gc-bottom{transform:translateY(101%)}
@@ -742,6 +752,17 @@ button.cta:hover{filter:brightness(1.06)}
       if (powered && ctx){ finaleChord(); kick(); }
       return;
     }
+    // K-62 脫離:游標上的訊號飛入舞台,在主爆發的位置待場——爆發把它接走(核心綻放=你的訊號抵達)
+    const carried = detachSignal();
+    if (carried){
+      const fr = fin.getBoundingClientRect();
+      const destX = fr.left + fr.width / 2, destY = fr.top + fr.height * .44;
+      carried.el.animate([
+        { transform: "translate(" + carried.x + "px," + carried.y + "px) scale(1)" },
+        { transform: "translate(" + destX + "px," + destY + "px) scale(1.3)" }
+      ], { duration: 900, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" });
+      setTimeout(() => carried.el.remove(), 2200); // 主爆發同拍:core 在同一點綻放,訊號完成迴路
+    }
     lamps.forEach((l, i) => setTimeout(() => { l.classList.add("on"); ringPulse(l); }, 420 * i));
     setTimeout(() => { // 主爆發在末環(2160ms)收完之後——注意力單焦點,環不與爆發同臺
       burst(fin);
@@ -862,7 +883,8 @@ button.cta:hover{filter:brightness(1.06)}
     const fin = $("finale");
     fin.classList.remove("run");
     fin.querySelectorAll(".lamp").forEach((l) => l.classList.remove("on"));
-    const done = () => { if (!rewinding) return; rewinding = false; finaleDone = false; };
+    const done = () => { if (!rewinding) return; rewinding = false; finaleDone = false;
+      if (ptrSeen) attachSignal(tX, tY); }; // 再走一次:訊號回到你手上(僅 fine+非低敏,attach 內部把關)
     addEventListener("scrollend", done, { once: true });
     setTimeout(done, 2600); // Safari 無 scrollend 的後備
     scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
@@ -970,7 +992,45 @@ button.cta:hover{filter:brightness(1.06)}
   new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) runFinale(); }),
     { threshold: 1 }).observe(document.querySelector("#finale .lamps"));
 
-  // ---- 開機閘：載入儀式(Bruno 式「按下開始」)。跳過/Esc/直接捲動皆離開；讀數是真實就緒訊號 ----
+  // ---- 訊號游標(K-62):附著/跟隨/讓位/脫離 ----
+  const FINE = matchMedia("(pointer: fine)").matches;
+  let sig = null, sigOn = false, sigX = 0, sigY = 0, tX = 0, tY = 0, sigRaf = null, ptrSeen = false;
+  function sigLoop(){
+    if (!sigOn || !sig) return; // 脫離瞬間仍有一幀已排入佇列(實測抓到的競態)
+    sigX += (tX - sigX) * .2; sigY += (tY - sigY) * .2;
+    sig.style.transform = "translate(" + sigX + "px," + sigY + "px)";
+    sigRaf = sigOn ? requestAnimationFrame(sigLoop) : null;
+  }
+  function attachSignal(x, y){
+    if (!FINE || reduceMotion || sigOn) return;
+    sigOn = true;
+    sig = document.createElement("span");
+    sig.className = "sig-cursor";
+    sigX = x; sigY = y; tX = ptrSeen ? tX : x; tY = ptrSeen ? tY : y;
+    sig.style.transform = "translate(" + x + "px," + y + "px)";
+    document.body.appendChild(sig);
+    document.documentElement.classList.add("signal-cursor"); // 原生游標只在跟隨者活著時隱藏
+    sigRaf = requestAnimationFrame(sigLoop);
+  }
+  function detachSignal(){ // 取回跟隨者(還原生游標);回傳最後位置供謝幕演出接手
+    if (!sigOn) return null;
+    sigOn = false;
+    document.documentElement.classList.remove("signal-cursor");
+    const el = sig; sig = null;
+    return { el, x: sigX, y: sigY };
+  }
+  addEventListener("pointermove", (e) => {
+    tX = e.clientX; tY = e.clientY; ptrSeen = true;
+    if (!sig) return;
+    const t = e.target;
+    const overPad = !!(t && t.closest && t.closest(".xy-pad"));
+    sig.classList.toggle("hidden", overPad); // 板上讓位:板內光點=訊號上了儀器
+    sig.classList.toggle("ring", !overPad && !!(t && t.closest && t.closest("a,button,input,select,textarea")));
+  }, { passive: true });
+  document.documentElement.addEventListener("mouseleave", () => { if (sig) sig.classList.add("hidden"); });
+  document.documentElement.addEventListener("mouseenter", () => { if (sig) sig.classList.remove("hidden"); });
+
+  // ---- 開機閘:載入儀式(Bruno 式「按下開始」)。跳過/Esc/直接捲動皆離開;讀數是真實就緒訊號 ----
   const gate = $("gate");
   let gateDismissed = false;
   let gateY0 = null; // 首個 scroll 事件=瀏覽器位置還原的跳位,只做基準;之後偏移 >40 才是使用者要離開
@@ -985,9 +1045,12 @@ button.cta:hover{filter:brightness(1.06)}
     // (相位會烙進快照,±1.5px);目的地在飛行中先藏起來(否則兩顆 dot 同屏)
     gd.getAnimations().forEach((an) => an.cancel());
     gd.style.opacity = "0";
+    // K-62:有指標就飛向游標(訊號交到你手裡);無指標(鍵盤/觸控)退回原路=飛向 hook 光點
+    const toCursor = FINE && !reduceMotion && ptrSeen;
     hd.style.animation = "none";
-    const a = gd.getBoundingClientRect(), b = hd.getBoundingClientRect();
-    hd.style.opacity = "0";
+    const a = gd.getBoundingClientRect();
+    const b = toCursor ? { left: tX - 5, top: tY - 5, width: 10, height: 10 } : hd.getBoundingClientRect();
+    if (!toCursor) hd.style.opacity = "0";
     const c = document.createElement("span");
     c.className = "dot";
     c.style.cssText = "position:fixed;left:" + a.left + "px;top:" + a.top + "px;width:" + a.width + "px;height:" + a.height + "px;z-index:71;margin:0;pointer-events:none;transform-origin:top left";
@@ -1013,8 +1076,9 @@ button.cta:hover{filter:brightness(1.06)}
       removeEventListener("scroll", onScroll);
       clearInterval(trail);
       c.remove(); restore();
+      if (toCursor){ attachSignal(tX, tY); } // 訊號附著為游標——旅程從你手上開始
       // 落地:光點脈衝+擴散環+訊號線點亮(開機時由 powerOnSound 經 analyser 點亮=同源;安靜路徑手動短湧)
-      hd.animate([{ transform: "scale(1)" }, { transform: "scale(1.6)" }, { transform: "scale(1)" }],
+      if (!toCursor) hd.animate([{ transform: "scale(1)" }, { transform: "scale(1.6)" }, { transform: "scale(1)" }],
         { duration: 560, easing: "ease-out" });
       const hb = hd.getBoundingClientRect();
       const ring = document.createElement("span");
