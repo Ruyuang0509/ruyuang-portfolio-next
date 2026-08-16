@@ -221,7 +221,7 @@ button.cta:hover{filter:brightness(1.06)}
 #finale .lamp i{display:block;width:10px;height:10px;border-radius:50%;background:var(--color-rule);transition:background var(--dur-2) var(--ease-out),box-shadow var(--dur-2) var(--ease-out)}
 #finale .lamp.on i{background:var(--color-accent);box-shadow:0 0 22px 4px color-mix(in oklab,var(--color-accent) 55%,transparent)}
 #finale .lamp.on{color:var(--color-ink-2)}
-.colophon-quote{margin-top:var(--space-2xl);font-size:1.05rem;color:var(--color-ink-2);opacity:1;transition:opacity 1.8s var(--ease-out);text-align:center;margin-inline:auto;max-width:30ch}
+.colophon-quote{margin-top:var(--space-xl);font-size:1.05rem;color:var(--color-ink-2);opacity:1;transition:opacity 1.8s var(--ease-out);text-align:center;margin-inline:auto;white-space:nowrap} /* 16 全形字一行到底(375px 實寬 269px 放得下);30ch 上限曾逼斷句——ch 是半形字寬 */
 .js #finale:not(.run) .colophon-quote{opacity:0} /* JS 在場才候場;無 JS 全亮(d018)。演出前不得半亮劇透 */
 #finale.run .colophon-quote{opacity:1}
 
@@ -375,6 +375,7 @@ button.cta:hover{filter:brightness(1.06)}
       <a href="#cinema"><b>Hamlet Story MV</b><span>AI 協作影音實驗・權利鏈可查</span></a>
       <a href="#field"><b>田野導覽影片</b><span>四部外拍後製・9 分 29 秒</span></a>
       <a href="#ctrl"><b>控制室</b><span>方法與證據</span></a>
+      <a href="#gen"><b>作品集網站(兩代)</b><span>初代線上・二代重製</span></a>
       <a href="#master"><b>MASTER OUT</b><span>研究方向</span></a>
     </nav>
   </div>
@@ -473,7 +474,21 @@ button.cta:hover{filter:brightness(1.06)}
         <li><span class="led" aria-hidden="true"></span> check:csspunct — CSS 碼內全形標點</li>
       </ul>
       <p class="note">設計註記：這一站的殘響全站最低，回饋聲又乾又短。</p>
-      <p class="dossier-link">這套檢查，連同整個網站，原始碼都公開:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a>。站台本身走過兩代，每一步修正都留在 git 歷史裡——<a href="https://ruyuang0509.github.io/ruyuang-portfolio-next/work/portfolio-site/">兩代的作品檔案(dossier)→</a>。<!-- 甲-5 程式原始碼類目+回饋6 兩代經歷;完整版=K-35 把網站立為 dossier 條目 --></p>
+      <p class="dossier-link">這套檢查，連同整個網站，原始碼都公開:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a>。<!-- 甲-5 程式原始碼類目+回饋6 兩代經歷;完整版=K-35 把網站立為 dossier 條目 --></p>
+    </div>
+  </div>
+</section>
+
+<!-- BEAT 6.5 · GEN — 兩代機(使用者 2026-08-16 裁定:一代經驗價值高,獨立成站) -->
+<section class="beat" id="gen">
+  <div class="wrap beat-inner">
+    <p class="orient">BACKSTAGE · GEN —— 兩代機</p>
+    <div class="panel">
+      <span class="plate">SITE · TWO GENERATIONS</span>
+      <h2 style="font-weight:700;font-size:1.2rem">這台機器，自己也走過兩代</h2>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">第一代作品集仍在線上，原樣保存，佔守正式網址;你正在走的是第二代——由研究驅動重製，七道閘門把關，每一步修正都留在公開的 git 歷史裡。</p>
+      <p class="dossier-link">初代網站：<a href="https://ruyuang0509.github.io/ruyuang-portfolio/">聲響、互動與數位學習作品集 →</a></p>
+      <p class="dossier-link">深入這件作品：<a href="https://ruyuang0509.github.io/ruyuang-portfolio-next/work/portfolio-site/">兩代的作品檔案(dossier)→</a></p>
     </div>
   </div>
 </section>
