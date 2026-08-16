@@ -24,5 +24,9 @@ const stamped = html.replace(
   anchor + '\n<meta name="robots" content="noindex" /><!-- generated copy for preview-phone testing; source of truth: docs/design/ -->'
 );
 mkdirSync(dirname(out), { recursive: true });
-writeFileSync(out, stamped, "utf8");
+// docs/design/ references ../../public/media (repo-root dev server); the deployed copy at
+// /design/ must reach the same files at ../media (Astro copies public/* into the dist root).
+// User-reported: the Hamlet poster 404'd on the deployed prototype.
+const rewritten = stamped.replaceAll("../../public/", "../");
+writeFileSync(out, rewritten, "utf8");
 console.log("sync-proto: docs/design/journey-proto-1.html -> public/design/ (noindex injected)");

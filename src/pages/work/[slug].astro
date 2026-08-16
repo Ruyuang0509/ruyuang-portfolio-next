@@ -17,7 +17,7 @@ const { Content } = await render(work);
 const d = work.data;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 // 內頁「回到旅程」對應站點(K-35 遷移後改站內錨點)
-const beatMap: Record<string, string> = { "pd-crossmodal": "#station", "hamlet-story-mv": "#cinema", "guide-videos": "#field" };
+const beatMap: Record<string, string> = { "pd-crossmodal": "#station", "hamlet-story-mv": "#cinema", "guide-videos": "#field", "portfolio-site": "#ctrl" };
 const beat = beatMap[work.id] ?? "";
 // 開場款式依主題(回饋:DOSSIER 也上全屏開場,且各主題各異)
 const fxMap: Record<string, string> = { "pd-crossmodal": "xy", "hamlet-story-mv": "cinema", "guide-videos": "field" };
