@@ -19,6 +19,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 // 內頁「回到旅程」對應站點(K-35 遷移後改站內錨點)
 const beatMap: Record<string, string> = { "pd-crossmodal": "#station", "hamlet-story-mv": "#cinema", "guide-videos": "#field" };
 const beat = beatMap[work.id] ?? "";
+// 開場款式依主題(回饋:DOSSIER 也上全屏開場,且各主題各異)
+const fxMap: Record<string, string> = { "pd-crossmodal": "xy", "hamlet-story-mv": "cinema", "guide-videos": "field" };
+const fx = fxMap[work.id] ?? "stamp";
 ---
 
 <html lang="zh-Hant-TW" data-room="paper"><!-- K-27 證據紙房間:dossier 深讀=正極性。房間綁路由,非使用者偏好 -->
@@ -34,6 +37,11 @@ const beat = beatMap[work.id] ?? "";
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" />
   </head>
   <body>
+    <!-- 全屏開場(純 CSS:無 JS 也演完並消失;pointer-events:none 永不擋操作;reduced-motion 整層不演) -->
+    <div class="dfx" data-fx={fx} aria-hidden="true">
+      <span class="dfx-x"></span><span class="dfx-y"></span><span class="dfx-dot"></span>
+      <span class="dfx-tag">{(d.channel ?? d.kind.toUpperCase()) + " · DOSSIER"}</span>
+    </div>
     <div class="chassis">
       <TransportNav subpage beat={beat} />
       <div class="inner">

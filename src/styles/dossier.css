@@ -26,3 +26,30 @@
 }
 @keyframes paper-lamp{from{background-color:#070503}to{background-color:var(--color-paper)}} /* 從旅程的黑亮到閱讀室的暖褐:同一棟房子裡開了盞燈 */
 @keyframes d-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* 全屏開場・依主題三款(xy=十字軸掃描/cinema=letterbox 開幕/field=地平線展開/stamp=銘牌壓印)
+   純 CSS 時間軸,結尾 visibility:hidden;pointer-events:none 由始至終 */
+.dfx{position:fixed;inset:0;z-index:80;pointer-events:none;display:none}
+@media (prefers-reduced-motion: no-preference){
+  .dfx{display:block;background:#070503;animation:dfx-out .5s 1s var(--ease-out) forwards}
+  .dfx-tag{position:absolute;left:50%;top:50%;transform:translate(-50%,-58%);font-family:var(--font-mono);
+    font-size:var(--text-xs);letter-spacing:.22em;color:var(--color-accent);white-space:nowrap;
+    animation:dfx-tag .9s var(--ease-out) both}
+  .dfx[data-fx="cinema"]{background:transparent}
+  .dfx[data-fx="cinema"] .dfx-x{position:absolute;left:0;right:0;top:0;height:50.5%;background:#070503;animation:dfx-bar-t .85s .4s var(--ease-out) both}
+  .dfx[data-fx="cinema"] .dfx-y{position:absolute;left:0;right:0;bottom:0;height:50.5%;background:#070503;animation:dfx-bar-b .85s .4s var(--ease-out) both}
+  .dfx[data-fx="xy"] .dfx-x{position:absolute;left:0;right:0;top:50%;height:1px;background:var(--color-accent);transform:scaleX(0);animation:dfx-sx .7s .1s var(--ease-out) both}
+  .dfx[data-fx="xy"] .dfx-y{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--color-accent);transform:scaleY(0);animation:dfx-sy .7s .25s var(--ease-out) both}
+  .dfx[data-fx="xy"] .dfx-dot{position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:50%;background:var(--color-accent);transform:translate(-50%,-50%) scale(0);animation:dfx-pop .4s .62s var(--ease-out) both}
+  .dfx[data-fx="field"] .dfx-x{position:absolute;top:58%;left:50%;width:0;height:1px;background:var(--color-accent);animation:dfx-hz .8s .15s var(--ease-out) both}
+  .dfx[data-fx="field"]{animation-name:dfx-up;animation-delay:1s;animation-duration:.6s}
+}
+@keyframes dfx-out{to{opacity:0;visibility:hidden}}
+@keyframes dfx-up{to{opacity:0;transform:translateY(-4%);visibility:hidden}}
+@keyframes dfx-tag{0%{opacity:0;letter-spacing:.5em}60%{opacity:1}100%{opacity:1;letter-spacing:.22em}}
+@keyframes dfx-bar-t{to{transform:translateY(-101%)}}
+@keyframes dfx-bar-b{to{transform:translateY(101%)}}
+@keyframes dfx-sx{to{transform:scaleX(1)}}
+@keyframes dfx-sy{to{transform:scaleY(1)}}
+@keyframes dfx-pop{to{transform:translate(-50%,-50%) scale(1)}}
+@keyframes dfx-hz{to{left:8%;width:84%}}

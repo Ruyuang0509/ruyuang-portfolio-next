@@ -5,7 +5,11 @@
 
 *{box-sizing:border-box;margin:0}
 html,body{overflow-x:clip}
-html{background:var(--color-paper);color:var(--color-ink);font-family:var(--font-body);font-size:16px;line-height:1.75}
+html{background:var(--color-paper);color:var(--color-ink);font-family:var(--font-body);font-size:16px;line-height:1.75;
+  line-break:strict;text-autospace:normal;text-spacing-trim:trim-start; /* 繁中起手式(教育部避頭尾+CLREQ) */
+  word-break:keep-all;overflow-wrap:anywhere} /* 斷句=句讀對齊(與旅程層同法) */
+h1,h2,h3{text-wrap:balance}
+p{text-wrap:pretty}
 body{background-image:
   linear-gradient(var(--color-rule-2) 1px,transparent 1px),
   linear-gradient(90deg,var(--color-rule-2) 1px,transparent 1px);
