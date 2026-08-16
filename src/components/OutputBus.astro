@@ -14,7 +14,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
       <div class="foot-row">
         <a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">GITHUB</a>
         <a href={`${base}/research/`}>研究筆記</a>
-        <a href={subpage ? `${base}/design/journey-proto-1.html` : "#console"}>{subpage ? "回到旅程" : "回訊號路徑"}</a>
+        <a href={subpage ? `${base}/` : "#hook"}>{subpage ? "回到旅程" : "回開頭"}</a><!-- K-35:旅程即首頁 -->
         <span>© 2026 如願 · 本站無廣告、無付費牆、無聯盟收益</span>
       </div>
     </div>

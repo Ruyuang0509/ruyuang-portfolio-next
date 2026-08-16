@@ -1,28 +1,18 @@
 ---
-// subpage 模式(dossier/research 內頁):一切「回去」都指向旅程(現行主站=journey proto;
-// K-35 遷移後 journey 成為站內首頁,這裡改站內路徑)。R1 console 頁=已拋棄世代,不得再被連到
-// (使用者回饋 2026-08-16:「頂端的連結連到先前被拋棄的舊頁面中」)。
-// POWER 只在有音訊引擎的頁面渲染(K-36)。
-const { subpage = false, beat = "" } = Astro.props;
+// 內頁(dossier / research / 作品索引)導覽:一切「回去」都指向站內首頁=訊號的旅程。
+// K-35 遷移完成後,旅程就是 `/`,不再是 /design/ 下的原型檔;R1 console 頁已隨遷移退場
+// (使用者回饋 2026-08-16:「頂端的連結連到先前被拋棄的舊頁面中」),故本檔只剩內頁一種形態。
+// POWER 只在有音訊引擎的頁面渲染(K-36),內頁一律不掛。
+const { beat = "" } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const journey = `${base}/design/journey-proto-1.html`;
+const journey = `${base}/`;
 ---
 
-{subpage ? (
-  <nav class="transport" aria-label="主導覽">
-    <a class="wordmark" href={journey}><b>●</b> 如願 RUYUAN</a>
-    <div class="t-links">
-      <a href={journey + (beat || "")}>← 回到旅程</a>
-      <a href={journey + "#identity"}>站內地圖</a>
-      <a href={journey + "#ctrl"}>控制室</a>
-    </div>
-  </nav>
-) : (
-  <nav class="transport" aria-label="主導覽">
-    <span class="wordmark"><b>●</b> 如願 RUYUAN</span>
-    <div class="t-links"><a href="#console">訊號路徑</a><a href="#rack">機櫃</a><a href="#ctrl">控制室</a><a href="#prov">佐證</a></div>
-    <button class="pw" data-power aria-pressed="false" title="全站聲音總開關(預設關閉)">
-      <span class="led" aria-hidden="true"></span> <span class="pw-label">POWER</span>
-    </button>
-  </nav>
-)}
+<nav class="transport" aria-label="主導覽">
+  <a class="wordmark" href={journey}><b>●</b> 如願 RUYUAN</a>
+  <div class="t-links">
+    <a href={journey + (beat || "")}>← 回到旅程</a>
+    <a href={`${base}/works/`}>全部作品</a>
+    <a href={journey + "#ctrl"}>控制室</a>
+  </div>
+</nav>

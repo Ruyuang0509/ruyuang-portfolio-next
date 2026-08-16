@@ -9,6 +9,7 @@ const GATES = [
   { name: "check:obligations", cmd: ["node", "scripts/checks/obligations.mjs"] },
   { name: "check:csspunct", cmd: ["node", "scripts/checks/csspunct.mjs", "src", "docs/design"] },
   { name: "check:fmpunct", cmd: ["node", "scripts/checks/fmpunct.mjs", "src/content"] },
+  { name: "check:links", cmd: ["node", "scripts/checks/links.mjs", "dist"] },
 ];
 
 let worst = 0;

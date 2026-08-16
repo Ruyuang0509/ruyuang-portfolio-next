@@ -1,0 +1,90 @@
+---
+// 全部作品檔案 —— K-35 遷移補位。旅程只帶四件主打過站,其餘 dossier 在 R1 主控台的 RACK
+// 才有入口;R1 頁退場後那些頁面會變成「在 sitemap 裡卻站內無路可達」的孤兒,故立此索引。
+// 資料來自 content collection,不手寫清單,避免與作品檔案漂移。
+import { getCollection } from "astro:content";
+import "../../styles/global.css";
+import TransportNav from "../../components/TransportNav.astro";
+import OutputBus from "../../components/OutputBus.astro";
+import SignalCursor from "../../components/SignalCursor.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const canonical = new URL(Astro.url.pathname.replace(/\/?$/, "/"), Astro.site).href;
+const all = await getCollection(
+  "works",
+  ({ data }) => data.tier === "featured" || (data.tier === "rack" && data.detail === true)
+);
+// 主打在前,其餘照年份新到舊——旅程走過的四站先讓人認得出來
+const order = (w: (typeof all)[number]) => (w.data.tier === "featured" ? 0 : 1);
+const works = all.sort((a, b) => order(a) - order(b) || b.data.year.localeCompare(a.data.year));
+const KIND: Record<string, string> = {
+  interactive: "INTERACTIVE", av: "AV", field: "FIELD", data: "DATA", film: "FILM",
+  graphic: "GRAPHIC", software: "SOFTWARE", game: "GAME", web: "WEB",
+};
+const title = "全部作品檔案 — 如願";
+const description = `${works.length} 件作品的檔案索引:每件都附角色說明、AI 參與聲明與可查的證據鏈。`;
+---
+
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#070503" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="如願 — 訊號的旅程" />
+    <meta property="og:locale" content="zh_TW" />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="icon" href={`${base}/favicon-32.png`} type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" />
+    <script is:inline>try { sessionStorage.setItem("inner", "1"); } catch {}</script><!-- 與其他內頁同:回旅程不重演開場、音效選擇延續(K-69) -->
+  </head>
+  <body>
+    <div class="chassis">
+      <TransportNav subpage />
+      <div class="inner">
+        <section class="panel" aria-label="全部作品檔案">
+          <span class="plate">RACK · ALL DOSSIERS</span>
+          <div class="panel-body" style="padding-bottom:var(--space-sm)">
+            <p class="orient">作品索引 · 檔案 {works.length} 件</p>
+            <h1 class="dossier-title">全部作品檔案</h1>
+            <p class="dossier-summary">旅程帶你走過三站;這裡是全部。以下 {works.length} 件都附角色說明、AI 參與聲明與可查的證據鏈;最末一件已完成但沒有獨立檔案頁,一併列出以免漏記。</p>
+          </div>
+          <div>
+            {works.map((w, i) => (
+              <div class="rack-row">
+                <span class="jack" aria-hidden="true"></span>
+                <span class="idx">{(w.data.tier === "featured" ? "F·" : "R·") + String(i + 1).padStart(2, "0")}</span>
+                <p class="t">
+                  <a href={`${base}/work/${w.id}/`}>{w.data.title}</a>
+                  <small>{w.data.summary}</small>
+                </p>
+                <span class="dash">――――</span>
+                <span class="tag">{KIND[w.data.kind] ?? w.data.kind.toUpperCase()} · {w.data.year}</span>
+              </div>
+            ))}
+            <div class="rack-row"><!-- R1 機櫃既有條目,無獨立檔案頁:保留提及,不假造連結 -->
+              <span class="jack" aria-hidden="true"></span>
+              <span class="idx">—</span>
+              <p class="t">娜伊拉<small>Unity 互動敘事遊戲 · 畢業專題(組隊完成,無獨立檔案頁)</small></p>
+              <span class="dash">――――</span>
+              <span class="tag">GAME</span>
+            </div>
+          </div>
+          <div class="ticks" aria-hidden="true"></div>
+        </section>
+      </div>
+      <OutputBus subpage />
+      <SignalCursor />
+    </div>
+  </body>
+</html>

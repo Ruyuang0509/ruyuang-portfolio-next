@@ -2,10 +2,11 @@
   "name": "ruyuang-portfolio-next",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "node scripts/sync-proto.mjs",
     "build": "astro build",
     "postbuild": "node scripts/gen-sitemap.mjs",
     "preview": "astro preview",
@@ -18,6 +19,7 @@
     "check:obligations": "node scripts/checks/obligations.mjs",
     "check:csspunct": "node scripts/checks/csspunct.mjs src docs/design",
     "check:fmpunct": "node scripts/checks/fmpunct.mjs src/content",
+    "check:links": "node scripts/checks/links.mjs dist",
     "check:submission": "node scripts/checks/submission.mjs"
   },
   "dependencies": {

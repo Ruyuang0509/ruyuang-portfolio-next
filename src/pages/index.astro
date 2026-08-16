@@ -1,53 +1,1011 @@
 ---
-import "../styles/global.css";
-import TransportNav from "../components/TransportNav.astro";
-import HeroPanel from "../components/HeroPanel.astro";
-import SignalPath from "../components/SignalPath.astro";
-import Rack from "../components/Rack.astro";
-import ControlRoom from "../components/ControlRoom.astro";
-import Provenance from "../components/Provenance.astro";
-import OutputBus from "../components/OutputBus.astro";
-const canonical = new URL(Astro.url.pathname.replace(/\/?$/, "/"), Astro.site).href; // K-72 正式切換:本站網址即正式網址(使用者 2026-08-16 裁定);結尾斜線=GH Pages 實際服務形
+// 訊號的旅程 —— 站台首頁。K-35 遷移:原型(docs/design/journey-proto-1.html,已凍結為歷史紀錄)
+// 的三個區塊搬進 src/,引擎自此只有一份。R1 主控台頁與 console-audio.js 同批退場(K-36)。
+import "../styles/journey.css";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const canonical = new URL(Astro.url.pathname.replace(/\/?$/, "/"), Astro.site).href;
+const title = "如願 — 訊號的旅程";
+const description = "一趟可以聽見的作品旅程:聲音互動、AI 協作與混合多聲道監聽研究。每一站都附得上證據。";
 ---
 
-<html lang="zh-Hant-TW">
+<html lang="zh-Hant-TW" data-base={base}><!-- data-base:is:inline 引擎不經 Astro 處理,資產路徑由此取得 -->
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#070503" /><!-- 外框/瀏覽器鑲邊偏暗(視口外的白不是頁面塗得到的) -->
-    <title>如願 — 聲音 × 智能應用</title>
-    <meta
-      name="description"
-      content="如願的作品集:聲音互動、AI 協作與混合多聲道監聽研究。"
-    />
-    <!-- K-40 正式切換(K-72):noindex 移除,同批 canonical+OG+sitemap -->
+    <meta name="theme-color" content="#070503" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta property="og:title" content="如願 — 聲音 × 智能應用" />
-    <meta property="og:description" content="如願的作品集:聲音互動、AI 協作與混合多聲道監聽研究。" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
-    <meta property="og:site_name" content="如願 — 訊號的旅程" />
+    <meta property="og:site_name" content={title} />
     <meta property="og:locale" content="zh_TW" />
-    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
-    <link rel="icon" href={`${base}/favicon-32.png`} type="image/png" sizes="32x32" />
-    <link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
+    <link rel="icon" href={base + "/favicon.svg"} type="image/svg+xml" />
+    <link rel="icon" href={base + "/favicon-32.png"} type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href={base + "/apple-touch-icon.png"} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <div class="chassis">
-      <TransportNav />
-      <div class="inner">
-        <HeroPanel />
-        <SignalPath />
-        <Rack />
-        <ControlRoom />
-        <Provenance />
-      </div>
-      <OutputBus />
+
+<nav class="transport collapsed" id="transportNav" aria-label="站點跳轉(隨時可離隊)">
+  <a href="#hook">開場</a><a href="#identity">身分</a><a href="#station">互動站</a><a href="#cinema">影院站</a><a href="#field">田野站</a><a href="#ctrl">控制室</a><a href="#master">OUT</a><a href="#exit">出口</a><!-- 回饋4:站點名稱;作品名歸 beat2 站內地圖 -->
+  <button class="tpwr" id="powerBtn" aria-pressed="false" aria-label="開機——完整體驗(含聲音)">▶ PWR</button>
+  <label class="tvol">VOL <input type="range" id="masterVol" min="0" max="100" value="60" disabled aria-label="全站音量" /></label>
+</nav>
+<button class="tfold" id="navFold" aria-expanded="false" aria-controls="transportNav" aria-label="展開導覽列">▾</button>
+<div class="nav-hotzone" aria-hidden="true"></div><!-- 滑鼠移頂自動展開(回饋3) -->
+
+<div class="filament" aria-hidden="true"></div>
+<div class="line-rail" aria-hidden="true"><div class="line-breath"></div><div class="line-glow" id="lineGlow"></div></div>
+
+<!-- 開機閘：載入儀式(JS+動效才啟用；跳過/Esc/直接捲動皆可離開，基態永不被擋) -->
+<div class="gate" id="gate" role="dialog" aria-label="開機序列" tabindex="-1" hidden>
+  <div class="gate-curtain gc-top" aria-hidden="true"></div>
+  <div class="gate-curtain gc-bottom" aria-hidden="true"></div>
+  <div class="gate-core">
+    <span class="dot" aria-hidden="true"></span>
+    <pre class="gate-lines" id="gateLines" aria-hidden="true"></pre>
+    <div class="gate-meter" aria-hidden="true"><i id="gateFill"></i></div>
+    <p class="gate-ear"><svg class="ear-ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 14a8 8 0 0 1 16 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="3" y="13.5" width="4.4" height="7" rx="1.8" fill="currentColor"/><rect x="16.6" y="13.5" width="4.4" height="7" rx="1.8" fill="currentColor"/></svg>戴上耳機，聲音的方位與遠近會更清楚</p><!-- 回饋5+圖樣 -->
+    <div class="gate-choice" id="gateChoice">
+      <button class="cta" id="gateFull">▶ 開機・完整體驗(含聲音)</button>
+      <button class="ghost" id="gateLite">安靜地往下讀</button>
     </div>
+  </div>
+  <button class="gate-skip" id="gateSkip">跳過 esc</button><!-- 錨定 .gate 角落;放 core 內會跟著 core 入棧改錨點(使用者回報的擠壓) -->
+</div>
+
+<!-- BEAT 1 · HOOK — base state is fully readable; 完整體驗 is an invitation, never a gate -->
+<section class="beat" id="hook">
+  <div class="wrap beat-inner">
+    <p class="orient">MONITOR ROOM · 一場訊號的旅程</p>
+    <p style="margin-top:var(--space-xl)"><span class="dot" id="hookDot" aria-hidden="true"></span></p>
+    <h1>把聲學的理解門檻，<br />調到<em>人人可聽見</em>。</h1>
+    <p class="hook-sub">這台監聽台可以親自動手：所有聲音，都與你息息相關。</p><!-- 使用者 2026-08-16 文藝向定稿句 -->
+    <p class="scroll-hint" id="modeNote">現在是安靜閱讀——內容一樣完整。</p>
+  </div>
+</section>
+
+<!-- BEAT 2 · IDENTITY -->
+<section class="beat" id="identity">
+  <div class="wrap beat-inner">
+    <p class="orient">SIGNAL · 01 — 我是誰</p>
+    <h2>用視覺與互動，降低聲學的理解門檻</h2>
+    <p style="margin-top:var(--space-md)">一副監聽耳機，把我從數位學習設計帶進聲音。和朋友比較設備聽感時，我們聽得出差異，卻說不清楚這差異是來自頻率、空間，還是動態。</p>
+    <p style="margin-top:var(--space-md)">我是把「說不清楚」當成題目的人——讀數位學習設計出身，自學 Pure Data 與訊號處理，正往聽覺感知與聲音應用走。我想做的一直是同一件事：把聽覺經驗，變成可以動手操作的東西。</p>
+    <div class="readouts">
+      <span>FOCUS <b>聲響 × 人工智慧</b></span>
+      <span>ROUTE <b>作品 → 證據 → 研究</b></span>
+      <span>OUT <b>混合多聲道監聽</b></span>
+    </div>
+    <!-- 甲-6 語意換位(回饋4):地圖不再充當目錄,而是身分主張的證據列——快讀承載主體改由 transport 作品名(首屏常駐)擔任 -->
+    <p class="map-lead">接下來的三站，是這件事做到哪裡的證據：</p>
+    <nav class="sitemap" aria-label="站內地圖：三件作品與去處">
+      <a href="#station"><b>XY 互動板</b><span>Pure Data 即時訊號處理・可親自動手</span></a>
+      <a href="#cinema"><b>Hamlet Story MV</b><span>AI 協作影音實驗・權利鏈可查</span></a>
+      <a href="#field"><b>田野導覽影片</b><span>四部外拍後製・9 分 29 秒</span></a>
+      <a href="#ctrl"><b>控制室</b><span>方法與證據</span></a>
+      <a href="#gen"><b>作品集網站(兩代)</b><span>初代線上・二代重製</span></a>
+      <a href="#master"><b>MASTER OUT</b><span>研究方向</span></a>
+    </nav>
+  </div>
+</section>
+
+<!-- BEAT 3 · STATION 1 (interactive) -->
+<section class="beat" id="station">
+  <div class="wrap beat-inner">
+    <p class="orient">STATION · CH 01 — 互動站</p>
+    <div class="panel">
+      <span class="plate">XY PAD · 跨模態映射</span>
+      <h2>透過本面板，我希望你仔細聆聽，感受聲音與空間的關係</h2><!-- 使用者 2026-08-16 文藝向定稿句 -->
+      <p class="desc">原作是一塊 Pure Data 原型：位置進來，聲音出去——先靠 AI 協作搭起來，再逆向拆解訊號路徑，拆到能自己說明、自己改。你眼前這塊，是它的 Web Audio 重現：同一套映射，直接在瀏覽器裡發聲。</p>
+      <div class="pad-wrap">
+        <div class="xy-pad" id="xyPad" role="application" aria-label="XY 合成板：發聲後，橫軸控制聲像與音高，縱軸控制遠近">
+          <span class="xy-dot" id="xyDot" aria-hidden="true"></span>
+        </div>
+        <div class="pad-legend"><span>← 左(低音・聲像左)</span><span>上=遠 / 下=近</span><span>右(高音・聲像右)→</span></div>
+        <div class="pad-controls">
+          <button class="play-toggle" id="padToggle" aria-pressed="false" disabled>▶ 發聲(上方 PWR 開機)</button>
+          <label class="vol">音量 <input type="range" id="padVol" min="0" max="100" value="60" /></label>
+          <span class="mono" style="font-size:var(--text-xs);color:var(--color-muted)">五聲音階 · 無錯音</span>
+        </div>
+      </div>
+      <p class="note">設計註記：以軟起音與 limiter 壓住爆音。</p>
+      <p class="dossier-link">深入這件作品:<a href={base + "/work/pd-crossmodal/"}>作品檔案(dossier)→</a></p>
+    </div>
+    <!-- 可發現的實驗:precedence effect(規格出自庫內空間聽覺研究) -->
+    <div class="panel haas">
+      <span class="plate">EXP · 先到者定位</span>
+      <h3>先到的聲音，決定你聽到的方向</h3>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch">同一個聲音左右各放一次，拉開兩者的時間差，聽方向怎麼變。</p>
+      <div class="haas-controls">
+        <button class="play-toggle" id="haasBtn" disabled>▶ 播放(上方 PWR 開機)</button>
+        <label class="vol">時間差 <input type="range" id="haasDelay" min="0" max="80" value="12" /> <span class="mono" id="haasMs">12 ms</span></label>
+        <span class="haas-read" id="haasRead">融合：方向跟著先到的左邊</span>
+      </div>
+      <p class="note">設計註記：<b>≤1ms 疊加、約 2–50ms 融合、>50ms 拆成回聲</b>。</p>
+    </div>
+  </div>
+</section>
+
+<!-- BEAT 4 · STATION 2 (cinema) — 房間身分：廳堂；情緒：莊重 -->
+<section class="beat" id="cinema" data-scene="cinema">
+  <div class="wrap beat-inner">
+    <p class="orient">STATION · CH 02 — 影院站</p>
+    <div class="panel" style="border:0;background:transparent;padding:0">
+      <h2 style="font-weight:700;font-size:1.2rem">Hamlet Story MV</h2>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">AI 生成場景與配樂、本人剪輯整合的文學影音實驗——四十秒、八幕、雙語字幕，權利鏈完整可查。</p>
+      <div class="cinema-frame">
+        <div class="lb" aria-hidden="true"></div>
+        <img src={base + "/media/hamlet-story-mv-poster-1200.webp"} alt="Hamlet Story MV 劇照——完整影片與雙語字幕在作品檔案裡" loading="lazy" /><!-- 資產一律走 base(check:links 會擋落在部署根之外的路徑) -->
+        <div class="lb" aria-hidden="true"></div>
+      </div>
+      <p class="mono credit">Song: Blinds-Soft Lament — Suno 生成 · 00:00–00:40 · 非營利用途經 Suno 書面確認</p>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">誠實揭露一項規格差異：原提示要求純音樂，實際輸出含英語歌詞與人聲——公開版本以實際成片為準，呈現差異而非抹除。</p>
+      <p class="note">設計註記：這一站的底色壓到全站最暗，黑邊收攏視線。</p>
+      <p class="dossier-link">深入這件作品:<a href={base + "/work/hamlet-story-mv/"}>作品檔案(dossier)→</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- BEAT 5 · STATION 3 (field) — 房間身分：開放空間；情緒：開放自然 -->
+<section class="beat" id="field" data-scene="field">
+  <div class="airgrid" aria-hidden="true"></div>
+  <div class="horizon" aria-hidden="true"></div>
+  <div class="wrap beat-inner">
+    <p class="orient">STATION · CH 03 — 田野站</p>
+    <h2 style="font-weight:700;font-size:1.2rem">導覽影片(四部)</h2>
+    <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">地方文化見習的影音成品——潭墘、糖廠(上/下)、蒜頭老街，四部合計 9 分 29 秒；分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
+    <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">見習為雙人同梯；此處列出的，是工作日誌記載由本人負責的影音線。</p>
+    <p class="note">設計註記：背景不設格線，只留一條地平線——這一站的影片，拍在沒有牆的地方。</p>
+    <p class="dossier-link">深入這件作品:<a href={base + "/work/guide-videos/"}>作品檔案(dossier)→</a></p>
+  </div>
+</section>
+
+<!-- 真休息(K-32):三站之後、後台之前的一段空白。零文字、零 CTA、無聲音場景——
+     博物館座椅的網頁版：讓 rail 獨自呼吸，不是留白失誤。刻意不掛 data-scene(不成為音場)。 -->
+<div class="rest" aria-hidden="true"><span class="rest-horizon"></span></div>
+
+<!-- BEAT 6 · BACKSTAGE (control room) — 房間身分：控制室(乾);情緒：機能精確 -->
+<section class="beat" id="ctrl" data-scene="ctrl">
+  <div class="wrap beat-inner">
+    <p class="orient">BACKSTAGE — 控制室</p>
+    <div class="panel">
+      <span class="plate">CONTROL ROOM · METHOD</span>
+      <h2 style="font-weight:700;font-size:1.2rem">方法不必相信，可以檢查</h2>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">每一格都掛著可查核的實據。發布前的機器強制檢查——核准永遠是人，閘門只是不讓遺忘發生。你看到的本頁，就是通過全部閘門後的部署產物:</p>
+      <ul class="gatelist">
+        <li><span class="led" aria-hidden="true"></span> check:paths — 本機路徑不外洩</li>
+        <li><span class="led" aria-hidden="true"></span> check:media — 受限媒體與 GPS EXIF</li>
+        <li><span class="led" aria-hidden="true"></span> check:wording — 措辭紀律</li>
+        <li><span class="led" aria-hidden="true"></span> check:motion — 禁自動播放 · 動效降級</li>
+        <li><span class="led" aria-hidden="true"></span> check:approval — 核准 human-only</li>
+        <li><span class="led" aria-hidden="true"></span> check:obligations — 授權義務落在頁面上</li>
+        <li><span class="led" aria-hidden="true"></span> check:csspunct — CSS 碼內全形標點</li>
+      </ul>
+      <p class="note">設計註記：這一站的殘響全站最低，回饋聲又乾又短。</p>
+      <p class="dossier-link">這套檢查，連同整個網站，原始碼都公開:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a>。<!-- 甲-5 程式原始碼類目+回饋6 兩代經歷;完整版=K-35 把網站立為 dossier 條目 --></p>
+    </div>
+  </div>
+</section>
+
+<!-- BEAT 6.5 · GEN — 兩代機(使用者 2026-08-16 裁定:一代經驗價值高,獨立成站) -->
+<section class="beat" id="gen">
+  <div class="wrap beat-inner">
+    <p class="orient">BACKSTAGE · GEN —— 兩代機</p>
+    <div class="panel">
+      <span class="plate">SITE · TWO GENERATIONS</span>
+      <h2 style="font-weight:700;font-size:1.2rem">這台機器，自己也走過兩代</h2>
+      <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">第一代作品集仍在線上，原樣保存，留作紀錄;你正在走的是第二代——由研究驅動重製，七道閘門把關，每一步修正都留在公開的 git 歷史裡。</p>
+      <p class="dossier-link">初代網站：<a href="https://ruyuang0509.github.io/ruyuang-portfolio/">聲響、互動與數位學習作品集 →</a></p>
+      <p class="dossier-link">深入這件作品：<a href={base + "/work/portfolio-site/"}>兩代的作品檔案(dossier)→</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- BEAT 7 · MASTER OUT — payoff:與開頭光點呼應 -->
+<section class="beat" id="master">
+  <div class="wrap beat-inner">
+    <p class="orient">MASTER OUT — 訊號送出</p>
+    <p style="margin-top:var(--space-xl)"><span class="dot" aria-hidden="true"></span></p>
+    <h2>混合多聲道監聽</h2>
+    <p class="desc">開頭那顆訊號，走過三站，在這裡送出。它做的始終是同一件事：把聽覺經驗，變成可以動手的東西。我要帶進研究所的題目，就是讓多聲道監聽也走這條路——建置與理解的門檻，再低一點。</p>
+    <p class="desc">方法你剛剛走過：機器守規則，核准的永遠是人。這套工作法，跟著題目一起進來。<!-- K-33 雙軸收束：兌現 FOCUS 兩讀數;d019=方法非題目;d020=一句指回，不擴展示 --></p>
+  </div>
+</section>
+
+<!-- FINALE v2 — 謝幕:零內容承載,純光影(d003)。跳過鍵依使用者 2026-08-16 裁定移除:
+     「刻意感太重」——謝幕在正常流、無 pin,自然捲動即離開,不需要按鈕宣告這件事。 -->
+<section class="beat" id="finale" data-scene="finale" aria-label="謝幕(純光影,無內容)">
+  <div class="f-stage" aria-hidden="true"></div>
+  <div class="wrap beat-inner">
+    <div class="lamps" aria-hidden="true">
+      <span class="lamp"><i></i>CH·01</span>
+      <span class="lamp"><i></i>CH·02</span>
+      <span class="lamp"><i></i>CH·03</span>
+      <span class="lamp"><i></i>MASTER</span>
+    </div>
+    <p class="colophon-quote">「先讓路途平坦，再思考如何裝飾風景」<span class="colophon-thanks">Thanks for watching.</span></p>
+  </div>
+</section>
+
+<!-- EXIT — 出口：刻意無聲的正常流；義務與重要內容一律在此(d003) -->
+<section class="beat" id="exit">
+  <div class="wrap beat-inner">
+    <p class="orient">EXIT — 出口</p>
+    <p>本站提供完整與精簡兩種瀏覽方式——與我研究所關注的「降低聆聽門檻」出於同一信念。</p>
+    <p class="legal">© 2026 如願 · 本站無廣告、無付費牆、無聯盟收益</p>
+    <p class="legal">原始碼:<a href="https://github.com/ruyuang0509/ruyuang-portfolio-next">github.com/ruyuang0509/ruyuang-portfolio-next</a>——網站本身，也是一件公開的程式作品。</p>
+    <p class="legal">全部作品檔案:<a href={base + "/works/"}>作品索引 →</a><!-- 件數不寫死:索引頁由 content collection 數,兩處硬編碼必然漂移 --></p>
+    <p class="legal">研究筆記與方法紀錄:<a href={base + "/research/"}>混合多聲道監聽 →</a><!-- 甲-5 研究報告類目;K-35 接上真連結 --></p>
+    <p class="legal">證書與佐證——逐項列在各作品檔案的證據鏈;聯絡方式隨備審資料提供，本站不承載個資。</p>
+    <p class="loop"><a href="#hook" id="loopBtn">回到開頭，再走一次 ↺</a></p>
+  </div>
+</section>
+    <script is:inline>
+// R2 audio engine v2 — 全部聲音 opt-in;安全鏈:voices → chGain → send(演算法殘響) → analyser → LIMITER → master
+(() => {
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.documentElement.classList.add("js"); // 增強層開關：無 JS=完整可讀基態(d018)
+  const PENTA = [220, 261.63, 293.66, 329.63, 392, 440, 523.25];
+  let ctx = null, master = null, limiter = null, analyser = null, buf = null;
+  let outMeter = null, outBuf = null, samplePeak = 0;
+  let padVoice = null, padOn = false, powered = false, rafId = null;
+  let reverb = null, room = null, sceneVoices = null, lastRoom = "", finaleDone = false;
+
+  // 房間身分(離散，場景邊界切換;d004):feedback / 低通 / send 濕度
+  const ROOMS = {
+    default:{ fb:.32, lp:2400, wet:.18 },   // 小房間(開機/身分/互動站)
+    cinema: { fb:.46, lp:1600, wet:.30 },   // 廳堂：莊重
+    field:  { fb:.24, lp:3200, wet:.22 },   // 開放空間：遠方感
+    ctrl:   { fb:.10, lp:2000, wet:.04 },   // 控制室：乾
+    finale: { fb:.55, lp:1900, wet:.36 },   // 全站最大空間感(LEV 峰值)
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const powerBtn = $("powerBtn"), padToggle = $("padToggle"),
+        pad = $("xyPad"), dot = $("xyDot"), modeNote = $("modeNote");
+
+  function ensureCtx(){
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // [R3 K-02] Round E 裁決:iPhone 靜音鍵下仍可發聲。Safari 16.4+ 實驗特性——feature-detect,不支援靜默略過
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch {}
+    // [R3 K-08] 聽力安全鏈:ratio=20 是 W3C 規格上限(min 1/max 20)——規格內最接近限幅的設定,
+    // 定位=安全網，非真限幅器(真 brick-wall 需 WaveShaper/AudioWorklet,R3 減法清單：不做)。
+    // 規格明載壓縮器有固定 look-ahead 延遲;analyser 維持在 limiter 前，視覺同步不受其影響。
+    limiter = ctx.createDynamicsCompressor();
+    limiter.threshold.value = -12; limiter.knee.value = 0; limiter.ratio.value = 20;
+    limiter.attack.value = 0.003; limiter.release.value = 0.25;
+    master = ctx.createGain(); master.gain.value = 0.12;
+    analyser = ctx.createAnalyser(); analyser.fftSize = 256;
+    buf = new Uint8Array(analyser.frequencyBinCount);
+    analyser.connect(limiter); limiter.connect(master); master.connect(ctx.destination);
+    // [R3 K-07] d015 誠實化：輸出峰值只能在 master 之後、用 float 時域樣本量(byte 頻譜原理上量不到峰值,
+    // 僅供視覺律動)。量到的是 sample peak,非 true peak(無 4× 過取樣，密集素材可低估 1–3dB)——限制照實記。
+    outMeter = ctx.createAnalyser(); outMeter.fftSize = 2048;
+    outBuf = new Float32Array(outMeter.fftSize);
+    master.connect(outMeter);
+    // 演算法殘響(G1 決策：不用 IR 檔)——小房間身分：短延遲×2 + 回授 + 低通
+    reverb = ctx.createGain(); reverb.gain.value = 0.18;
+    const d1 = ctx.createDelay(); d1.delayTime.value = 0.031;
+    const d2 = ctx.createDelay(); d2.delayTime.value = 0.047;
+    const fb = ctx.createGain(); fb.gain.value = 0.32;
+    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2400;
+    reverb.connect(d1); reverb.connect(d2); d1.connect(fb); d2.connect(fb);
+    fb.connect(lp); lp.connect(d1); lp.connect(analyser);
+    room = { fb, lp };
+    sceneVoices = buildSceneVoices();
+  }
+
+  // 場景聲音身分(逐場景 voice;鄰近度連續驅動=「聲源」層，d004)
+  function buildSceneVoices(){
+    const v = {};
+    { // 影院站:低音域小調傾向 pad(莊重)。抗煩躁三改(使用者 2026-08-16:長時間觀看產生煩躁)——
+      // 靜態頻譜+淺呼吸=疲勞源;改為 (a) 呼吸加深到近靜默休止 (b) 音色極慢演化 (c) 基準增益調低
+      const mix = ctx.createGain(); mix.gain.value = 1;
+      [[110,"sine"],[130.81,"sine"],[164.81,"triangle"]].forEach(([f,t]) => {
+        const o = ctx.createOscillator(); o.type = t;
+        o.frequency.value = f * (1 + (Math.random() - .5) * .003);
+        const og = ctx.createGain(); og.gain.value = .3;
+        o.connect(og); og.connect(mix); o.start();
+      });
+      const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 650; lp.Q.value = .5;
+      const lfoF = ctx.createOscillator(); lfoF.frequency.value = .03; // 音色呼吸:約 33 秒一輪
+      const lgF = ctx.createGain(); lgF.gain.value = 220;              // 掃 430–870Hz,頻譜不再靜止
+      lfoF.connect(lgF); lgF.connect(lp.frequency); lfoF.start();
+      const breath = ctx.createGain(); breath.gain.value = .5;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = .045;  // 約 22 秒一息
+      const lg = ctx.createGain(); lg.gain.value = .42;                // 谷值≈.08=近靜默的休止,聲音「間歇性地活著」
+      lfo.connect(lg); lg.connect(breath.gain); lfo.start();
+      const g = ctx.createGain(); g.gain.value = 0;
+      mix.connect(lp); lp.connect(breath); breath.connect(g);
+      const send = ctx.createGain(); send.gain.value = .5;
+      g.connect(analyser); g.connect(send); send.connect(reverb);
+      v.cinema = { g, base:.10 };
+    }
+    { // 田野站：濾波噪音的遠方感(開放自然)——帶通中心慢速漂移
+      const len = ctx.sampleRate * 2, nb = ctx.createBuffer(1, len, ctx.sampleRate), d = nb.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = nb; src.loop = true;
+      const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 520; bp.Q.value = .7;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = .05;
+      const lg = ctx.createGain(); lg.gain.value = 160;
+      lfo.connect(lg); lg.connect(bp.frequency); lfo.start();
+      const g = ctx.createGain(); g.gain.value = 0;
+      src.connect(bp); bp.connect(g);
+      const send = ctx.createGain(); send.gain.value = .3;
+      g.connect(analyser); g.connect(send); send.connect(reverb);
+      src.start();
+      v.field = { g, base:.09 };
+    }
+    return v;
+  }
+
+  // 鄰近度(viewport 中心距離)→ 場景 voice 增益；最近場景 → 房間身分離散切換
+  const sceneEls = () => [...document.querySelectorAll("[data-scene]")];
+  function updateScenes(){
+    if (!powered || !sceneVoices) return;
+    const vh = innerHeight; let nearest = "default", nearestD = Infinity;
+    for (const el of sceneEls()){
+      const r = el.getBoundingClientRect();
+      const c = Math.abs(r.top + r.height / 2 - vh / 2);
+      if (r.bottom > 0 && r.top < vh && c < nearestD){ nearestD = c; nearest = el.dataset.scene; }
+      const key = el.dataset.scene, v = sceneVoices[key];
+      if (v){
+        const prox = Math.max(0, 1 - c / (vh * .85));
+        v.g.gain.setTargetAtTime(v.base * prox * prox, ctx.currentTime, .12);
+      }
+    }
+    if (nearest !== lastRoom){
+      lastRoom = nearest;
+      const R = ROOMS[nearest] || ROOMS.default;
+      room.fb.gain.setTargetAtTime(R.fb, ctx.currentTime, .4);
+      room.lp.frequency.setTargetAtTime(R.lp, ctx.currentTime, .4);
+      if (nearest !== "default" || !padOn) // 互動站內 pad 的 Y 仍握有 send 濕度
+        reverb.gain.setTargetAtTime(R.wet, ctx.currentTime, .4);
+    }
+  }
+
+  function dryTick(){ // 控制室輕確認聲：乾、短、微隨機(抗煩躁)
+    if (!powered || !ctx) return;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine"; o.frequency.value = 1320 * (1 + (Math.random() - .5) * .05);
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(.09, ctx.currentTime + .008);
+    g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .09);
+    o.connect(g); g.connect(analyser); o.start(); o.stop(ctx.currentTime + .1);
+  }
+
+  function finaleChord(){ // 終止和弦：五聲內、長衰減入靜默(敬畏→釋放);全部經 limiter
+    [220, 261.63, 329.63, 440].forEach((f, i) => {
+      const o = ctx.createOscillator(); o.type = i < 2 ? "sine" : "triangle"; o.frequency.value = f;
+      const g = ctx.createGain(); g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(.2 / (i + 1) + .05, ctx.currentTime + .9 + i * .12); // 淡入(零驚嚇)
+      g.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime + 7);
+      o.connect(g); g.connect(reverb); g.connect(analyser);
+      o.start(ctx.currentTime + i * .12); o.stop(ctx.currentTime + 7.2);
+    });
+  }
+
+  function ringPulse(lamp){ // 燈點亮的擴散環(WAAPI,自清)
+    const r = document.createElement("span"); r.className = "f-ring";
+    lamp.appendChild(r);
+    r.animate([
+      { opacity:.9, transform:"translate(-50%,-50%) scale(1)" },
+      { opacity:0,  transform:"translate(-50%,-50%) scale(7)" }
+    ], { duration:900, easing:"cubic-bezier(.22,1,.36,1)" }).onfinish = () => r.remove();
+  }
+  function burst(fin){ // 主爆發:中央光點綻開+琥珀粒子場+全屏暖洗+燈列回聲環+進度絲增輝
+    const stage = fin.querySelector(".f-stage");
+    // 全屏暖洗:低不透明慢脈衝(1.6s,峰值 14% 琥珀)——力度來自範圍,不來自亮度(零驚嚇)
+    const wash = document.createElement("span");
+    wash.style.cssText = "position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(60% 50% at 50% 55%, color-mix(in oklab, var(--color-accent) 14%, transparent), transparent 70%)";
+    document.body.appendChild(wash);
+    wash.animate([{ opacity: 0 }, { opacity: 1, offset: .35 }, { opacity: 0 }],
+      { duration: 1600, easing: "ease-out" }).onfinish = () => wash.remove();
+    // 燈列回聲環:主爆發時四盞燈再各盪一圈(60ms 錯拍)
+    [...fin.querySelectorAll(".lamp")].forEach((l, i) => setTimeout(() => ringPulse(l), i * 60));
+    // 進度絲增輝:滿格的磁帶計數器閃一下
+    const fil = document.querySelector(".filament");
+    if (fil) fil.animate([{ filter: "brightness(1)" }, { filter: "brightness(2.4)" }, { filter: "brightness(1)" }],
+      { duration: 1200, easing: "ease-out" });
+    const core = document.createElement("span"); core.className = "f-core";
+    stage.appendChild(core);
+    core.animate([
+      { opacity:0, boxShadow:"0 0 0 0 transparent", transform:"translate(-50%,-50%) scale(.4)" },
+      { opacity:1, boxShadow:"0 0 90px 30px color-mix(in oklab, var(--color-accent) 55%, transparent)", transform:"translate(-50%,-50%) scale(1)", offset:.35 },
+      { opacity:0, boxShadow:"0 0 140px 10px transparent", transform:"translate(-50%,-50%) scale(1.6)" }
+    ], { duration:2200, easing:"cubic-bezier(.22,1,.36,1)" }).onfinish = () => core.remove();
+    // 數位訊號煙火(使用者令):物理=煙火(初速散開→頂點→垂降+殘餘橫移);
+    // 視覺=數位訊號(方形位元+短劃線,零圓角,步進式閃爍=取樣感)
+    for (let i = 0; i < 46; i++){
+      const sp = document.createElement("span"); sp.className = "f-spark";
+      const dash = Math.random() < .38;
+      const w = dash ? 7 + Math.random() * 4 : 2 + Math.random() * 3;
+      sp.style.width = w + "px"; sp.style.height = (dash ? 2 : w) + "px";
+      sp.style.borderRadius = "0";
+      if (Math.random() < .25) sp.style.background = "var(--color-focus)";
+      const ang = Math.random() * Math.PI * 2;
+      const v = 70 + Math.random() * 190;
+      const ax = Math.cos(ang) * v, ay = Math.sin(ang) * v * .75 - 30;
+      const fall = 110 + Math.random() * 170, drift = ax * (.12 + Math.random() * .18);
+      const rot = Math.random() * 160 - 80;
+      const dur = 1500 + Math.random() * 800, dly = Math.random() * 220;
+      stage.appendChild(sp);
+      sp.animate([
+        { transform: "translate(-50%,-50%) rotate(0deg)", easing: "cubic-bezier(.16,.84,.44,1)" },
+        { transform: "translate(calc(-50% + " + ax + "px), calc(-50% + " + ay + "px)) rotate(" + rot + "deg)", offset: .42, easing: "cubic-bezier(.55,.06,.68,.19)" },
+        { transform: "translate(calc(-50% + " + (ax + drift) + "px), calc(-50% + " + (ay + fall) + "px)) rotate(" + (rot * 1.6) + "deg)" }
+      ], { duration: dur, delay: dly, fill: "both" });
+      sp.animate([
+        { opacity: 0 }, { opacity: 1, offset: .08 }, { opacity: .35, offset: .5 },
+        { opacity: .85, offset: .64 }, { opacity: 0 }
+      ], { duration: dur, delay: dly, easing: "steps(5, jump-none)", fill: "both" }).onfinish = () => sp.remove();
+    }
+  }
+  function glowSurge(dur){ // 未開機的光湧:手動推 --glow 再放掉。開機時不走這裡——
+    // 和弦經 analyser 驅動同一組光,才是「同源」;兩套並跑=假動作(R2 同源法)
+    dur = dur || 5000; // 謝幕=5s(長衰減入靜默);開場落地=1.6s(短亮一下,預告有光)
+    const t0 = performance.now();
+    (function step(now){
+      const p = Math.min(1, (now - t0) / dur);
+      const v = p < .13 ? p / .13 : Math.pow(1 - (p - .13) / .87, 2.5); // 峰後指數型衰減,非線性掐斷
+      document.documentElement.style.setProperty("--glow", (v * .9).toFixed(3));
+      if (p < 1) requestAnimationFrame(step);
+      else document.documentElement.style.setProperty("--glow", "0");
+    })(performance.now());
+  }
+  let showEscaped = false; // Esc 逃出演出時,連自動滾動也一併取消
+  function lockScroll(ms){ // d005 修訂(使用者 2026-08-16):唯謝幕演出期間鎖捲動,保演出完整;Esc 隨時解鎖
+    const stop = (e) => e.preventDefault();
+    const keys = ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "];
+    const keyStop = (e) => { if (keys.includes(e.key)) e.preventDefault(); };
+    const release = () => {
+      removeEventListener("wheel", stop); removeEventListener("touchmove", stop);
+      removeEventListener("keydown", keyStop); removeEventListener("keydown", escRel);
+    };
+    const escRel = (e) => { if (e.key === "Escape"){ showEscaped = true; release(); } };
+    addEventListener("wheel", stop, { passive: false });
+    addEventListener("touchmove", stop, { passive: false });
+    addEventListener("keydown", keyStop);
+    addEventListener("keydown", escRel);
+    setTimeout(release, ms);
+  }
+  let rewinding = false; // 倒帶途中穿越謝幕不得開演:幽靈和弦+把第二輪的謝幕燒掉(批判實證)
+  function runFinale(){ // 謝幕 v2:燈序→環→主爆發(+和弦同拍)→字卡。仍零內容(d003);未開機=純視覺(d002)
+    if (finaleDone || rewinding) return; finaleDone = true;
+    const fin = $("finale");
+    const lamps = [...fin.querySelectorAll(".lamp")];
+    if (reduceMotion){
+      document.documentElement.classList.add("rail-off");
+      lamps.forEach((l) => l.classList.add("on"));
+      fin.classList.add("run");
+      if (powered && ctx){ finaleChord(); kick(); }
+      return;
+    }
+    showEscaped = false;
+    lockScroll(8300); // 演出+自動滾出口全程落鎖(d005 修訂追加);Esc 隨時逃出
+    fin.scrollIntoView({ block: "center", behavior: "smooth" }); // 追加令:演出自動置中
+    setTimeout(() => { // 追加令:演出完畢(字卡讀完一拍)自動滾至出口;Esc 逃出者不強送
+      if (showEscaped) return;
+      const exitInner = document.querySelector("#exit .beat-inner") || document.getElementById("exit");
+      exitInner.scrollIntoView({ block: "center", behavior: "smooth" });
+    }, 7400);
+    document.documentElement.classList.add("rail-off"); // 訊號送出,線退場(回饋3)
+    // K-62 脫離:等自動置中落定(700ms;鎖定期內座標不再變)才起飛——
+    // 置中滾動進行中就用舊座標,會飛向「舞台曾在的位置」(邊緣),再在實際位置爆炸=瞬移(使用者實證)
+    setTimeout(() => {
+      const carried = detachSignal();
+      if (!carried) return;
+      const fr = fin.getBoundingClientRect(); // 置中後的新鮮座標
+      const destX = fr.left + fr.width / 2, destY = fr.top + fr.height * .44;
+      carried.el.animate([
+        { transform: "translate(" + carried.x + "px," + carried.y + "px) scale(1)" },
+        { transform: "translate(" + destX + "px," + destY + "px) scale(1.3)" }
+      ], { duration: 900, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" });
+      setTimeout(() => carried.el.remove(), 1500); // t=2200 主爆發同拍:core 同點綻放,訊號完成迴路
+    }, 700);
+    lamps.forEach((l, i) => setTimeout(() => { l.classList.add("on"); ringPulse(l); }, 420 * i));
+    setTimeout(() => { // 主爆發在末環(2160ms)收完之後——注意力單焦點,環不與爆發同臺
+      burst(fin);
+      if (powered && ctx){ finaleChord(); kick(); } else { glowSurge(); }
+    }, 2200);
+    // 字卡=釋放拍:等爆發收束、粒子自清(~4450ms)之後,從靜默裡浮現——敬畏與釋放是兩拍,不同臺
+    setTimeout(() => fin.classList.add("run"), 4600);
+  }
+
+  function softBlip(){ // UI 回饋：軟起音+微隨機失諧(抗煩躁)
+    if (!powered || !ctx) return;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine"; o.frequency.value = 660 * (1 + (Math.random() - .5) * 0.04);
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+    o.connect(g); g.connect(analyser); o.start(); o.stop(ctx.currentTime + 0.3);
+  }
+
+  function powerOnSound(){ // 開機聲：暖正弦緩慢綻開+微上滑(情緒軌：甦醒；零驚嚇=長淡入)
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine";
+    o.frequency.setValueAtTime(180, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 1.4);
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 1.1);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.4);
+    o.connect(g); g.connect(reverb); g.connect(analyser);
+    o.start(); o.stop(ctx.currentTime + 2.5);
+  }
+
+  function buildPadVoice(){
+    const o1 = ctx.createOscillator(); o1.type = "sine"; o1.frequency.value = PENTA[2];
+    const o2 = ctx.createOscillator(); o2.type = "triangle"; o2.frequency.value = PENTA[2] * 2.003;
+    const f = ctx.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = 1400; f.Q.value = 3;
+    const panN = ctx.createStereoPanner(); // 空間映射契約:X=聲像
+    const g = ctx.createGain(); g.gain.value = 0;
+    o1.connect(f); o2.connect(f); f.connect(panN); panN.connect(g);
+    g.connect(analyser); g.connect(reverb);
+    o1.start(); o2.start();
+    g.gain.linearRampToValueAtTime(0.5 * ($("padVol").value / 100), ctx.currentTime + 0.35); // 軟起音
+    return { o1, o2, f, panN, g, stop(){
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.25); // 軟收
+      setTimeout(() => { try { o1.stop(); o2.stop(); } catch {} }, 400);
+    }};
+  }
+
+  function meterLoop(){
+    updateScenes(); // 鄰近度→場景 voice/房間身分(僅完整體驗模式)
+    analyser.getByteFrequencyData(buf);
+    let s = 0; for (let i = 0; i < buf.length; i++) s += buf[i];
+    const lvl = Math.min(1, (s / buf.length) / 120);
+    document.documentElement.style.setProperty("--glow", lvl.toFixed(3)); // 視聽同源:analyser→光暈
+    outMeter.getFloatTimeDomainData(outBuf); // [R3 K-07] 不 clamp:down-mix 時 |x|>1.0 合法，夾住會低報削波
+    for (let i = 0; i < outBuf.length; i++){ const a = Math.abs(outBuf[i]); if (a > samplePeak) samplePeak = a; }
+    document.documentElement.dataset.peak = samplePeak.toFixed(3);
+    rafId = powered ? requestAnimationFrame(meterLoop) : null;
+    if (rafId === null) document.documentElement.style.setProperty("--glow", "0");
+  }
+  const kick = () => { if (rafId == null) rafId = requestAnimationFrame(meterLoop); };
+
+  function setPower(on){
+    powered = on;
+    powerBtn.setAttribute("aria-pressed", String(on));
+    powerBtn.textContent = on ? "■ PWR" : "▶ PWR"; // 回饋2:入站已在閘選過,hook 不再重問;PWR 移入導覽列
+    powerBtn.setAttribute("aria-label", on ? "關機——回到安靜" : "開機——完整體驗(含聲音)");
+    padToggle.disabled = !on;
+    $("masterVol").disabled = !on; // 音量控制常駐外露(d015)
+    padToggle.textContent = on ? (padOn ? "■ 靜音" : "▶ 發聲") : "▶ 發聲(上方 PWR 開機)";
+    modeNote.textContent = on ? "聲音開了。滑到頁面頂端展開控制列" + String.fromCharCode(0xFF0C) + "可調音量或關機。"
+                              : "現在是安靜閱讀——內容一樣完整。";
+    const hb = $("haasBtn"); hb.disabled = !on; hb.textContent = on ? "▶ 播放一次" : "▶ 播放(上方 PWR 開機)";
+    document.documentElement.classList.toggle("enhanced", on && !reduceMotion);
+  }
+
+  // 導覽列:預設收起,滑鼠移頂自動展開、離開自動收回;把手鈕=鍵盤/觸控的後備(回饋:按鈕切換→感應)
+  {
+    const nav = document.querySelector(".transport"), fold = $("navFold");
+    const setNav = (open) => {
+      nav.classList.toggle("collapsed", !open);
+      fold.setAttribute("aria-expanded", String(open));
+      fold.textContent = open ? "▴" : "▾";
+      fold.setAttribute("aria-label", open ? "收合導覽列" : "展開導覽列");
+    };
+    fold.addEventListener("click", () => setNav(nav.classList.contains("collapsed")));
+    document.querySelector(".nav-hotzone").addEventListener("mouseenter", () => setNav(true));
+    nav.addEventListener("mouseleave", (e) => {
+      if (e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".tfold,.nav-hotzone")) return;
+      setNav(false);
+    });
+  }
+
+  powerBtn.addEventListener("click", () => {
+    restorePending = false; // 批判A:親手按 PWR=作廢恢復認領,懸置的 resume promise 不得半路翻轉本次按壓
+    if (!powered){
+      ensureCtx();
+      if (ctx.state === "suspended") ctx.resume(); // 手勢內 resume(G1 驗證的可攜模式)
+      master.gain.setTargetAtTime(0.2 * ($("masterVol").value / 100), ctx.currentTime, 0.05); // 回復關機前音量
+      setPower(true);
+      try { sessionStorage.setItem("pwr", "on"); } catch {} // 回饋3:選擇入 session,內頁回歸讀回
+      // [R3 K-29] 儀式只存在開機閘一處;POWER 就地回應——右下提示依使用者裁定刪除(pad 圖例已在現場)
+      powerOnSound(); kick();
+    } else {
+      if (padVoice){ padVoice.stop(); padVoice = null; padOn = false; }
+      padToggle.setAttribute("aria-pressed", "false"); // 批判 F7:關機後殘留 true
+      setPower(false);
+      try { sessionStorage.setItem("pwr", "off"); } catch {} // 親手關機=明確選擇
+      // [R3 K-04] 關機不咔嗒：零驚嚇是對稱的——先 150ms 淡出，靜了再 suspend(原本 suspend() 硬切)
+      if (ctx){
+        master.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
+        setTimeout(() => { if (!powered && ctx.state === "running") ctx.suspend(); }, 300);
+      }
+    }
+  });
+
+  // [R3 K-05] 回到開頭=可以真的再走一次：重置謝幕狀態(原本 finaleDone 永不重置，第二輪走到底沒有謝幕);
+  // reduced-motion 瞬移，否則平滑倒帶
+  $("loopBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    rewinding = true; // finaleDone 等倒帶結束才解鎖——立刻解鎖會在穿越謝幕時被幽靈觸發吃掉
+    const fin = $("finale");
+    fin.classList.remove("run");
+    fin.querySelectorAll(".lamp").forEach((l) => l.classList.remove("on"));
+    document.documentElement.classList.remove("rail-off"); // 線回到路上,旅程重新成立
+    const done = () => { if (!rewinding) return; rewinding = false; finaleDone = false;
+      if (ptrSeen) attachSignal(tX, tY); }; // 再走一次:訊號回到你手上(僅 fine+非低敏,attach 內部把關)
+    addEventListener("scrollend", done, { once: true });
+    setTimeout(done, 2600); // Safari 無 scrollend 的後備
+    scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    history.replaceState(null, "", "#hook");
+    focusPower();
+  });
+
+  padToggle.addEventListener("click", () => {
+    if (!powered) return;
+    if (!padOn){ padVoice = buildPadVoice(); padOn = true; kick(); }
+    else { padVoice.stop(); padVoice = null; padOn = false; }
+    padToggle.setAttribute("aria-pressed", String(padOn));
+    padToggle.textContent = padOn ? "■ 靜音" : "▶ 發聲";
+    softBlip();
+  });
+
+  $("padVol").addEventListener("input", (e) => {
+    if (padVoice) padVoice.g.gain.setTargetAtTime(0.5 * (e.target.value / 100), ctx.currentTime, 0.05);
+  });
+
+  // XY:X=聲像+五聲音階音高(無錯音);Y=距離感(濾波+殘響比+微音量)——空間映射契約
+  let lastTrail = 0;
+  pad.addEventListener("pointermove", (e) => {
+    const r = pad.getBoundingClientRect();
+    const x = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1);
+    const y = Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1);
+    dot.style.left = (x * 100) + "%"; dot.style.top = (y * 100) + "%";
+    if (powered && !reduceMotion && performance.now() - lastTrail > 60){ // 光跟手走(視覺對位)
+      lastTrail = performance.now();
+      const t = document.createElement("span"); t.className = "trail";
+      t.style.left = (x * 100) + "%"; t.style.top = (y * 100) + "%";
+      pad.appendChild(t);
+      t.animate([{opacity:.35, transform:"translate(-50%,-50%) scale(1)"},{opacity:0, transform:"translate(-50%,-50%) scale(.4)"}],
+        {duration:700, easing:"ease-out"}).onfinish = () => t.remove();
+    }
+    if (padVoice){
+      const f0 = PENTA[Math.min(PENTA.length - 1, Math.floor(x * PENTA.length))];
+      padVoice.o1.frequency.setTargetAtTime(f0, ctx.currentTime, 0.03);
+      padVoice.o2.frequency.setTargetAtTime(f0 * 2.003, ctx.currentTime, 0.03);
+      padVoice.panN.pan.setTargetAtTime(x * 2 - 1, ctx.currentTime, 0.03);            // X=聲像
+      padVoice.f.frequency.setTargetAtTime(500 + (1 - y) * 2600, ctx.currentTime, 0.03); // Y=亮度(近=亮)
+      reverb.gain.setTargetAtTime(0.08 + y * 0.3, ctx.currentTime, 0.05);              // Y=遠(殘響比升)
+    }
+  });
+
+  // 置中跳轉(使用者回饋 2026-08-16):index 鍵把「內容」帶到畫面中央,而非把
+  // 區塊頂(含 30vh 留白)貼到視窗頂、內容擠在下緣。內容比視窗矮=置中;
+  // 高於 80vh=從頭開始(置中會把開頭推出畫面)。無 JS 時原生錨點跳轉仍在(d018)。
+  document.querySelectorAll('a[href^="#"]').forEach((a) => {
+    const id = a.getAttribute("href").slice(1);
+    if (!id || a.id === "loopBtn") return; // loopBtn 有自己的重置流程
+    a.addEventListener("click", (e) => {
+      const t = document.getElementById(id);
+      if (!t) return;
+      e.preventDefault();
+      const inner = t.querySelector(".beat-inner") || t;
+      const block = inner.getBoundingClientRect().height < innerHeight * 0.8 ? "center" : "start";
+      inner.scrollIntoView({ block, behavior: reduceMotion ? "auto" : "smooth" });
+      history.pushState(null, "", "#" + id);
+    });
+  });
+
+  // 全站音量(0–100 → master gain 0–0.2;預設 60=保守初始值)
+  $("masterVol").addEventListener("input", (e) => {
+    if (master) master.gain.setTargetAtTime(0.2 * (e.target.value / 100), ctx.currentTime, 0.05);
+    try { sessionStorage.setItem("pwrvol", e.target.value); } catch {}
+  });
+
+  // 控制室：閘門列輕確認聲(乾；節流抗煩躁)
+  let lastTick = 0;
+  document.querySelectorAll("#ctrl .gatelist li").forEach((li) =>
+    li.addEventListener("pointerenter", () => {
+      if (performance.now() - lastTick > 150){ lastTick = performance.now(); dryTick(); }
+    }));
+
+  // 先到者定位實驗：同一 click 左右各一發，時間差由推桿決定(規格:≤1ms 疊加/≤50ms 融合/>50ms 回聲)
+  function haasClick(pan, when){
+    const o = ctx.createOscillator(), g = ctx.createGain(), p = ctx.createStereoPanner();
+    o.type = "triangle"; o.frequency.value = 1100;
+    g.gain.setValueAtTime(0, when);
+    g.gain.linearRampToValueAtTime(.26, when + .002);
+    g.gain.exponentialRampToValueAtTime(.001, when + .06);
+    p.pan.value = pan;
+    o.connect(g); g.connect(p); p.connect(analyser);
+    o.start(when); o.stop(when + .08);
+  }
+  function haasZone(ms){
+    if (ms <= 1)  return "疊加：兩發合成一聲";
+    if (ms <= 50) return "融合：方向跟著先到的左邊";
+    return "拆開：右邊變成回聲";
+  }
+  $("haasDelay").addEventListener("input", (e) => {
+    $("haasMs").textContent = e.target.value + " ms";
+    $("haasRead").textContent = haasZone(+e.target.value);
+  });
+  $("haasBtn").addEventListener("click", () => {
+    if (!powered || !ctx) return;
+    const t = ctx.currentTime + .05, d = (+$("haasDelay").value) / 1000;
+    haasClick(-0.9, t); haasClick(0.9, t + d);
+    kick();
+  });
+
+  // 謝幕觸發：進入視窗即演出(無 POWER=純視覺)
+  // 幕啟必須在台上:觀察燈列本體(threshold 1)——0.35 觀察整節時,觸發瞬間可見的
+  // 幾乎全是 30vh 上留白,第一盞燈在台下就演掉了
+  new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) runFinale(); }),
+    { threshold: 1 }).observe(document.querySelector("#finale .lamps"));
+
+  // ---- 訊號游標(K-62):附著/跟隨/讓位/脫離 ----
+  const FINE = matchMedia("(pointer: fine)").matches;
+  let sig = null, sigOn = false, sigX = 0, sigY = 0, tX = 0, tY = 0, sigRaf = null, ptrSeen = false;
+  let trailTick = 0;
+  function sigLoop(){
+    if (!sigOn || !sig) return; // 脫離瞬間仍有一幀已排入佇列(實測抓到的競態)
+    const px = sigX, py = sigY;
+    sigX += (tX - sigX) * .2; sigY += (tY - sigY) * .2;
+    sig.style.transform = "translate(" + sigX + "px," + sigY + "px)";
+    // 拖尾(回饋2):速度感應的彗尾——靜止無痕,快移才留殘點;與開場飛行尾跡同語彙
+    if (Math.hypot(sigX - px, sigY - py) > 5 && (++trailTick & 1) === 0 && !sig.classList.contains("hidden")){
+      const t = document.createElement("span");
+      t.className = "sig-trail";
+      document.body.appendChild(t);
+      t.animate([
+        { transform: "translate(" + sigX + "px," + sigY + "px) scale(1)", opacity: .5 },
+        { transform: "translate(" + sigX + "px," + sigY + "px) scale(.25)", opacity: 0 }
+      ], { duration: 380, easing: "ease-out", fill: "both" }).onfinish = () => t.remove();
+    }
+    sigRaf = sigOn ? requestAnimationFrame(sigLoop) : null;
+  }
+  function attachSignal(x, y){
+    if (!FINE || reduceMotion || sigOn) return;
+    try { sessionStorage.setItem("sig", "1"); } catch {} // 跨頁旗標:dossier 內頁據此接手(回饋1)
+    sigOn = true;
+    sig = document.createElement("span");
+    sig.className = "sig-cursor";
+    sigX = x; sigY = y; tX = ptrSeen ? tX : x; tY = ptrSeen ? tY : y;
+    sig.style.transform = "translate(" + x + "px," + y + "px)";
+    document.body.appendChild(sig);
+    document.documentElement.classList.add("signal-cursor"); // 原生游標只在跟隨者活著時隱藏
+    sigRaf = requestAnimationFrame(sigLoop);
+  }
+  function detachSignal(){ // 取回跟隨者(還原生游標);回傳最後位置供謝幕演出接手
+    if (!sigOn) return null;
+    try { sessionStorage.setItem("sig", "sent"); } catch {} // 已送出:本 session 不再自動附著
+    sigOn = false;
+    document.documentElement.classList.remove("signal-cursor");
+    const el = sig; sig = null;
+    return { el, x: sigX, y: sigY };
+  }
+  addEventListener("pointermove", (e) => {
+    tX = e.clientX; tY = e.clientY; ptrSeen = true;
+    if (!sig) return;
+    const t = e.target;
+    const overPad = !!(t && t.closest && t.closest(".xy-pad"));
+    sig.classList.toggle("hidden", overPad); // 板上讓位:板內光點=訊號上了儀器
+    sig.classList.toggle("ring", !overPad && !!(t && t.closest && t.closest("a,button,input,select,textarea")));
+  }, { passive: true });
+  addEventListener("pointerdown", (e) => { // 左鍵回饋(回饋4):游標短促減光+觸發環盪開——儀器的「按下」感
+    if (!sigOn || !sig || sig.classList.contains("hidden")) return;
+    sig.animate([{ opacity: 1 }, { opacity: .3 }, { opacity: 1 }], { duration: 170, easing: "ease-out" });
+    const ring = document.createElement("span");
+    ring.className = "sig-click";
+    document.body.appendChild(ring);
+    ring.animate([
+      { transform: "translate(" + e.clientX + "px," + e.clientY + "px) scale(.4)", opacity: .9 },
+      { transform: "translate(" + e.clientX + "px," + e.clientY + "px) scale(3.4)", opacity: 0 }
+    ], { duration: 400, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" }).onfinish = () => ring.remove();
+  });
+  document.documentElement.addEventListener("mouseleave", () => { if (sig) sig.classList.add("hidden"); });
+  document.documentElement.addEventListener("mouseenter", () => { if (sig) sig.classList.remove("hidden"); });
+  function ensureSignal(){ // 回饋2:bail、入站秒滾、深處重整——訊號都要吸附上手;唯「已送出」不回頭
+    if (!FINE || reduceMotion || sigOn) return;
+    let st = null; try { st = sessionStorage.getItem("sig"); } catch {}
+    if (st === "sent") return;
+    if (ptrSeen) attachSignal(tX, tY);
+    else addEventListener("pointermove", (e) => { if (!sigOn) attachSignal(e.clientX, e.clientY); }, { once: true, passive: true });
+  }
+
+  // ---- 開機閘:載入儀式(Bruno 式「按下開始」)。跳過/Esc/直接捲動皆離開;讀數是真實就緒訊號 ----
+  const gate = $("gate");
+  let gateDismissed = false;
+  let gateY0 = null, gateT0 = 0; // T0 在開閘時錨定——錨在解析時的話,載入慢一點還原窗就已過期
+  // 位置還原可能連射多發(y=0 先毒化基準,跳位那發就誤殺閘)——開閘後 500ms 內一律只更新基準;
+  // 之後偏移 >40 才是使用者要離開(深處重整「必演」的最後一塊)
+  function gateScrollDismiss(){
+    if (performance.now() - gateT0 < 500){ gateY0 = scrollY; return; }
+    if (gateY0 === null) { gateY0 = scrollY; return; }
+    if (Math.abs(scrollY - gateY0) > 40) dismissGate();
+  }
+  function flipDotToHook(){ // 閘的光點飛去 hook 落位(FLIP):同一顆訊號,從儀式接進頁面
+    const gd = gate.querySelector(".gate-core .dot"), hd = $("hookDot");
+    if (!gd || !hd) return;
+    // 批判修正三件:bloom 的 fill 蓋得住 inline opacity(先 cancel);量測前停掉呼吸
+    // (相位會烙進快照,±1.5px);目的地在飛行中先藏起來(否則兩顆 dot 同屏)
+    gd.getAnimations().forEach((an) => an.cancel());
+    gd.style.opacity = "0";
+    // K-62:有指標就飛向游標(訊號交到你手裡);無指標(鍵盤/觸控)退回原路=飛向 hook 光點
+    const toCursor = FINE && !reduceMotion && ptrSeen;
+    hd.style.animation = "none";
+    const a = gd.getBoundingClientRect();
+    const b = toCursor ? { left: tX - 5, top: tY - 5, width: 10, height: 10 } : hd.getBoundingClientRect();
+    if (!toCursor) hd.style.opacity = "0";
+    const c = document.createElement("span");
+    c.className = "dot";
+    c.style.cssText = "position:fixed;left:" + a.left + "px;top:" + a.top + "px;width:" + a.width + "px;height:" + a.height + "px;z-index:71;margin:0;pointer-events:none;transform-origin:top left";
+    document.body.appendChild(c);
+    const restore = () => { hd.style.opacity = ""; hd.style.animation = ""; };
+    const anim = c.animate([
+      { transform: "translate(0,0) scale(1)" },
+      { transform: "translate(" + (b.left - a.left) + "px," + (b.top - a.top) + "px) scale(" + (b.width / a.width) + ")" }
+    ], { duration: 680, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" });
+    // 火花尾跡:訊號劃過黑場(沿 clone 即時位置生成,結束自清)
+    const trail = setInterval(() => {
+      const r = c.getBoundingClientRect();
+      const sp = document.createElement("span");
+      sp.className = "dot";
+      sp.style.cssText = "position:fixed;left:" + r.left + "px;top:" + r.top + "px;width:4px;height:4px;z-index:70;margin:0;pointer-events:none;box-shadow:none";
+      document.body.appendChild(sp);
+      sp.animate([{ opacity: .8, transform: "scale(1)" }, { opacity: 0, transform: "scale(.3)" }],
+        { duration: 480, easing: "ease-out" }).onfinish = () => sp.remove();
+    }, 70);
+    const onScroll = () => { clearInterval(trail); anim.cancel(); c.remove(); restore(); }; // 目標座標過期,中止不硬著陸
+    addEventListener("scroll", onScroll, { once: true, passive: true });
+    anim.onfinish = () => {
+      removeEventListener("scroll", onScroll);
+      clearInterval(trail);
+      c.remove(); restore();
+      if (toCursor){ attachSignal(tX, tY); } // 訊號附著為游標——旅程從你手上開始
+      // 落地:光點脈衝+擴散環+訊號線點亮(開機時由 powerOnSound 經 analyser 點亮=同源;安靜路徑手動短湧)
+      if (!toCursor) hd.animate([{ transform: "scale(1)" }, { transform: "scale(1.6)" }, { transform: "scale(1)" }],
+        { duration: 560, easing: "ease-out" });
+      const hb = hd.getBoundingClientRect();
+      const ring = document.createElement("span");
+      ring.style.cssText = "position:fixed;left:" + (hb.left + hb.width / 2) + "px;top:" + (hb.top + hb.height / 2) + "px;width:10px;height:10px;border-radius:50%;border:1px solid var(--color-accent);transform:translate(-50%,-50%);z-index:69;pointer-events:none";
+      document.body.appendChild(ring);
+      ring.animate([
+        { opacity: .95, transform: "translate(-50%,-50%) scale(1)" },
+        { opacity: 0, transform: "translate(-50%,-50%) scale(14)" }
+      ], { duration: 850, easing: "cubic-bezier(.22,1,.36,1)" }).onfinish = () => ring.remove();
+      if (!powered) glowSurge(1600);
+    };
+  }
+  function hookEntrance(){ // hook 內容依序浮起,接住飛來的光點
+    [...document.querySelectorAll("#hook .beat-inner > *")].forEach((el, i) =>
+      el.animate([{ opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "none" }],
+        { duration: 520, delay: 140 + i * 90, easing: "cubic-bezier(.22,1,.36,1)", fill: "backwards" }));
+  }
+  function dismissGate(mode){ // mode="choice"=按鈕選擇(演轉場);其餘(捲動/Esc/跳過)=簡單淡出
+    if (gateDismissed) return; gateDismissed = true;
+    removeEventListener("scroll", gateScrollDismiss);
+    if (mode === "choice" && !reduceMotion){
+      flipDotToHook(); hookEntrance();
+      gate.classList.add("lift");
+      setTimeout(() => { gate.hidden = true; }, 900);
+    } else {
+      gate.classList.remove("on");
+      setTimeout(() => { gate.hidden = true; }, 750);
+    }
+    if (gate.contains(document.activeElement)) focusPower(); // [R3 K-09] 焦點歸還對應控制
+    ensureSignal(); // 附著為冪等:FLIP 已附著則無事;bail/秒滾也拿得到訊號(回饋2)
+  }
+  function focusPower(){ // 收合時聚焦「可見的把手」而非展開整列——預設收起是裁定,過閘不得偷偷展開(回饋2)
+    const nav = document.querySelector(".transport");
+    if (nav.classList.contains("collapsed")) { $("navFold").focus({ preventScroll: true }); return; }
+    powerBtn.focus({ preventScroll: true });
+  }
+  function runGate(){
+    if (reduceMotion) return; // 動效低敏模式：不演，直接可讀
+    // 重演規則(使用者 2026-08-16,取代 session-once):重整=必演;
+    // 唯「從站內內頁(dossier/research)回歸」不演。reload 判定優先——回歸後再重整仍算重整。
+    const navType = (performance.getEntriesByType("navigation")[0] || {}).type || "navigate";
+    if (navType !== "reload" && FROM_INNER){ ensureSignal(); return; } // 內頁回歸(連結或 Back 皆算):不重演,但訊號回到手上
+    gateT0 = performance.now();
+    try { sessionStorage.removeItem("pwr"); } catch {} // 批判B:閘門重問=舊答案作廢——Esc/跳過/捲動離場不得讓過期的「on」在下次回歸還魂
+    gate.hidden = false; requestAnimationFrame(() => { if (gateDismissed) return; gate.classList.add("on"); gate.focus(); }); // [R3 K-09] focus 入閘;守衛防「解除後補 .on」殭屍態
+    gate.addEventListener("keydown", (e) => { // [R3 K-09] APG dialog:Tab 圈內(只在可見鈕之間)
+      if (e.key !== "Tab") return;
+      const f = [...gate.querySelectorAll("button")].filter((b) => b.checkVisibility ? b.checkVisibility() : b.offsetParent !== null);
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === gate)){ e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (document.activeElement === last || document.activeElement === gate)){ e.preventDefault(); first.focus(); }
+    });
+    const checks = [
+      ["SIGNAL PATH", document.fonts ? document.fonts.ready : Promise.resolve()],
+      ["MONITORS",    new Promise((res) => { const im = new Image(); im.onload = im.onerror = res;
+                        im.src = document.documentElement.dataset.base + "/media/hamlet-story-mv-poster-1200.webp"; })],
+      ["ROOM",        new Promise((res) => setTimeout(res, 700))],
+    ];
+    const box = $("gateLines"); let done = 0;
+    checks.forEach(([label, ready], i) => {
+      const row = document.createElement("div");
+      row.textContent = label.padEnd(12, " ") + "……";
+      box.appendChild(row);
+      setTimeout(() => row.classList.add("show"), 250 + i * 350);
+      Promise.race([ready, new Promise((res) => setTimeout(res, 2200))]).then(() => {
+        row.innerHTML = label.padEnd(12, " ") + '<span class="ok">OK</span>';
+        done++;
+        $("gateFill").style.transform = "scaleX(" + (done / checks.length) + ")";
+        if (done === checks.length)
+          setTimeout(() => { if (gateDismissed) return; // [R3 K-09] 已解除的閘不得回頭偷焦點(背景分頁 rAF 節流下實測到)
+            $("gateChoice").classList.add("show"); $("gateFull").focus(); }, 350);
+      });
+    });
+    addEventListener("keydown", (e) => { if (e.key === "Escape") dismissGate(); });
+    addEventListener("scroll", gateScrollDismiss, { passive: true });
+    $("gateSkip").addEventListener("click", () => dismissGate());
+    $("gateLite").addEventListener("click", () => { dismissGate("choice");
+      try { sessionStorage.setItem("pwr", "off"); } catch {} }); // 安靜進站=明確選擇(回饋3)
+    $("gateFull").addEventListener("click", () => { dismissGate("choice"); if (!powered) powerBtn.click(); });
+  }
+  let restorePending = false; // 批判A:恢復是「可取消的認領」,不是既成事實——PWR 按壓的當下就要贏過任何懸置 promise
+  const FROM_INNER = (() => { // 批判E:歷史回退(Back)不更新 referrer——內頁寫麵包屑,回歸判定=referrer ∪ 麵包屑;讀後即銷
+    let bc = null; try { bc = sessionStorage.getItem("inner"); sessionStorage.removeItem("inner"); } catch {}
+    return /\/(work|research)\//.test(document.referrer) || bc === "1";
+  })();
+  function restorePowerFromSession(){ // 回饋3(2026-08-16):內頁回歸=延續音效選擇。reload 走閘門重問,不在此列
+    const navType = (performance.getEntriesByType("navigation")[0] || {}).type || "navigate";
+    if (navType === "reload" || !FROM_INNER) return;
+    let st = null, v = null;
+    try { st = sessionStorage.getItem("pwr"); v = sessionStorage.getItem("pwrvol"); } catch {}
+    if (v !== null && +v >= 0 && +v <= 100) $("masterVol").value = v; // 批判C:音量先還原——關機回歸後再開機,也該用你選過的音量(d015 驚嚇軸)
+    if (st !== "on") return; // off/未選擇:維持安靜,現狀即正解
+    restorePending = true;
+    const offGesture = () => {
+      removeEventListener("pointerdown", onGesture); removeEventListener("pointerup", onGesture);
+      removeEventListener("keydown", onGesture);
+    };
+    const tryOn = () => {
+      if (!restorePending || powered) return;
+      ensureCtx();
+      ctx.resume().then(() => {
+        if (!restorePending || powered || ctx.state !== "running") return; // 批判A:被取消的認領不得回頭開機(pointerdown 授權會喚醒懸置 promise)
+        restorePending = false; offGesture();
+        master.gain.setTargetAtTime(0.2 * ($("masterVol").value / 100), ctx.currentTime, 0.05);
+        setPower(true); kick(); // 無 powerOnSound:回歸是延續,不是再開機(K-29 儀式只在閘)
+      }).catch(() => {});
+    };
+    const onGesture = (e) => { // 批判D:非一次性——Esc 與觸控 pointerdown 不授權自動播放,一次性監聽會被它們白白吃掉
+      if (powered || !restorePending){ offGesture(); return; }
+      if (e.target && e.target.closest && e.target.closest("#powerBtn")){ restorePending = false; offGesture(); return; } // 讓位給按鈕語意=取消認領
+      if (e.type === "keydown" && e.key === "Escape") return; // 非授權鍵:不消耗、不觸發
+      tryOn(); // 成功才自我拆除(見 then);失敗留著等下一個手勢
+    };
+    tryOn(); // 政策放行的環境(已互動過的 origin 等)直接恢復
+    addEventListener("pointerdown", onGesture);
+    addEventListener("pointerup", onGesture); // 觸控在 pointerup 才取得授權
+    addEventListener("keydown", onGesture);
+  }
+  restorePowerFromSession(); // reduced-motion 也適用:電源是狀態,不是儀式
+  runGate();
+
+  // ---- 捲動進度:CSS timeline 不可用時(Firefox / reduced-motion)由被動監聽直寫 ----
+  // reduced-motion 也必須跑這條:K-30 讓 filament 成為唯一進度指示後，兩條路徑都關掉會使
+  // 低敏使用者完全失去進度回饋(R2 回饋 3 未滿足)。直寫是「位置映射」不是動畫——無過渡、
+  // 無插值，捲到哪畫到哪，正是 reduced-motion 該有的形狀。
+  if (reduceMotion || !(window.CSS && CSS.supports("animation-timeline: scroll()"))){
+    const fil = document.querySelector(".filament");
+    let ticking = false;
+    const upd = () => {
+      ticking = false;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      const p = max > 0 ? Math.min(1, scrollY / max) : 0;
+      fil.style.transform = "scaleX(" + p + ")";
+    };
+    addEventListener("scroll", () => { if (!ticking){ ticking = true; requestAnimationFrame(upd); } }, { passive: true });
+    upd();
+  }
+})();
+    </script>
   </body>
 </html>

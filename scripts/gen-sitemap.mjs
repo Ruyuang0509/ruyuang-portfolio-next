@@ -20,9 +20,9 @@ function walk(dir, rel = "") {
   for (const name of readdirSync(dir)) {
     const p = join(dir, name);
     if (statSync(p).isDirectory()) { walk(p, rel + name + "/"); continue; }
+    // index.html only: 404 stays out of the index, and so does the /design/ redirect stub
+    // (K-35 — the prototype URL now forwards to the root; listing it would advertise a hop)
     if (name === "index.html" && rel !== "404/") urls.push(SITE + rel);
-    else if (name === "404.html") continue;
-    else if (name === "journey-proto-1.html") urls.push(SITE + rel + name);
   }
 }
 walk(dist);
