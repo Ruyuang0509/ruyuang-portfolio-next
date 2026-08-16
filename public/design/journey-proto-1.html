@@ -743,6 +743,7 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
       else document.documentElement.style.setProperty("--glow", "0");
     })(performance.now());
   }
+  let showEscaped = false; // Esc 逃出演出時,連自動滾動也一併取消
   function lockScroll(ms){ // d005 修訂(使用者 2026-08-16):唯謝幕演出期間鎖捲動,保演出完整;Esc 隨時解鎖
     const stop = (e) => e.preventDefault();
     const keys = ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "];
@@ -751,7 +752,7 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
       removeEventListener("wheel", stop); removeEventListener("touchmove", stop);
       removeEventListener("keydown", keyStop); removeEventListener("keydown", escRel);
     };
-    const escRel = (e) => { if (e.key === "Escape") release(); };
+    const escRel = (e) => { if (e.key === "Escape"){ showEscaped = true; release(); } };
     addEventListener("wheel", stop, { passive: false });
     addEventListener("touchmove", stop, { passive: false });
     addEventListener("keydown", keyStop);
@@ -770,7 +771,14 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
       if (powered && ctx){ finaleChord(); kick(); }
       return;
     }
-    lockScroll(4600); // 演出期間視角落鎖(d005 修訂);字卡浮現即解鎖
+    showEscaped = false;
+    lockScroll(8300); // 演出+自動滾出口全程落鎖(d005 修訂追加);Esc 隨時逃出
+    fin.scrollIntoView({ block: "center", behavior: "smooth" }); // 追加令:演出自動置中
+    setTimeout(() => { // 追加令:演出完畢(字卡讀完一拍)自動滾至出口;Esc 逃出者不強送
+      if (showEscaped) return;
+      const exitInner = document.querySelector("#exit .beat-inner") || document.getElementById("exit");
+      exitInner.scrollIntoView({ block: "center", behavior: "smooth" });
+    }, 7400);
     document.documentElement.classList.add("rail-off"); // 訊號送出,線退場(回饋3)
     // K-62 脫離:游標上的訊號飛入舞台,在主爆發的位置待場——爆發把它接走(核心綻放=你的訊號抵達)
     const carried = detachSignal();
