@@ -7,6 +7,8 @@ import Rack from "../components/Rack.astro";
 import ControlRoom from "../components/ControlRoom.astro";
 import Provenance from "../components/Provenance.astro";
 import OutputBus from "../components/OutputBus.astro";
+const canonical = new URL(Astro.url.pathname.replace(/\/?$/, "/"), Astro.site).href; // K-72 正式切換:本站網址即正式網址(使用者 2026-08-16 裁定);結尾斜線=GH Pages 實際服務形
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <html lang="zh-Hant-TW">
@@ -15,12 +17,22 @@ import OutputBus from "../components/OutputBus.astro";
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#070503" /><!-- 外框/瀏覽器鑲邊偏暗(視口外的白不是頁面塗得到的) -->
-    <meta name="robots" content="noindex" /><!-- 預覽期防搜尋引擎收錄;正式切換時移除,同批補 canonical+OG+sitemap [R3 K-40] -->
     <title>如願 — 聲音 × 智能應用</title>
     <meta
       name="description"
       content="如願的作品集:聲音互動、AI 協作與混合多聲道監聽研究。"
     />
+    <!-- K-40 正式切換(K-72):noindex 移除,同批 canonical+OG+sitemap -->
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content="如願 — 聲音 × 智能應用" />
+    <meta property="og:description" content="如願的作品集:聲音互動、AI 協作與混合多聲道監聽研究。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="如願 — 訊號的旅程" />
+    <meta property="og:locale" content="zh_TW" />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="icon" href={`${base}/favicon-32.png`} type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" />

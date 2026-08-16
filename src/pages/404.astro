@@ -9,7 +9,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#070503" /><!-- 外框/瀏覽器鑲邊偏暗(視口外的白不是頁面塗得到的) -->
-    <meta name="robots" content="noindex" />
+    <meta name="robots" content="noindex" /><!-- 404 維持 noindex:錯誤頁不該進索引(K-72 正式切換的唯一例外) -->
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="icon" href={`${base}/favicon-32.png`} type="image/png" sizes="32x32" />
     <title>NO SIGNAL — 如願</title>
   </head>
   <body>

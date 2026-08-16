@@ -7,6 +7,7 @@
     "dev": "astro dev",
     "prebuild": "node scripts/sync-proto.mjs",
     "build": "astro build",
+    "postbuild": "node scripts/gen-sitemap.mjs",
     "preview": "astro preview",
     "test": "vitest run",
     "check:paths": "node scripts/checks/paths.mjs src public scripts docs dist",

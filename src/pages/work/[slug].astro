@@ -23,6 +23,7 @@ const beat = beatMap[work.id] ?? "";
 // 開場款式依主題(回饋:DOSSIER 也上全屏開場,且各主題各異)
 const fxMap: Record<string, string> = { "pd-crossmodal": "xy", "hamlet-story-mv": "cinema", "guide-videos": "field" };
 const fx = fxMap[work.id] ?? "stamp";
+const canonical = new URL(Astro.url.pathname.replace(/\/?$/, "/"), Astro.site).href; // K-72 正式切換;結尾斜線正規化
 ---
 
 <html lang="zh-Hant-TW" data-room="paper"><!-- K-27 證據紙房間:dossier 深讀=正極性。房間綁路由,非使用者偏好 -->
@@ -31,9 +32,19 @@ const fx = fxMap[work.id] ?? "stamp";
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#070503" /><!-- 外框/瀏覽器鑲邊偏暗(視口外的白不是頁面塗得到的) -->
     <meta name="color-scheme" content="dark" /><!-- v4 暖暗閱讀室 -->
-    <meta name="robots" content="noindex" /><!-- 預覽期防搜尋引擎收錄;正式切換時移除,同批補 canonical+OG+sitemap [R3 K-40] -->
     <title>{d.title} — 如願</title>
     <meta name="description" content={d.summary} />
+    <!-- K-40 正式切換(K-72) -->
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={`${d.title} — 如願`} />
+    <meta property="og:description" content={d.summary} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="如願 — 訊號的旅程" />
+    <meta property="og:locale" content="zh_TW" />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="icon" href={`${base}/favicon-32.png`} type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" />
