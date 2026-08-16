@@ -53,3 +53,8 @@
 @keyframes dfx-sy{to{transform:scaleY(1)}}
 @keyframes dfx-pop{to{transform:translate(-50%,-50%) scale(1)}}
 @keyframes dfx-hz{to{left:8%;width:84%}}
+
+/* 換行修正(回饋:部分不適當換行仍在):全站 keep-all 假設「句讀密度夠」,但 dossier 逐字稿
+   不能加句讀(d016)——長句撞行尾時 anywhere 會任意斷字。閱讀層改回標準 CJK 換行
+  (避頭尾 strict 仍在);雜湊/網址仍靠 anywhere 斷。 */
+.dbody,.dbody p,.dfield p,.dossier-summary,.evlist li{word-break:normal}

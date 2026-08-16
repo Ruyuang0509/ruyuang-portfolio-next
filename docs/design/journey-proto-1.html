@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<meta name="theme-color" content="#070503" />
 <title>如願 — 訊號的旅程(原型 1・完整旅程 節拍 1–7)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -217,7 +219,7 @@ button.cta:hover{filter:brightness(1.06)}
 #finale .lamp i{display:block;width:10px;height:10px;border-radius:50%;background:var(--color-rule);transition:background var(--dur-2) var(--ease-out),box-shadow var(--dur-2) var(--ease-out)}
 #finale .lamp.on i{background:var(--color-accent);box-shadow:0 0 22px 4px color-mix(in oklab,var(--color-accent) 55%,transparent)}
 #finale .lamp.on{color:var(--color-ink-2)}
-.colophon-quote{margin-top:var(--space-2xl);font-size:1.05rem;color:var(--color-ink-2);opacity:1;transition:opacity 1.8s var(--ease-out)}
+.colophon-quote{margin-top:var(--space-2xl);font-size:1.05rem;color:var(--color-ink-2);opacity:1;transition:opacity 1.8s var(--ease-out);text-align:center;margin-inline:auto;max-width:30ch}
 .js #finale:not(.run) .colophon-quote{opacity:0} /* JS 在場才候場;無 JS 全亮(d018)。演出前不得半亮劇透 */
 #finale.run .colophon-quote{opacity:1}
 
