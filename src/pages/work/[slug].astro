@@ -67,7 +67,7 @@ const fx = fxMap[work.id] ?? "stamp";
                     <track kind="captions" src={`${base}${t.src}`} srclang={t.srclang} label={t.label} />
                   ))}
                 </video>
-                {d.media.note && <figcaption class="mono dmedia-note">{d.media.note}</figcaption>}
+                {d.media.note && <figcaption class="dmedia-note">{d.media.note}</figcaption>}<!-- K-67:圖說是完整中文句,不是儀表標籤——回內文字體 -->
               </figure>
             )}
 

@@ -22,7 +22,7 @@
   --color-signal:#e24947;
   --font-display:"Noto Sans TC",sans-serif;
   --font-body:"Noto Sans TC",sans-serif;
-  --font-mono:"IBM Plex Mono",monospace;
+  --font-mono:"IBM Plex Mono","Noto Sans TC",monospace; /* K-67:mono 疊 CJK 後援——中文標籤(orient/dlabel/foot-row)不再掉進瀏覽器預設等寬字型 */
   --space-xs:4px;--space-sm:8px;--space-md:16px;--space-lg:24px;--space-xl:40px;--space-2xl:56px;
   --text-body:1rem;--text-sm:.8125rem;--text-xs:.6875rem;
   --text-display:clamp(1.8rem,4vw + .5rem,3.2rem);

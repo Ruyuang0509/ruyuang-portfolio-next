@@ -1,5 +1,5 @@
 ---
-title: 作品集網站(兩代)
+title: 作品集網站（兩代）
 kind: web
 tier: rack
 year: "2025–2026"
@@ -8,8 +8,8 @@ summary: 這個網站本身。第一代「聲響、互動與數位學習作品�
 role: 兩代皆由本人設計、建置與迭代；重製過程的每一次設計裁決與上線核准由本人執行。
 aiDisclosure: 第二代開發採 AI 協作工作流；設計方向、逐項裁決與每一次核准由本人執行，repo 的 git 歷史逐 commit 可查。
 evidence:
-  - { label: GEN-1, value: "蕭智仁|聲響、互動與數位學習作品集 · ruyuang0509.github.io/ruyuang-portfolio(線上)" }
-  - { label: GEN-2, value: "訊號的旅程 · 本站(repo ruyuang-portfolio-next,git 歷史公開)" }
+  - { label: GEN-1, value: "蕭智仁｜聲響、互動與數位學習作品集 · ruyuang0509.github.io/ruyuang-portfolio（線上）" }
+  - { label: GEN-2, value: "訊號的旅程 · 本站（repo ruyuang-portfolio-next，git 歷史公開）" }
   - { label: GATES, value: "七道發布檢查：paths / media / wording / motion / approval / obligations / csspunct" }
 thirdParty: false
 detail: true

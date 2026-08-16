@@ -1,15 +1,15 @@
 .dossier-title{font-family:var(--font-display);font-weight:900;font-size:clamp(1.6rem,3.4vw + .5rem,2.6rem);line-height:1.35;margin-top:var(--space-md);max-width:24ch}
-.dossier-summary{margin-top:var(--space-md);max-width:52ch;color:var(--color-ink-2)}
+.dossier-summary{margin-top:var(--space-md);max-width:52ch;color:var(--color-ink-2);line-height:1.9} /* K-67 稽核:摘要是連續閱讀散文,不得停在 html 的 1.75 */
 .dmedia{margin-top:var(--space-xl);border:1px solid var(--color-rule);border-radius:var(--radius-1);background:var(--color-paper-2);padding:var(--space-sm)}
 .dmedia video{display:block;width:100%;height:auto;border-radius:2px;background:var(--color-paper)}
-.dmedia-note{margin-top:var(--space-sm);font-size:var(--text-sm);color:var(--color-muted);padding-inline:var(--space-xs)} /* 媒體註記承載揭露性 caveat,自 xs 升 sm(K-28) */
+.dmedia-note{margin-top:var(--space-sm);font-size:var(--text-body);color:var(--color-muted);padding-inline:var(--space-xs)} /* 媒體註記承載揭露性 caveat=完整中文句,受 16px 閱讀下限管(K-28 升 sm 仍不足,K-67 稽核定案) */
 .dossier-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-md);margin-top:var(--space-xl)}
 .dfield{border:1px solid var(--color-rule-2);border-radius:var(--radius-1);background:var(--color-paper-2);padding:var(--space-md);margin-top:var(--space-md)}
 .dossier-grid .dfield{margin-top:0}
 .dlabel{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;color:var(--color-muted);text-transform:uppercase;margin-bottom:var(--space-sm);font-weight:500}
 .dfield p{font-size:var(--text-body);color:var(--color-ink-2);line-height:1.8} /* K-27:連續閱讀層下限 16px(正極性證據在小字咬得最深,反向同守) */
 .evlist{list-style:none;padding:0;display:flex;flex-direction:column;gap:var(--space-sm)}
-.evlist li{display:flex;gap:var(--space-md);align-items:baseline;font-size:var(--text-body);color:var(--color-ink-2);overflow-wrap:anywhere} /* K-27+K-28:證據值=必讀資訊,不得停留在標籤級字級 */
+.evlist li{display:flex;gap:var(--space-md);align-items:baseline;font-size:var(--text-body);color:var(--color-ink-2);overflow-wrap:anywhere;line-height:1.8} /* K-27+K-28:證據值=必讀資訊,不得停留在標籤級字級;行高 1.8=長值折行後仍是連續閱讀(K-67) */
 .evk{color:var(--color-accent);font-size:var(--text-xs);letter-spacing:.08em;min-width:7.5rem}
 .dbody{margin-top:var(--space-xl);max-width:62ch}
 .dbody p{margin-bottom:var(--space-md);color:var(--color-ink-2);line-height:1.9}
@@ -20,6 +20,11 @@
 .dbody blockquote{border-left:2px solid var(--color-rule);padding-left:var(--space-md);color:var(--color-muted);margin:0 0 var(--space-md)}
 @media (max-width:720px){
   .dossier-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  /* K-67 稽核:evk 固定 7.5rem 佔位在 375px 視口把值欄壓成 ~7 全形字/行,
+     長值(hamlet APPROVAL ~60 字)折成九行細條且 anywhere 硬拆日期 token——改上下疊 */
+  .evlist li{flex-direction:column;align-items:flex-start;gap:2px}
 }
 
 /* 開燈過渡(使用者:切換突兀+割裂感)——從暗房走進紙房,燈是慢慢亮起來的;

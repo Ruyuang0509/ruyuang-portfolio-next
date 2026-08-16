@@ -4,14 +4,14 @@ kind: software
 tier: rack
 year: "2026"
 tags: [".NET", "WPF", "桌面應用"]
-summary: Windows 離線桌面應用——把 Word 反白單字一鍵轉成測驗表格；.NET/WPF,v1.0 前釋出強化中。
+summary: Windows 離線桌面應用——把 Word 反白單字一鍵轉成測驗表格；.NET/WPF，v1.0 前釋出強化中。
 role: 需求定義、架構決策、驗收與釋出由本人負責。
 aiDisclosure: 開發過程採 AI 協作工作流；需求、架構決策與驗收由本人負責。
 evidence:
   - { label: STACK, value: ".NET 10 / WPF · 離線執行" }
   - { label: STATUS, value: v1.0 前釋出強化階段 }
 thirdParty: false
-obligations: [no-monetization]
+obligations: ["no-monetization"]
 detail: true
 ---
 
