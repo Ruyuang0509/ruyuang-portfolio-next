@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import "../../styles/global.css";
 import TransportNav from "../../components/TransportNav.astro";
 import OutputBus from "../../components/OutputBus.astro";
+import SignalCursor from "../../components/SignalCursor.astro";
 
 export async function getStaticPaths() {
   const works = await getCollection(
@@ -101,6 +102,7 @@ const fx = fxMap[work.id] ?? "stamp";
         </article>
       </div>
       <OutputBus subpage />
+      <SignalCursor />
     </div>
   </body>
 </html>

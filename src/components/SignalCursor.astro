@@ -1,0 +1,56 @@
+---
+// 訊號游標的內頁接手(K-62 續,回饋:光標沒被帶進 DOSSIER):
+// 旅程頁把 sessionStorage sig="1" 當接力棒;內頁只在「訊號仍在旅途中」時接手。
+// "sent"=謝幕已送出,不再出現;僅 pointer:fine+非低敏。
+---
+
+<style is:global>
+  html.signal-cursor,
+  html.signal-cursor * { cursor: none !important; }
+  .sig-cursor {
+    position: fixed; left: 0; top: 0; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--color-accent); pointer-events: none; z-index: 72; margin: -5px 0 0 -5px;
+    box-shadow: 0 0 6px 1px color-mix(in oklab, var(--color-accent) 60%, transparent);
+    transition: width .18s ease, height .18s ease, margin .18s ease,
+      background .18s ease, border .18s ease, opacity .25s linear;
+  }
+  .sig-cursor.ring { width: 26px; height: 26px; margin: -13px 0 0 -13px; background: transparent; border: 1.5px solid var(--color-accent); }
+  .sig-cursor.hidden { opacity: 0; }
+</style>
+
+<script>
+  const FINE = matchMedia("(pointer: fine)").matches;
+  const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let flag = null;
+  try { flag = sessionStorage.getItem("sig"); } catch {}
+  if (FINE && !RM && flag === "1") {
+    let sig: HTMLSpanElement | null = null, x = 0, y = 0, tx = 0, ty = 0, on = false;
+    const loop = () => {
+      if (!on || !sig) return;
+      x += (tx - x) * 0.2; y += (ty - y) * 0.2;
+      sig.style.transform = `translate(${x}px,${y}px)`;
+      requestAnimationFrame(loop);
+    };
+    addEventListener(
+      "pointermove",
+      (e) => {
+        tx = e.clientX; ty = e.clientY;
+        if (!on) {
+          on = true;
+          sig = document.createElement("span");
+          sig.className = "sig-cursor";
+          x = tx; y = ty;
+          sig.style.transform = `translate(${x}px,${y}px)`;
+          document.body.appendChild(sig);
+          document.documentElement.classList.add("signal-cursor");
+          requestAnimationFrame(loop);
+        }
+        const t = e.target as Element | null;
+        sig!.classList.toggle("ring", !!(t && t.closest && t.closest("a,button,input,select,textarea,video")));
+      },
+      { passive: true }
+    );
+    document.documentElement.addEventListener("mouseleave", () => sig && sig.classList.add("hidden"));
+    document.documentElement.addEventListener("mouseenter", () => sig && sig.classList.remove("hidden"));
+  }
+</script>

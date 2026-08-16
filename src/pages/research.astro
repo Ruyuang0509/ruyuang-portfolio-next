@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import TransportNav from "../components/TransportNav.astro";
 import OutputBus from "../components/OutputBus.astro";
+import SignalCursor from "../components/SignalCursor.astro";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
@@ -65,6 +66,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
         </article>
       </div>
       <OutputBus subpage />
+      <SignalCursor />
     </div>
   </body>
 </html>

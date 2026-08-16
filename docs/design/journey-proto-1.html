@@ -54,6 +54,8 @@ a{color:var(--color-ink)}
   background:linear-gradient(to bottom,transparent,var(--color-rule) 8%,var(--color-rule) 92%,transparent)}
 .line-glow{position:absolute;inset:0;background:linear-gradient(to bottom,transparent,var(--color-accent) 8%,var(--color-accent) 92%,transparent);
   opacity:calc(.12 + var(--glow) * .8);transition:opacity 120ms linear}
+.rail-off .line-rail{opacity:0} /* 謝幕:訊號送出,線退場——文字不再與線重疊(敘事解,不是遮罩解) */
+@media (prefers-reduced-motion: no-preference){.line-rail{transition:opacity 1.2s var(--ease-out)}}
 .line-breath{position:absolute;inset:0;background:linear-gradient(to bottom,transparent,var(--color-accent) 8%,var(--color-accent) 92%,transparent);opacity:0}
 @media (max-width:700px){.line-rail{left:20px}} /* 手機:rail 退居邊緣 [R3 K-30] */
 
@@ -82,7 +84,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opa
   text-align:center;margin-bottom:var(--space-xl)}
 .orient::before{content:"";display:block;width:1px;height:26px;margin:0 auto var(--space-md);
   background:linear-gradient(var(--color-accent),transparent);opacity:.7}
-.note{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);border-left:2px solid var(--color-rule);padding:var(--space-xs) var(--space-md);margin-top:var(--space-lg);max-width:46ch;line-height:1.9}
+.note{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-muted);border-left:2px solid var(--color-rule);padding:var(--space-xs) var(--space-md);margin-top:var(--space-lg);max-width:64ch;line-height:1.9} /* 46ch(≈23 全形)曾逼斷單句註記 */
 .note b{color:var(--color-accent);font-weight:500}
 
 /* beat 1 hook */
@@ -453,7 +455,7 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
     <h2 style="font-weight:700;font-size:1.2rem">導覽影片(四部)</h2>
     <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-sm)">地方文化見習的影音成品——潭墘、糖廠(上/下)、蒜頭老街，四部合計 9 分 29 秒；分鏡、外拍、剪輯與後製訊號處理、跨裝置播放驗證。</p>
     <p class="desc" style="color:var(--color-ink-2);font-size:var(--text-sm);max-width:52ch;margin-top:var(--space-md)">見習為雙人同梯；此處列出的，是工作日誌記載由本人負責的影音線。</p>
-    <p class="note">設計註記：格線在這裡逐漸消散，只留一條地平線。</p>
+    <p class="note">設計註記：背景不設格線，只留一條地平線——這一站的影片，拍在沒有牆的地方。</p>
     <p class="dossier-link">深入這件作品:<a href="https://ruyuang0509.github.io/ruyuang-portfolio-next/work/guide-videos/">作品檔案(dossier)→</a></p>
   </div>
 </section>
@@ -521,7 +523,7 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
       <span class="lamp"><i></i>CH·03</span>
       <span class="lamp"><i></i>MASTER</span>
     </div>
-    <p class="colophon-quote">「先讓路平坦，再思考如何裝飾風景。」</p>
+    <p class="colophon-quote">「先讓路途平坦，再思考如何裝飾風景。」</p>
   </div>
 </section>
 
@@ -740,17 +742,35 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
       else document.documentElement.style.setProperty("--glow", "0");
     })(performance.now());
   }
+  function lockScroll(ms){ // d005 修訂(使用者 2026-08-16):唯謝幕演出期間鎖捲動,保演出完整;Esc 隨時解鎖
+    const stop = (e) => e.preventDefault();
+    const keys = ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "];
+    const keyStop = (e) => { if (keys.includes(e.key)) e.preventDefault(); };
+    const release = () => {
+      removeEventListener("wheel", stop); removeEventListener("touchmove", stop);
+      removeEventListener("keydown", keyStop); removeEventListener("keydown", escRel);
+    };
+    const escRel = (e) => { if (e.key === "Escape") release(); };
+    addEventListener("wheel", stop, { passive: false });
+    addEventListener("touchmove", stop, { passive: false });
+    addEventListener("keydown", keyStop);
+    addEventListener("keydown", escRel);
+    setTimeout(release, ms);
+  }
   let rewinding = false; // 倒帶途中穿越謝幕不得開演:幽靈和弦+把第二輪的謝幕燒掉(批判實證)
   function runFinale(){ // 謝幕 v2:燈序→環→主爆發(+和弦同拍)→字卡。仍零內容(d003);未開機=純視覺(d002)
     if (finaleDone || rewinding) return; finaleDone = true;
     const fin = $("finale");
     const lamps = [...fin.querySelectorAll(".lamp")];
     if (reduceMotion){
+      document.documentElement.classList.add("rail-off");
       lamps.forEach((l) => l.classList.add("on"));
       fin.classList.add("run");
       if (powered && ctx){ finaleChord(); kick(); }
       return;
     }
+    lockScroll(4600); // 演出期間視角落鎖(d005 修訂);字卡浮現即解鎖
+    document.documentElement.classList.add("rail-off"); // 訊號送出,線退場(回饋3)
     // K-62 脫離:游標上的訊號飛入舞台,在主爆發的位置待場——爆發把它接走(核心綻放=你的訊號抵達)
     const carried = detachSignal();
     if (carried){
@@ -882,6 +902,7 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
     const fin = $("finale");
     fin.classList.remove("run");
     fin.querySelectorAll(".lamp").forEach((l) => l.classList.remove("on"));
+    document.documentElement.classList.remove("rail-off"); // 線回到路上,旅程重新成立
     const done = () => { if (!rewinding) return; rewinding = false; finaleDone = false;
       if (ptrSeen) attachSignal(tX, tY); }; // 再走一次:訊號回到你手上(僅 fine+非低敏,attach 內部把關)
     addEventListener("scrollend", done, { once: true });
@@ -1002,6 +1023,7 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
   }
   function attachSignal(x, y){
     if (!FINE || reduceMotion || sigOn) return;
+    try { sessionStorage.setItem("sig", "1"); } catch {} // 跨頁旗標:dossier 內頁據此接手(回饋1)
     sigOn = true;
     sig = document.createElement("span");
     sig.className = "sig-cursor";
@@ -1013,6 +1035,7 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
   }
   function detachSignal(){ // 取回跟隨者(還原生游標);回傳最後位置供謝幕演出接手
     if (!sigOn) return null;
+    try { sessionStorage.setItem("sig", "sent"); } catch {} // 已送出:本 session 不再自動附著
     sigOn = false;
     document.documentElement.classList.remove("signal-cursor");
     const el = sig; sig = null;
@@ -1028,12 +1051,22 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
   }, { passive: true });
   document.documentElement.addEventListener("mouseleave", () => { if (sig) sig.classList.add("hidden"); });
   document.documentElement.addEventListener("mouseenter", () => { if (sig) sig.classList.remove("hidden"); });
+  function ensureSignal(){ // 回饋2:bail、入站秒滾、深處重整——訊號都要吸附上手;唯「已送出」不回頭
+    if (!FINE || reduceMotion || sigOn) return;
+    let st = null; try { st = sessionStorage.getItem("sig"); } catch {}
+    if (st === "sent") return;
+    if (ptrSeen) attachSignal(tX, tY);
+    else addEventListener("pointermove", (e) => { if (!sigOn) attachSignal(e.clientX, e.clientY); }, { once: true, passive: true });
+  }
 
   // ---- 開機閘:載入儀式(Bruno 式「按下開始」)。跳過/Esc/直接捲動皆離開;讀數是真實就緒訊號 ----
   const gate = $("gate");
   let gateDismissed = false;
-  let gateY0 = null; // 首個 scroll 事件=瀏覽器位置還原的跳位,只做基準;之後偏移 >40 才是使用者要離開
+  let gateY0 = null, gateT0 = 0; // T0 在開閘時錨定——錨在解析時的話,載入慢一點還原窗就已過期
+  // 位置還原可能連射多發(y=0 先毒化基準,跳位那發就誤殺閘)——開閘後 500ms 內一律只更新基準;
+  // 之後偏移 >40 才是使用者要離開(深處重整「必演」的最後一塊)
   function gateScrollDismiss(){
+    if (performance.now() - gateT0 < 500){ gateY0 = scrollY; return; }
     if (gateY0 === null) { gateY0 = scrollY; return; }
     if (Math.abs(scrollY - gateY0) > 40) dismissGate();
   }
@@ -1107,6 +1140,7 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
       setTimeout(() => { gate.hidden = true; }, 750);
     }
     if (gate.contains(document.activeElement)) focusPower(); // [R3 K-09] 焦點歸還對應控制
+    ensureSignal(); // 附著為冪等:FLIP 已附著則無事;bail/秒滾也拿得到訊號(回饋2)
   }
   function focusPower(){ // 收合時聚焦「可見的把手」而非展開整列——預設收起是裁定,過閘不得偷偷展開(回饋2)
     const nav = document.querySelector(".transport");
@@ -1118,8 +1152,9 @@ html.signal-cursor, html.signal-cursor *{cursor:none !important}
     // 重演規則(使用者 2026-08-16,取代 session-once):重整=必演;
     // 唯「從站內內頁(dossier/research)回歸」不演。reload 判定優先——回歸後再重整仍算重整。
     const navType = (performance.getEntriesByType("navigation")[0] || {}).type || "navigate";
-    if (navType !== "reload" && /\/(work|research)\//.test(document.referrer)) return;
-    gate.hidden = false; requestAnimationFrame(() => { gate.classList.add("on"); gate.focus(); }); // [R3 K-09] focus 入閘
+    if (navType !== "reload" && /\/(work|research)\//.test(document.referrer)){ ensureSignal(); return; } // 內頁回歸:不重演,但訊號回到手上
+    gateT0 = performance.now();
+    gate.hidden = false; requestAnimationFrame(() => { if (gateDismissed) return; gate.classList.add("on"); gate.focus(); }); // [R3 K-09] focus 入閘;守衛防「解除後補 .on」殭屍態
     gate.addEventListener("keydown", (e) => { // [R3 K-09] APG dialog:Tab 圈內(只在可見鈕之間)
       if (e.key !== "Tab") return;
       const f = [...gate.querySelectorAll("button")].filter((b) => b.checkVisibility ? b.checkVisibility() : b.offsetParent !== null);
