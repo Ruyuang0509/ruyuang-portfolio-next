@@ -51,6 +51,7 @@ const canonical = new URL(Astro.url.pathname.replace(/\/?$/, "/"), Astro.site).h
     <script is:inline>try { sessionStorage.setItem("inner", "1"); } catch {}</script><!-- K-69 批判E:Back 回歸不帶 referrer——內頁留麵包屑,旅程頁讀後即銷 -->
   </head>
   <body>
+    <a class="skip-link" href="#main">跳到主要內容</a>
     <!-- 全屏開場(純 CSS:無 JS 也演完並消失;pointer-events:none 永不擋操作;reduced-motion 整層不演) -->
     <div class="dfx" data-fx={fx} aria-hidden="true">
       <span class="dfx-x"></span><span class="dfx-y"></span><span class="dfx-dot"></span>
@@ -59,7 +60,7 @@ const canonical = new URL(Astro.url.pathname.replace(/\/?$/, "/"), Astro.site).h
     <div class="chassis">
       <TransportNav subpage beat={beat} />
       <div class="inner">
-        <article class="panel dossier">
+        <article class="panel dossier" id="main" tabindex="-1">
           <span class="plate">{d.channel ?? d.kind.toUpperCase()} · DOSSIER</span>
           <div class="panel-body">
             <p class="orient">{d.tags.join(" · ")} · {d.year}</p>

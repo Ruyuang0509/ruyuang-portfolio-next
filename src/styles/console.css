@@ -113,3 +113,11 @@ body.powered .pw .led{background:var(--color-accent)}
   .rack-row .idx,.rack-row .dash{display:none}
   .rack-row .tag{grid-column:2;justify-self:start}
 }
+
+/* 跳過導覽(WCAG 2.4.1,使用者 2026-08-16 裁定):平時收在視窗上緣外,鍵盤聚焦時落下——
+   第一個 Tab 就能越過導覽直達內容。滑鼠使用者永遠看不到它。 */
+.skip-link{position:fixed;left:12px;top:-56px;z-index:90;padding:10px 18px;background:var(--color-paper-2);
+  color:var(--color-ink);border:1px solid var(--color-accent);border-radius:3px;
+  font-family:var(--font-mono);font-size:var(--text-sm);text-decoration:none}
+.skip-link:focus-visible{top:12px}
+@media (prefers-reduced-motion: no-preference){.skip-link{transition:top .15s var(--ease-out)}}

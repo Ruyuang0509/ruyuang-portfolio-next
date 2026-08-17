@@ -49,10 +49,11 @@ const description = `${works.length} 件作品的檔案索引:每件都附角色
     <script is:inline>try { sessionStorage.setItem("inner", "1"); } catch {}</script><!-- 與其他內頁同:回旅程不重演開場、音效選擇延續(K-69) -->
   </head>
   <body>
+    <a class="skip-link" href="#main">跳到主要內容</a>
     <div class="chassis">
       <TransportNav subpage />
       <div class="inner">
-        <section class="panel" aria-label="全部作品檔案">
+        <section class="panel" id="main" tabindex="-1" aria-label="全部作品檔案">
           <span class="plate">RACK · ALL DOSSIERS</span>
           <div class="panel-body" style="padding-bottom:var(--space-sm)">
             <p class="orient">作品索引 · 檔案 {works.length} 件</p>

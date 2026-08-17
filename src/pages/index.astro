@@ -32,6 +32,8 @@ const description = "一趟可以聽見的作品旅程:聲音互動、AI 協作�
   </head>
   <body>
 
+<a class="skip-link" href="#hook">跳到主要內容</a><!-- WCAG 2.4.1(使用者 2026-08-16 裁定補上):閘門開著時焦點鎖在閘內,skip link 在閘門解除後成為第一個 Tab 停靠點 -->
+
 <nav class="transport collapsed" id="transportNav" aria-label="站點跳轉(隨時可離隊)">
   <a href="#hook">開場</a><a href="#identity">身分</a><a href="#station">互動站</a><a href="#cinema">影院站</a><a href="#field">田野站</a><a href="#ctrl">控制室</a><a href="#master">OUT</a><a href="#exit">出口</a><!-- 回饋4:站點名稱;作品名歸 beat2 站內地圖 -->
   <button class="tpwr" id="powerBtn" aria-pressed="false" aria-label="開機——完整體驗(含聲音)">▶ PWR</button>
@@ -61,7 +63,7 @@ const description = "一趟可以聽見的作品旅程:聲音互動、AI 協作�
 </div>
 
 <!-- BEAT 1 · HOOK — base state is fully readable; 完整體驗 is an invitation, never a gate -->
-<section class="beat" id="hook">
+<section class="beat" id="hook" tabindex="-1">
   <div class="wrap beat-inner">
     <p class="orient">MONITOR ROOM · 一場訊號的旅程</p>
     <p style="margin-top:var(--space-xl)"><span class="dot" id="hookDot" aria-hidden="true"></span></p>
