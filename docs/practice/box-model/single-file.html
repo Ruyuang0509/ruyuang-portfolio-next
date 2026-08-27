@@ -5,15 +5,18 @@
   ===================================================================
 
   怎麼用：把這個檔案存成 box-model.html，用瀏覽器直接打開就能看。
-  HTML、CSS、JS 全部寫在同一個檔案裡，不需要安裝任何東西。
+  整份只有 HTML 和 CSS，沒有 JavaScript，也不需要安裝任何東西。
 
-  一份網頁由三個部分組成，這個檔案裡都有：
+  一份網頁通常由三個部分組成：
     HTML → 內容與結構（有什麼東西、誰包著誰）
     CSS  → 外觀與間距（長什麼樣子、彼此距離多遠）
     JS   → 行為（使用者做了動作之後，畫面怎麼反應）
 
-  正式專案會把 CSS 和 JS 拆成獨立檔案（style.css / script.js），
-  這樣多個頁面可以共用。這裡合成一個檔案純粹是為了方便傳給同學。
+  這個檔案只用到前兩個。頁面上那個「顯示間距標註」的開關看起來像
+  需要寫程式，其實純 CSS 就能做到，寫法在下面第 7 區。
+
+  正式專案會把 CSS 拆成獨立的 style.css，讓多個頁面共用；
+  這裡合成一個檔案純粹是為了方便傳給同學。
   ===================================================================
 -->
 <html lang="zh-Hant">
@@ -51,12 +54,13 @@
           選擇器    屬性       值
 
          選擇器怎麼選：
-           p       → 所有 <p> 標籤
-           .card   → 所有 class="card" 的元素（點開頭 = class）
+           p         → 所有 <p> 標籤
+           .card     → 所有 class="card" 的元素（點開頭 = class）
            #annotate → id="annotate" 的那一個元素（井號開頭 = id）
 
          class 可以重複用在很多元素上，id 整頁只能出現一次。
-         排版樣式一律用 class，id 留給 JS 抓特定元素用。
+         排版樣式一律用 class；id 留給「需要被單獨指名」的元素，
+         例如第 7 區那個開關。
 
          0. class 怎麼取名 —— BEM 命名慣例
 
@@ -155,22 +159,9 @@
         padding: 0 16px; /* 左右各留 16px，手機上文字才不會貼著螢幕邊 */
       }
 
-      .page__head {
-        margin-bottom: 24px;
-      }
-
       .page__title {
         font-size: 24px;
-        margin-bottom: 8px;
-      }
-
-      .toggle {
-        display: inline-flex;  /* 讓核取方塊和文字在同一行、垂直對齊 */
-        align-items: center;   /* 垂直置中 */
-        gap: 8px;              /* 兩者之間留 8px（比用 margin 乾淨） */
-        font-size: 14px;
-        color: #475569;
-        cursor: pointer;       /* 滑鼠移上去變成手指，暗示「這可以點」 */
+        margin-bottom: 12px;
       }
 
       /* ==============================================================
@@ -194,7 +185,7 @@
          想確認自己有沒有搞混，把背景色打開看它染到哪裡就知道了。
          ============================================================== */
       .card {
-        margin: 24px 0;  /* 上下各 24px、左右 0 → 白板最上面那支紅箭頭 */
+        margin: 16px 0;  /* 上下各 16px、左右 0 → 白板最上面那支紅箭頭 */
         padding: 24px;   /* 四邊都 24px → 白板左右兩側那兩支紅箭頭 */
 
         /* border 的三個值：粗細 樣式 顏色，順序可以對調 */
@@ -305,28 +296,93 @@
       }
 
       /* ==============================================================
-         7. 標註模式：把白板上的紅箭頭實際畫出來
+         7. 標註開關：不用 JavaScript 的做法（俗稱 checkbox hack）
 
-         這一段是視覺輔助，不是排版必需，看不懂可以先跳過。
+         這是額外的技巧，聽不懂可以先跳過，不影響上面的盒模型。
 
-         做法：inset box-shadow 的「擴散值」設成和 padding 一樣大，
-         染出來的那一圈就正好等於 padding 佔掉的空間。
+         原理只有兩個零件：
 
-           box-shadow: inset 水平 垂直 模糊 擴散 顏色;
-                        ↑                    ↑
-                    往內畫              設成 24px = padding 值
+           :checked  偽類，意思是「這個核取方塊現在是勾選狀態」
+           ~         一般兄弟選擇器，意思是「我後面的兄弟元素」
 
-         .is-annotated 這個 class 由下面的 JS 加在 <body> 上。
-         「.is-annotated .card」中間有空格，意思是
-         「在 .is-annotated 裡面的 .card」——這叫後代選擇器，
-         是用一個開關同時控制整組樣式最常見的手法。
+         所以下面這一行讀作：
+           「當 #annotate 被勾選時，把它後面的 .card 加上紅色網底」
+
+           #annotate:checked ~ .card { ... }
+
+         關鍵限制（這是最值得記的一點）：
+         CSS 只能往「後面的兄弟」找，不能往前找、也不能往上找父層。
+         所以 <input> 在 HTML 裡必須排在 .card 的前面，
+         而且兩者要是同一層的兄弟，這招才有效。
+         你會發現 HTML 那邊 input 沒有被包在 label 裡，就是為了這件事。
+
+         需要選到更裡面的元素時，後面再接一段空格就好：
+           #annotate:checked ~ .card .card__title
+           讀作「.card 裡面的 .card__title」。
+
+         純 CSS 的好處是它不依賴 JavaScript 執行環境——
+         有些預覽工具或安全設定會擋掉網頁裡的 script，
+         那種情況下用 JS 寫的開關會整個失效，這個做法不會。
          ============================================================== */
-      .is-annotated .card {
-        box-shadow: inset 0 0 0 24px rgba(239, 68, 68, 0.12);
+
+      /* 開關本體。input 和 label 是兄弟，不能互相包住，
+         所以用 vertical-align 讓它們在同一條線上對齊。 */
+      .toggle__input {
+        vertical-align: middle;
+        margin-right: 6px;
       }
 
-      .is-annotated .card__figure {
-        box-shadow: inset 0 0 0 12px rgba(239, 68, 68, 0.16);
+      .toggle {
+        vertical-align: middle;
+        font-size: 14px;
+        color: #475569;
+        cursor: pointer; /* 滑鼠移上去變成手指，暗示「這可以點」 */
+      }
+
+      /* 狀態小標籤：開和關各準備一個，用 :checked 決定顯示哪一個。
+         預設先把「開」藏起來，勾選時再換過來。 */
+      .toggle__state {
+        display: inline-block;
+        min-width: 3.6em;
+        padding: 0 8px;
+        border-radius: 999px;
+        font-size: 13px;
+        text-align: center;
+        background: #e2e8f0;
+        color: #475569;
+      }
+
+      .toggle__state--on {
+        display: none;
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+
+      /* 勾選時：把「關」藏起來、把「開」放出來 */
+      #annotate:checked ~ .toggle .toggle__state--off {
+        display: none;
+      }
+
+      #annotate:checked ~ .toggle .toggle__state--on {
+        display: inline-block;
+      }
+
+      /*
+        勾選時才畫出來的標註。
+
+        做法：inset box-shadow 的「擴散值」設成和 padding 一樣大，
+        染出來的那一圈就正好等於 padding 佔掉的空間。
+
+          box-shadow: inset 水平 垂直 模糊 擴散 顏色;
+                       ↑                    ↑
+                   往內畫              設成 24px = padding 值
+      */
+      #annotate:checked ~ .card {
+        box-shadow: inset 0 0 0 24px rgba(239, 68, 68, 0.18);
+      }
+
+      #annotate:checked ~ .card .card__figure {
+        box-shadow: inset 0 0 0 12px rgba(239, 68, 68, 0.22);
       }
 
       /*
@@ -337,17 +393,25 @@
 
         rgba 的第四個數字是透明度（0 全透明 ~ 1 不透明）。
       */
-      .is-annotated .card__title,
-      .is-annotated .card__text,
-      .is-annotated .card__image {
-        outline: 1px dashed rgba(239, 68, 68, 0.7);
+      #annotate:checked ~ .card .card__title,
+      #annotate:checked ~ .card .card__text,
+      #annotate:checked ~ .card .card__image {
+        outline: 1px dashed rgba(220, 38, 38, 0.9);
       }
 
       /* --------------------------------------------------------------
          8. 圖例
+
+         圖例只有在標註打開時才看得懂，所以預設收起來（display: none），
+         勾選時再放出來。同一個屬性寫兩次，後面的規則不會蓋掉前面的——
+         真正決定勝負的是「選擇器誰比較具體」：
+           #annotate:checked ~ .legend   有 id，比較具體  → 贏
+           .legend                       只有 class       → 輸
+         這叫 CSS 的「specificity（權重）」，是排版失效時第一個要查的東西。
          -------------------------------------------------------------- */
       .legend {
-        margin-top: 24px;
+        display: none;
+        margin-top: 16px;
         padding: 16px;
         border-radius: 8px;
         background: #ffffff;
@@ -386,6 +450,10 @@
         background: rgba(239, 68, 68, 0.2);
         border: 1px solid rgba(239, 68, 68, 0.6);
       }
+
+      #annotate:checked ~ .legend {
+        display: block;
+      }
     </style>
   </head>
 
@@ -406,18 +474,29 @@
       ============================================================
     -->
     <main class="page">
-      <header class="page__head">
-        <h1 class="page__title">盒模型練習</h1>
+      <h1 class="page__title">盒模型練習</h1>
 
-        <!--
-          <label> 包住 <input> 之後，點文字也能勾選核取方塊，
-          點擊範圍變大、對手機和輔助工具都更友善。這是免費的體驗改善。
-        -->
-        <label class="toggle">
-          <input id="annotate" type="checkbox" checked />
-          顯示間距標註（對應白板上的紅色箭頭）
-        </label>
-      </header>
+      <!--
+        這個核取方塊控制下面所有的標註樣式（原理見 CSS 第 7 區）。
+
+        兩個重點：
+
+        1. 它必須排在 .card 和 .legend 的「前面」，而且是同一層的兄弟。
+           因為 CSS 的 ~ 只能往後找，往前、往上都找不到。
+
+        2. input 和 label 用 id / for 配對：
+             <input id="annotate">  ←→  <label for="annotate">
+           兩個字串要一模一樣。配對成功之後，點 label 上的文字
+           也能勾選方塊，點擊範圍變大，對手機和輔助工具都更友善。
+           （平常沒有這個兄弟關係的限制時，也可以直接用 label 把
+           input 包起來，那樣就不用寫 id 和 for。）
+      -->
+      <input class="toggle__input" id="annotate" type="checkbox" checked />
+      <label class="toggle" for="annotate">
+        顯示間距標註（對應白板上的紅色箭頭）
+        <span class="toggle__state toggle__state--off">關</span>
+        <span class="toggle__state toggle__state--on">開</span>
+      </label>
 
       <!-- ====== 白板的藍框：最外層 <div> ====== -->
       <div class="card">
@@ -474,42 +553,5 @@
         <li><span class="legend__swatch legend__swatch--red"></span>紅色網底＝該元素的 <code>padding</code> 佔掉的空間</li>
       </ul>
     </main>
-
-    <script>
-      /* ==============================================================
-         JS 開始
-
-         script 放在 </body> 之前，是為了確保執行時 HTML 已經讀完了。
-         如果放在 head，這段程式跑的時候畫面上還沒有那個核取方塊，
-         document.getElementById 會拿到 null，然後整段報錯。
-
-         這一段只做一件事：把樣式的開關打開或關掉。
-         注意 JS 完全沒有去改顏色、改邊框——那些都留在 CSS。
-         JS 只負責「換一個 class」，剩下交給 CSS 決定要長什麼樣。
-         這個分工是前端的基本原則，越早養成越好。
-         ============================================================== */
-
-      // 步驟一：抓元素。用 id 找到畫面上的核取方塊，存進變數。
-      const checkbox = document.getElementById("annotate");
-
-      // 步驟二：定義「要做什麼」。
-      function syncAnnotation() {
-        // classList.toggle(名稱, 條件)
-        //   條件為 true  → 加上這個 class
-        //   條件為 false → 移除這個 class
-        // checkbox.checked 是布林值（true / false），代表現在有沒有被勾。
-        document.body.classList.toggle("is-annotated", checkbox.checked);
-      }
-
-      // 步驟三：綁事件。「當 checkbox 發生 change 時，去執行 syncAnnotation」。
-      // 注意函式名稱後面沒有加 ()——加了就變成「現在馬上執行、把結果交出去」，
-      // 這裡要交出去的是函式本身，等事件發生時才由瀏覽器呼叫。
-      checkbox.addEventListener("change", syncAnnotation);
-
-      // 步驟四：進頁面時先手動跑一次。
-      // 因為 HTML 裡寫了 checked（預設勾選），但「預設值」不會觸發 change 事件，
-      // 不先跑這一次的話，畫面會和勾選狀態對不起來。
-      syncAnnotation();
-    </script>
   </body>
 </html>

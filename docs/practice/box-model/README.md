@@ -5,10 +5,23 @@
 
 ```
 docs/practice/box-model/
-├── index.html   結構（白板上的藍框、綠框、文字）
-├── style.css    樣式（margin / padding 都寫在這裡）
-└── script.js    標註開關（12 行，示範抓元素、綁事件、換 class）
+├── single-file.html   單檔版：HTML + CSS 全在一起，純 CSS 開關，沒有 JS
+├── index.html         拆檔版：結構（白板上的藍框、綠框、文字）
+├── style.css          拆檔版：樣式（margin / padding 都寫在這裡）
+└── script.js          拆檔版：標註開關（12 行，示範抓元素、綁事件、換 class）
 ```
+
+兩個版本畫面一樣，差在標註開關的做法：
+
+| | 開關做法 | 適合 |
+| --- | --- | --- |
+| `single-file.html` | 純 CSS（`:checked` + `~` 兄弟選擇器） | 傳給同學、丟進任何預覽環境都會動 |
+| 拆檔版三個檔 | JS 換 class（`classList.toggle`） | 要順便教 JS 的時候 |
+
+用 JS 那版有個前提：開啟環境必須允許執行網頁裡的 script。
+某些編輯器預覽（例如 VS Code 的 Live Preview）或有 CSP 限制的環境會擋掉，
+那時候方框看起來是勾的、但畫面沒有標註、點了也沒反應。
+純 CSS 版沒有這個依賴，所以拿去發給別人時建議用單檔版。
 
 ## 白板對照表
 
