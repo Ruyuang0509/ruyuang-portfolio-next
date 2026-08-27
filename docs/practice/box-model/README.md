@@ -1,22 +1,32 @@
-# 盒模型練習：div / h2 / img / p
+# 盒模型 ＋ 文繞圖練習：div / h2 / img / p
 
-課堂白板的程式碼版本。純 HTML + CSS + 一支基礎 JS，沒有框架、不需要 build，
-用瀏覽器直接打開 `index.html` 就能看。
+課堂白板的程式碼版本。純 HTML + CSS（拆檔版多一支基礎 JS），沒有框架、不需要 build，
+用瀏覽器直接打開就能看。
+
+作業有兩個階段，這裡放的是**更新後的版本**：
+
+| 階段 | 版面 | 重點 |
+| --- | --- | --- |
+| 第一版 | 圖片和文字上下疊 | `margin` 與 `padding` 的差別、`* { margin: 0; padding: 0 }` |
+| **第二版（現在）** | **圖片置左上、文字排右邊** | **`float` 文繞圖、高度塌陷、float vs flex** |
 
 ```
 docs/practice/box-model/
 ├── single-file.html   單檔版：HTML + CSS 全在一起，純 CSS 開關，沒有 JS
-├── index.html         拆檔版：結構（白板上的藍框、綠框、文字）
-├── style.css          拆檔版：樣式（margin / padding 都寫在這裡）
+├── index.html         拆檔版：結構
+├── style.css          拆檔版：樣式
 └── script.js          拆檔版：標註開關（12 行，示範抓元素、綁事件、換 class）
 ```
 
-兩個版本畫面一樣，差在標註開關的做法：
+兩個版本的版面一樣，差在標註開關的做法：
 
 | | 開關做法 | 適合 |
 | --- | --- | --- |
 | `single-file.html` | 純 CSS（`:checked` + `~` 兄弟選擇器） | 傳給同學、丟進任何預覽環境都會動 |
 | 拆檔版三個檔 | JS 換 class（`classList.toggle`） | 要順便教 JS 的時候 |
+
+單檔版另外多放了一張 **flex 對照卡片**，同樣的內容用 `display: flex` 排，
+可以直接看出兩種做法的行為差在哪。
 
 用 JS 那版有個前提：開啟環境必須允許執行網頁裡的 script。
 某些編輯器預覽（例如 VS Code 的 Live Preview）或有 CSP 限制的環境會擋掉，
@@ -27,42 +37,75 @@ docs/practice/box-model/
 
 | 白板上的東西 | 對應的程式碼 |
 | --- | --- |
-| 右上角 `* { margin: 0; padding: 0; }` | `style.css` 第 1 區的全域重置 |
+| 右上角 `* { margin: 0; padding: 0; }` | 全域重置那一區 |
 | 藍色外框 `<div>` | `<div class="card">` |
-| `<h2> ... </h2>` | `<h2 class="card__title">` |
+| 左上角的圖片 | `.card__figure { float: left; }`，而且它在 HTML 裡排在最前面 |
+| 圖片右方的文字 | `<h2 class="card__title">` 與 `<p class="card__text">`，沒有做任何靠右設定 |
 | 綠色框 + 裡面的 `<img>` | `<figure class="card__figure">` 包住 `<img class="card__image">` |
-| 右側連續的 `<p> ... </p>` | `<p class="card__text">` |
-| 藍框「外面」的紅箭頭 | `.card { margin: 24px 0; }` |
+| 藍框「外面」的紅箭頭 | `.card { margin: 16px 0; }` |
 | 藍框「裡面」的紅箭頭 | `.card { padding: 24px; }` |
-| 綠框到圖片之間的紅箭頭 | `.card__figure { padding: 12px; }` |
+| 圖片與文字之間的空隙 | `.card__figure { margin-right: 20px; }` |
 | 段落與段落之間的紅箭頭 | `.card__text { margin-bottom: 12px; }` |
 
 頁面上方那個勾選框打開後，會把 padding 佔掉的範圍染成紅色網底、
 把各元素的邊界用紅色虛線框出來，就是白板紅箭頭的實際樣子。
 
-## 三個重點
+## 這一版的重點：float
 
-**1. margin 在外、padding 在內，中間隔著 border**
+**1. 圖片要放在 HTML 的最前面**
 
-由外到內是：`margin` → `border` → `padding` → 內容。
+`float` 只能讓「排在它後面」的內容繞著它，寫在它前面的元素完全不受影響。
+順序錯了就沒有效果，這是最常見的第一個坑。
+
+**2. 浮動元素不會撐開父層（高度塌陷）**
+
+浮動元素脫離正常流，父層算高度時當它不存在。圖片比文字高的時候，
+藍框會從圖片中間切過去。三代解法都會遇到：
+
+| 寫法 | 說明 |
+| --- | --- |
+| `overflow: hidden` | 舊做法，能用，但超出範圍的東西會被裁掉 |
+| clearfix（`::after` + `clear: both`） | 舊做法，相容性最好，但要多寫三行 |
+| `display: flow-root` | 現在的寫法，一行、沒有副作用 |
+
+**3. 被擠開的是「文字行」，不是「盒子」**
+
+`h2` 和 `p` 的盒子其實還是整排寬，只是裡面的每一行文字避開了浮動元素。
+把 `p` 加背景色就會看到底色一路鋪到圖片後面去。
+真的要讓盒子也避開，那個元素要自己形成 BFC（例如加 `display: flow-root`），或改用 flex。
+
+**4. float 和 flex 差在哪**
+
+| | float | flex |
+| --- | --- | --- |
+| 文字比圖片長時 | 繞到圖片下方接續 | 留在自己那一欄，不會繞下去 |
+| 適合 | 雜誌式的圖文混排 | 穩定的兩欄／多欄版面 |
+
+沒有誰比較好。現代版面大多用 flex，但文繞圖只有 float 做得到。
+
+## 上一版的重點（還是要記）
+
+**margin 在外、padding 在內，中間隔著 border**
+
 要讓「兩個框之間」有距離用 margin；要讓「框和自己的內容」之間有距離用 padding。
+背景色會塗到 padding，不會塗到 margin——分不清楚時打開背景色看它染到哪裡。
 
-**2. 為什麼一開始要 `* { margin: 0; padding: 0; }`**
+**為什麼一開始要 `* { margin: 0; padding: 0; }`**
 
-`h1`~`h6`、`p`、`ul`、`body` 都帶著瀏覽器的預設 margin，
-而且不同瀏覽器的數值不一定一樣。先歸零，之後看到的每一段間距
-都是自己寫出來的，排版才可控。這裡還多加了 `box-sizing: border-box`，
-讓 `width` 把 padding 和 border 算進去，給了寬度再加 padding 才不會撐爆。
+`h1`~`h6`、`p`、`ul`、`body` 都帶著瀏覽器的預設 margin，而且不同瀏覽器不一定一樣。
+先歸零，之後看到的每一段間距都是自己寫出來的。這裡還多加了 `box-sizing: border-box`，
+讓 `width` 把 padding 和 border 算進去——這一版特別有感，因為圖片有寬度限制。
 
-**3. 間距只往一個方向給**
+**間距只往一個方向給**
 
-段落之間的空隙統一用 `margin-bottom`，不要上下都給。
-上下都給的話，相鄰的兩個 margin 會發生「margin 合併（collapse）」——
-不是相加，而是取比較大的那一個，算出來的距離常常和預期不符。
-最後一個元素再用 `:last-child` 把 margin 歸零，卡片底部才不會多一段空白。
+段落之間統一用 `margin-bottom`，不要上下都給。上下都給會遇到「margin 合併」：
+不是相加，而是取比較大的那一個。最後一個元素用 `:last-child` 歸零。
 
 ## 練習題
 
-1. 把 `.card` 的 `padding` 從 `24px` 改成 `48px`，觀察紅色網底變寬、內容往內縮。
-2. 把 `.card__image` 的 `display: block` 註解掉，看看圖片下方為什麼多出一條空隙。
-3. 把 `.card__text` 改成 `margin: 12px 0`，打開開發者工具量段落間距——會發現是 12px 而不是 24px，這就是 margin 合併。
+1. 把 `.card` 的 `display: flow-root` 註解掉，**同時刪掉後面兩段文字**（讓圖片比文字高），看藍框怎麼被圖片穿出去——這就是高度塌陷。文字比圖片長的時候看不出來，因為卡片高度是被文字撐開的。
+2. 把 `<figure>` 移到三段 `<p>` 的後面，看文字為什麼不再繞圖（float 只影響排在它**後面**的內容）。
+3. 把 `.card__figure` 的 `float: left` 改成 `float: right`，圖片會跑到右邊、文字排左邊。
+4. 給 `.card__text` 加一個 `background: #fef9c3`，看底色鋪到圖片後面去——證明盒子還是整排寬。
+5. 把瀏覽器視窗慢慢縮窄到 560px 以下，看 `@media` 把浮動關掉、圖片改成自己一排。
+6. 把 `.card__image` 的 `display: block` 註解掉，**再在 `<img>` 前面打幾個字**，看容器高度突然多幾 px——那是 inline 圖片底部留給文字下伸部位的空間。只註解掉 `display: block` 而不加文字是看不到的：圖片自己獨佔一行時，現在的瀏覽器不會留那條縫（實測 0px）。
