@@ -1,0 +1,515 @@
+<!doctype html>
+<!--
+  ===================================================================
+  盒模型練習（單一檔案版）— 對照課堂白板的 div / h2 / img / p
+  ===================================================================
+
+  怎麼用：把這個檔案存成 box-model.html，用瀏覽器直接打開就能看。
+  HTML、CSS、JS 全部寫在同一個檔案裡，不需要安裝任何東西。
+
+  一份網頁由三個部分組成，這個檔案裡都有：
+    HTML → 內容與結構（有什麼東西、誰包著誰）
+    CSS  → 外觀與間距（長什麼樣子、彼此距離多遠）
+    JS   → 行為（使用者做了動作之後，畫面怎麼反應）
+
+  正式專案會把 CSS 和 JS 拆成獨立檔案（style.css / script.js），
+  這樣多個頁面可以共用。這裡合成一個檔案純粹是為了方便傳給同學。
+  ===================================================================
+-->
+<html lang="zh-Hant">
+  <!--
+    lang="zh-Hant" 告訴瀏覽器和螢幕閱讀器：這頁是繁體中文。
+    影響斷行規則、字型挑選、以及輔助工具的發音。
+  -->
+  <head>
+    <!--
+      <head> 裡面放的是「給瀏覽器看的設定」，不會顯示在畫面上。
+      真正會出現在畫面上的東西，全部寫在下面的 <body> 裡。
+    -->
+
+    <!-- 文字編碼。沒有這行，中文很可能變成亂碼。永遠放在 head 第一行。 -->
+    <meta charset="utf-8" />
+
+    <!--
+      手機版的關鍵設定。
+      沒有這行，手機會假裝自己是 980px 寬的桌機，然後把整頁縮小，
+      結果就是字小到看不清楚。加了它，手機才會用自己真正的寬度來排版。
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- 分頁標籤上顯示的標題，也是搜尋結果的標題。 -->
+    <title>盒模型練習：div / h2 / img / p</title>
+
+    <style>
+      /* ==============================================================
+         CSS 開始
+
+         寫法是「選誰 { 改什麼: 改成什麼; }」：
+
+           .card { padding: 24px; }
+             ↑        ↑         ↑
+          選擇器    屬性       值
+
+         選擇器怎麼選：
+           p       → 所有 <p> 標籤
+           .card   → 所有 class="card" 的元素（點開頭 = class）
+           #annotate → id="annotate" 的那一個元素（井號開頭 = id）
+
+         class 可以重複用在很多元素上，id 整頁只能出現一次。
+         排版樣式一律用 class，id 留給 JS 抓特定元素用。
+
+         0. class 怎麼取名 —— BEM 命名慣例
+
+         這份檔案的 class 名字（card、card__title）不是隨便取的，
+         用的是業界常見的 BEM 慣例：
+
+           .card          區塊本體（Block）
+           .card__title   區塊裡的某個部位（Element），用兩個底線接
+           .card--large   同一個區塊的不同版本（Modifier），用兩個減號接
+
+         好處是看到 class 名字就知道它屬於誰、在哪裡，
+         而且不會不小心和別人的樣式撞名。剛開始覺得名字很長是正常的，
+         等專案大到有兩百個 class 的時候就會感謝自己當初有取好名字。
+         ============================================================== */
+
+      /* --------------------------------------------------------------
+         1. 全域重置 —— 就是白板右上角那一行
+
+         * 是「萬用選擇器」，代表頁面上每一個元素。
+
+         為什麼要歸零？
+         瀏覽器對 h1~h6、p、ul、body 都內建了 margin/padding，
+         而且各家瀏覽器的數字不完全一樣。不歸零的話，你看到的間距
+         有一部分是瀏覽器送的、有一部分是你寫的，改起來會很難預測。
+         先全部歸零，之後畫面上每一段空隙都是你自己寫出來的。
+         -------------------------------------------------------------- */
+      * {
+        margin: 0;
+        padding: 0;
+
+        /*
+          box-sizing 決定 width 這個數字「算到哪裡為止」：
+
+            content-box（瀏覽器預設）
+              width = 內容區
+              實際佔的寬度 = width + padding + border  ← 會被撐大
+
+            border-box（我們要的）
+              width = 內容 + padding + border 全部加起來
+              實際佔的寬度 = width           ← 說多寬就多寬
+
+          舉例：width: 200px + padding: 20px + border: 2px
+            content-box → 實際 244px（200 + 20×2 + 2×2）
+            border-box  → 實際 200px，padding 和 border 往內縮
+
+          排版會踩到的坑幾乎都來自前者，所以現在幾乎所有專案
+          都會在重置裡加上這一行。
+        */
+        box-sizing: border-box;
+      }
+
+      /* --------------------------------------------------------------
+         2. 頁面底層設定
+
+         寫在 body 上的字型、顏色、行高會「繼承」給裡面所有元素，
+         所以只要設定一次，整頁的文字都會跟著變。
+         -------------------------------------------------------------- */
+      body {
+        /*
+          字型用逗號列出備援清單：前面的找不到就往後找。
+          中文字型在 Mac 和 Windows 上名字不一樣，所以兩邊都列，
+          最後的 sans-serif 是「隨便給我一個無襯線字型」的保底。
+        */
+        font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+
+        /* 行高不加單位時 = 字級的倍數。1.7 表示行距是字體大小的 1.7 倍。
+           中文因為字比較方正，建議比英文再鬆一點，1.6~1.8 讀起來最舒服。 */
+        line-height: 1.7;
+
+        color: #1f2937;      /* 文字顏色。純黑 #000 對比太硬，深灰更好讀 */
+        background: #f8fafc; /* 頁面底色，讓白色卡片浮出來 */
+      }
+
+      /* --------------------------------------------------------------
+         3. 內容置中的外框
+
+         max-width 而不是 width：
+           width: 720px     → 永遠 720px，手機螢幕只有 390px 時會爆版
+           max-width: 720px → 「最多」720px，螢幕比較窄時自動縮小
+         這一行就是最簡單的 RWD（響應式）作法。
+         -------------------------------------------------------------- */
+      .page {
+        max-width: 720px;
+
+        /*
+          margin 的四個值可以縮寫，記法是「順時鐘」：
+            margin: 上 右 下 左           四個值
+            margin: 上下 左右             兩個值  ← 這裡用的
+            margin: 全部                  一個值
+
+          左右給 auto 的意思是「剩下的空間左右平分」，
+          這就是區塊元素水平置中最常用的寫法。
+        */
+        margin: 32px auto;
+
+        padding: 0 16px; /* 左右各留 16px，手機上文字才不會貼著螢幕邊 */
+      }
+
+      .page__head {
+        margin-bottom: 24px;
+      }
+
+      .page__title {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+
+      .toggle {
+        display: inline-flex;  /* 讓核取方塊和文字在同一行、垂直對齊 */
+        align-items: center;   /* 垂直置中 */
+        gap: 8px;              /* 兩者之間留 8px（比用 margin 乾淨） */
+        font-size: 14px;
+        color: #475569;
+        cursor: pointer;       /* 滑鼠移上去變成手指，暗示「這可以點」 */
+      }
+
+      /* ==============================================================
+         4. 白板的藍框：最外層 <div>
+
+         這裡是整堂課的重點。由外往內，每個元素都有四層：
+
+             ┌─────────── margin ───────────┐   ← 框「外面」的空白
+             │  ┌───────  border  ───────┐  │   ← 框線本身
+             │  │  ┌──── padding ────┐   │  │   ← 框「裡面」的空白
+             │  │  │     內容        │   │  │   ← 文字或圖片
+             │  │  └─────────────────┘   │  │
+             │  └────────────────────────┘  │
+             └──────────────────────────────┘
+
+         只要記住這一句就不會搞混：
+           margin  推開「別人」——我和隔壁元素的距離
+           padding 推開「自己的內容」——框線和裡面文字的距離
+
+         背景色會塗到 padding，但不會塗到 margin。
+         想確認自己有沒有搞混，把背景色打開看它染到哪裡就知道了。
+         ============================================================== */
+      .card {
+        margin: 24px 0;  /* 上下各 24px、左右 0 → 白板最上面那支紅箭頭 */
+        padding: 24px;   /* 四邊都 24px → 白板左右兩側那兩支紅箭頭 */
+
+        /* border 的三個值：粗細 樣式 顏色，順序可以對調 */
+        border: 2px solid #2563eb;
+
+        border-radius: 8px;  /* 圓角。數字越大越圓 */
+        background: #ffffff;
+      }
+
+      .card__title {
+        font-size: 20px;
+
+        /*
+          只給 margin-bottom，不給 margin-top。
+          原因寫在下面第 6 區的「margin 合併」，那是這堂課第二個重點。
+        */
+        margin-bottom: 16px;
+      }
+
+      /* --------------------------------------------------------------
+         5. 白板的綠框：包住 <img> 的圖片區塊
+
+         注意這裡的做法：留白給「外層的 figure」，不是給 img 自己。
+         好處是之後換圖片、換尺寸，間距設定都不用動，
+         而且圖片區塊要整組搬到別的地方也不會掉樣式。
+         -------------------------------------------------------------- */
+      .card__figure {
+        margin-bottom: 20px; /* 圖片區塊和下面第一段文字的距離 */
+        padding: 12px;       /* 綠框到圖片的距離 → 白板上下那兩支紅箭頭 */
+        border: 2px solid #16a34a;
+        border-radius: 6px;
+        background: #f0fdf4;
+      }
+
+      .card__image {
+        /*
+          這一行是實務上最常見的「莫名其妙多一條縫」解法。
+
+          img 預設是 inline（行內元素），瀏覽器會把它當成一個字來排，
+          於是底下會空出一小條給「英文字母 g、y 的下伸部位」用的空間。
+          改成 block 之後它就是獨立一塊，那條縫自然消失。
+
+          順帶一提，block 和 inline 的差別也要記：
+            block  → 自己獨佔一行，可以設定寬高（div、p、h1~h6）
+            inline → 和文字排在同一行，設寬高無效（span、a、img）
+        */
+        display: block;
+
+        /* width 用百分比、height 用 auto → 圖片隨容器縮放且不變形。
+           只給其中一邊，另一邊寫 auto，比例就會自動算。 */
+        width: 100%;
+        height: auto;
+
+        border-radius: 4px;
+      }
+
+      .card__caption {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #15803d;
+        text-align: center;
+      }
+
+      /* ==============================================================
+         6. 白板右側：連續的 <p>
+
+         這堂課第二個重點：margin 合併（margin collapse）
+
+         上下相鄰的兩個區塊元素，它們之間的 margin 不會相加，
+         而是「取比較大的那一個」：
+
+           A 的 margin-bottom: 20px
+           B 的 margin-top:    30px
+           實際距離 = 30px，不是 50px
+
+         這是 CSS 的正常行為、不是 bug，但很容易讓人算不出距離。
+         最好的自保方式就是：間距只往一個方向給。
+         整份專案統一只用 margin-bottom，就永遠不會遇到這件事。
+         （左右方向的 margin 不會合併，只有上下會。）
+         ============================================================== */
+      .card__text {
+        margin-bottom: 12px;
+      }
+
+      /*
+        :last-child 是「偽類選擇器」，意思是「在同一個父層裡排最後的那一個」。
+
+        為什麼需要它？
+        最後一段文字如果也帶著 margin-bottom，那段空白會加在
+        .card 自己的 padding 上面，卡片底部就會比上面胖一截。
+        把最後一個歸零，上下留白才會對稱。
+
+        其他常用的同類選擇器：
+          :first-child  第一個
+          :hover        滑鼠移上去的時候
+          :nth-child(2) 第二個
+      */
+      .card__text:last-child {
+        margin-bottom: 0;
+      }
+
+      /* <code> 標籤：用來標示「這是一段程式碼」，通常會配等寬字型 */
+      .card__text code {
+        padding: 1px 5px;
+        border-radius: 4px;
+        background: #f1f5f9;
+        font-size: 0.9em; /* em = 相對於「自己的字級」的倍數 */
+      }
+
+      /* ==============================================================
+         7. 標註模式：把白板上的紅箭頭實際畫出來
+
+         這一段是視覺輔助，不是排版必需，看不懂可以先跳過。
+
+         做法：inset box-shadow 的「擴散值」設成和 padding 一樣大，
+         染出來的那一圈就正好等於 padding 佔掉的空間。
+
+           box-shadow: inset 水平 垂直 模糊 擴散 顏色;
+                        ↑                    ↑
+                    往內畫              設成 24px = padding 值
+
+         .is-annotated 這個 class 由下面的 JS 加在 <body> 上。
+         「.is-annotated .card」中間有空格，意思是
+         「在 .is-annotated 裡面的 .card」——這叫後代選擇器，
+         是用一個開關同時控制整組樣式最常見的手法。
+         ============================================================== */
+      .is-annotated .card {
+        box-shadow: inset 0 0 0 24px rgba(239, 68, 68, 0.12);
+      }
+
+      .is-annotated .card__figure {
+        box-shadow: inset 0 0 0 12px rgba(239, 68, 68, 0.16);
+      }
+
+      /*
+        逗號 = 「或」。這三個選擇器套用同一組樣式，不用寫三次。
+
+        這裡用 outline 而不是 border，因為 outline 不佔空間、
+        不會把版面推開，很適合拿來做這種暫時性的標示。
+
+        rgba 的第四個數字是透明度（0 全透明 ~ 1 不透明）。
+      */
+      .is-annotated .card__title,
+      .is-annotated .card__text,
+      .is-annotated .card__image {
+        outline: 1px dashed rgba(239, 68, 68, 0.7);
+      }
+
+      /* --------------------------------------------------------------
+         8. 圖例
+         -------------------------------------------------------------- */
+      .legend {
+        margin-top: 24px;
+        padding: 16px;
+        border-radius: 8px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        list-style: none; /* 拿掉 ul 預設的小圓點 */
+        font-size: 14px;
+      }
+
+      .legend li {
+        display: flex;      /* 讓色塊和文字並排 */
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .legend li:last-child {
+        margin-bottom: 0;
+      }
+
+      .legend__swatch {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        flex: none; /* 不准被壓縮，維持正方形 */
+      }
+
+      .legend__swatch--blue {
+        border: 2px solid #2563eb;
+      }
+
+      .legend__swatch--green {
+        border: 2px solid #16a34a;
+      }
+
+      .legend__swatch--red {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.6);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!--
+      ============================================================
+      HTML 開始 —— 這裡是真正會顯示在畫面上的內容
+
+      標籤要挑「意思對」的，不是挑「看起來對」的：
+        <h1>~<h6> 標題，數字代表層級，一頁只放一個 h1，不可跳級
+        <p>       段落
+        <img>     圖片
+        <figure>  圖片和它的說明文字，當成一組
+        <div>     沒有特別意思的容器，純粹拿來包東西、套樣式
+
+      為什麼要在意？搜尋引擎和螢幕閱讀器是靠標籤來理解頁面結構的。
+      全部用 div 排出來的頁面看起來一樣，但機器讀不懂。
+      ============================================================
+    -->
+    <main class="page">
+      <header class="page__head">
+        <h1 class="page__title">盒模型練習</h1>
+
+        <!--
+          <label> 包住 <input> 之後，點文字也能勾選核取方塊，
+          點擊範圍變大、對手機和輔助工具都更友善。這是免費的體驗改善。
+        -->
+        <label class="toggle">
+          <input id="annotate" type="checkbox" checked />
+          顯示間距標註（對應白板上的紅色箭頭）
+        </label>
+      </header>
+
+      <!-- ====== 白板的藍框：最外層 <div> ====== -->
+      <div class="card">
+        <!--
+          class 名字為什麼長這樣（card、card__title），
+          寫在上面 CSS 第 0 區的 BEM 命名慣例那一段。
+        -->
+        <h2 class="card__title">標題文字（h2）</h2>
+
+        <!-- ====== 白板的綠框：包住圖片的區塊 ====== -->
+        <figure class="card__figure">
+          <!--
+            img 有兩個屬性一定要寫：
+              src → 圖片位置，可以是檔名、網址，或像這裡直接內嵌一張 SVG
+              alt → 圖片的文字描述
+
+            alt 不是可有可無：圖片載入失敗時它會顯示出來，
+            視障使用者的螢幕閱讀器也是唸這一段。
+            （純裝飾用的圖片才寫 alt=""，代表「這張可以略過」。）
+          -->
+          <img
+            class="card__image"
+            src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 200'><rect width='320' height='200' fill='%23dbeafe'/><circle cx='108' cy='72' r='30' fill='%2360a5fa'/><path d='M28 176 L124 88 L184 140 L238 104 L300 176 Z' fill='%233b82f6'/></svg>"
+            alt="示意圖片：藍色調的山景插圖"
+          />
+
+          <!-- figcaption 一定要放在 figure 裡面，它是圖片的正式說明 -->
+          <figcaption class="card__caption">圖片區塊（綠框與圖片之間的空隙＝padding）</figcaption>
+        </figure>
+
+        <!-- ====== 白板右側：連續的段落 ====== -->
+        <!--
+          段落之間的距離要用 CSS 的 margin 做，不要用 <br> 硬換行，
+          也不要靠打空白行——HTML 會把連續的空白壓縮成一個空格，
+          排版效果是做不出來的。內容歸 HTML，間距歸 CSS。
+        -->
+        <p class="card__text">
+          第一段文字。段落之間的距離，是由 <code>p</code> 的
+          <code>margin-bottom</code> 撐出來的，不是空白行。
+        </p>
+        <p class="card__text">
+          第二段文字。<code>margin</code> 在框線外面、<code>padding</code>
+          在框線裡面，這是盒模型最容易搞混的一組。
+        </p>
+        <p class="card__text">
+          第三段文字。整張卡片與瀏覽器邊緣的距離，來自
+          <code>.card</code> 自己的 <code>margin</code>。
+        </p>
+      </div>
+
+      <ul class="legend">
+        <li><span class="legend__swatch legend__swatch--blue"></span>藍框＝外層 <code>div</code>（.card）</li>
+        <li><span class="legend__swatch legend__swatch--green"></span>綠框＝圖片區塊（.card__figure）</li>
+        <li><span class="legend__swatch legend__swatch--red"></span>紅色網底＝該元素的 <code>padding</code> 佔掉的空間</li>
+      </ul>
+    </main>
+
+    <script>
+      /* ==============================================================
+         JS 開始
+
+         script 放在 </body> 之前，是為了確保執行時 HTML 已經讀完了。
+         如果放在 head，這段程式跑的時候畫面上還沒有那個核取方塊，
+         document.getElementById 會拿到 null，然後整段報錯。
+
+         這一段只做一件事：把樣式的開關打開或關掉。
+         注意 JS 完全沒有去改顏色、改邊框——那些都留在 CSS。
+         JS 只負責「換一個 class」，剩下交給 CSS 決定要長什麼樣。
+         這個分工是前端的基本原則，越早養成越好。
+         ============================================================== */
+
+      // 步驟一：抓元素。用 id 找到畫面上的核取方塊，存進變數。
+      const checkbox = document.getElementById("annotate");
+
+      // 步驟二：定義「要做什麼」。
+      function syncAnnotation() {
+        // classList.toggle(名稱, 條件)
+        //   條件為 true  → 加上這個 class
+        //   條件為 false → 移除這個 class
+        // checkbox.checked 是布林值（true / false），代表現在有沒有被勾。
+        document.body.classList.toggle("is-annotated", checkbox.checked);
+      }
+
+      // 步驟三：綁事件。「當 checkbox 發生 change 時，去執行 syncAnnotation」。
+      // 注意函式名稱後面沒有加 ()——加了就變成「現在馬上執行、把結果交出去」，
+      // 這裡要交出去的是函式本身，等事件發生時才由瀏覽器呼叫。
+      checkbox.addEventListener("change", syncAnnotation);
+
+      // 步驟四：進頁面時先手動跑一次。
+      // 因為 HTML 裡寫了 checked（預設勾選），但「預設值」不會觸發 change 事件，
+      // 不先跑這一次的話，畫面會和勾選狀態對不起來。
+      syncAnnotation();
+    </script>
+  </body>
+</html>
