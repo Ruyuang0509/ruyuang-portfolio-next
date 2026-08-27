@@ -1,0 +1,730 @@
+<!doctype html>
+<!--
+  ===================================================================
+  盒模型 ＋ 文繞圖練習（單一檔案版）
+  對照課堂白板：div / h2 / img / p，圖片置左上、右方排文字
+  ===================================================================
+
+  怎麼用：把這個檔案存成 layout.html，用瀏覽器直接打開就能看。
+  整份只有 HTML 和 CSS，沒有 JavaScript，也不需要安裝任何東西。
+
+  這一版比上一版多了什麼：
+    上一版  圖片和文字上下疊，重點在 margin / padding 的差別
+    這一版  圖片浮到左上角、文字排在它右邊，重點多了 float 與它的副作用
+
+  頁面上放了兩張卡片，內容一模一樣、做法不同：
+    第一張  float（文繞圖）  ← 這次作業的答案
+    第二張  flex（兩欄）     ← 對照組，看清楚兩者差在哪
+
+  正式專案會把 CSS 拆成獨立的 style.css，讓多個頁面共用；
+  這裡合成一個檔案純粹是為了方便傳給同學。
+  ===================================================================
+-->
+<html lang="zh-Hant">
+  <!--
+    lang="zh-Hant" 告訴瀏覽器和螢幕閱讀器：這頁是繁體中文。
+    影響斷行規則、字型挑選、以及輔助工具的發音。
+  -->
+  <head>
+    <!--
+      <head> 裡面放的是「給瀏覽器看的設定」，不會顯示在畫面上。
+      真正會出現在畫面上的東西，全部寫在下面的 <body> 裡。
+    -->
+
+    <!-- 文字編碼。沒有這行，中文很可能變成亂碼。永遠放在 head 第一行。 -->
+    <meta charset="utf-8" />
+
+    <!--
+      手機版的關鍵設定。
+      沒有這行，手機會假裝自己是 980px 寬的桌機，然後把整頁縮小，
+      結果就是字小到看不清楚。加了它，手機才會用自己真正的寬度來排版。
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- 分頁標籤上顯示的標題，也是搜尋結果的標題。 -->
+    <title>盒模型 ＋ 文繞圖練習：圖片置左、文字在右</title>
+
+    <style>
+      /* ==============================================================
+         CSS 開始
+
+         寫法是「選誰 { 改什麼: 改成什麼; }」：
+
+           .card { padding: 24px; }
+             ↑        ↑         ↑
+          選擇器    屬性       值
+
+         選擇器怎麼選：
+           p         → 所有 <p> 標籤
+           .card     → 所有 class="card" 的元素（點開頭 = class）
+           #annotate → id="annotate" 的那一個元素（井號開頭 = id）
+
+         class 可以重複用在很多元素上，id 整頁只能出現一次。
+         排版樣式一律用 class；id 留給「需要被單獨指名」的元素，
+         例如第 9 區那個開關。
+
+         0. class 怎麼取名 —— BEM 命名慣例
+
+         這份檔案的 class 名字（card、card__title）不是隨便取的，
+         用的是業界常見的 BEM 慣例：
+
+           .card          區塊本體（Block）
+           .card__title   區塊裡的某個部位（Element），用兩個底線接
+           .card--flex    同一個區塊的不同版本（Modifier），用兩個減號接
+
+         下面第二張卡片就是 .card .card--flex，兩個 class 同時掛在
+         同一個元素上：共用 .card 的外觀，再用 .card--flex 覆寫排法。
+         這就是 Modifier 的實際用途。
+         ============================================================== */
+
+      /* --------------------------------------------------------------
+         1. 全域重置 —— 就是白板右上角那一行
+
+         * 是「萬用選擇器」，代表頁面上每一個元素。
+
+         為什麼要歸零？
+         瀏覽器對 h1~h6、p、ul、body 都內建了 margin/padding，
+         而且各家瀏覽器的數字不完全一樣。不歸零的話，你看到的間距
+         有一部分是瀏覽器送的、有一部分是你寫的，改起來會很難預測。
+         先全部歸零，之後畫面上每一段空隙都是你自己寫出來的。
+         -------------------------------------------------------------- */
+      * {
+        margin: 0;
+        padding: 0;
+
+        /*
+          box-sizing 決定 width 這個數字「算到哪裡為止」：
+
+            content-box（瀏覽器預設）
+              width = 內容區
+              實際佔的寬度 = width + padding + border  ← 會被撐大
+
+            border-box（我們要的）
+              width = 內容 + padding + border 全部加起來
+              實際佔的寬度 = width           ← 說多寬就多寬
+
+          舉例：width: 200px + padding: 20px + border: 2px
+            content-box → 實際 244px（200 + 20×2 + 2×2）
+            border-box  → 實際 200px，padding 和 border 往內縮
+
+          這一版特別有感：圖片區塊要抓「不超過卡片的 45%」，
+          用 content-box 的話 padding 和 border 都會額外加上去，
+          算出來的寬度跟你想的不一樣，排版很容易擠爆。
+        */
+        box-sizing: border-box;
+      }
+
+      /* --------------------------------------------------------------
+         2. 頁面底層設定
+
+         寫在 body 上的字型、顏色、行高會「繼承」給裡面所有元素，
+         所以只要設定一次，整頁的文字都會跟著變。
+         -------------------------------------------------------------- */
+      body {
+        /*
+          字型用逗號列出備援清單：前面的找不到就往後找。
+          中文字型在 Mac 和 Windows 上名字不一樣，所以兩邊都列，
+          最後的 sans-serif 是「隨便給我一個無襯線字型」的保底。
+        */
+        font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+
+        /* 行高不加單位時 = 字級的倍數。1.7 表示行距是字體大小的 1.7 倍。
+           中文因為字比較方正，建議比英文再鬆一點，1.6~1.8 讀起來最舒服。 */
+        line-height: 1.7;
+
+        color: #1f2937;      /* 文字顏色。純黑 #000 對比太硬，深灰更好讀 */
+        background: #f8fafc; /* 頁面底色，讓白色卡片浮出來 */
+      }
+
+      /* --------------------------------------------------------------
+         3. 內容置中的外框
+
+         max-width 而不是 width：
+           width: 720px     → 永遠 720px，手機螢幕只有 390px 時會爆版
+           max-width: 720px → 「最多」720px，螢幕比較窄時自動縮小
+         這一行就是最簡單的 RWD（響應式）作法。
+         -------------------------------------------------------------- */
+      .page {
+        max-width: 720px;
+
+        /*
+          margin 的四個值可以縮寫，記法是「順時鐘」：
+            margin: 上 右 下 左           四個值
+            margin: 上下 左右             兩個值  ← 這裡用的
+            margin: 全部                  一個值
+
+          左右給 auto 的意思是「剩下的空間左右平分」，
+          這就是區塊元素水平置中最常用的寫法。
+        */
+        margin: 32px auto;
+
+        padding: 0 16px; /* 左右各留 16px，手機上文字才不會貼著螢幕邊 */
+      }
+
+      .page__title {
+        font-size: 24px;
+        margin-bottom: 12px;
+      }
+
+      .page__note {
+        margin: 20px 0 8px;
+        font-size: 14px;
+        color: #475569;
+      }
+
+      /* ==============================================================
+         4. 白板的藍框：最外層 <div>
+
+         盒模型是上一份作業的重點，這裡複習一次。由外往內四層：
+
+             ┌─────────── margin ───────────┐   ← 框「外面」的空白
+             │  ┌───────  border  ───────┐  │   ← 框線本身
+             │  │  ┌──── padding ────┐   │  │   ← 框「裡面」的空白
+             │  │  │     內容        │   │  │   ← 文字或圖片
+             │  │  └─────────────────┘   │  │
+             │  └────────────────────────┘  │
+             └──────────────────────────────┘
+
+           margin  推開「別人」——我和隔壁元素的距離
+           padding 推開「自己的內容」——框線和裡面文字的距離
+
+         背景色會塗到 padding，但不會塗到 margin。
+         想確認自己有沒有搞混，把背景色打開看它染到哪裡就知道了。
+         ============================================================== */
+      .card {
+        margin: 16px 0;  /* 上下各 16px、左右 0 → 白板最上面那支紅箭頭 */
+        padding: 24px;   /* 四邊都 24px → 白板左右兩側那兩支紅箭頭 */
+
+        /* border 的三個值：粗細 樣式 顏色，順序可以對調 */
+        border: 2px solid #2563eb;
+
+        border-radius: 8px;  /* 圓角。數字越大越圓 */
+        background: #ffffff;
+
+        /*
+          這一行是這次作業的隱藏地雷，非常值得記。
+
+          問題：浮動元素（下面的 .card__figure）會「脫離正常文件流」，
+          父層算自己該多高的時候會當作它不存在。所以如果圖片比文字高，
+          藍框會從圖片中間切過去，圖片整個掉出卡片外面。
+          這個現象叫「高度塌陷」。
+
+          解法有三代，都會遇到，認得就好：
+
+            舊  父層加 overflow: hidden;
+                能用，但副作用是超出範圍的東西會被裁掉
+
+            舊  clearfix ——父層加一個看不見的收尾元素：
+                  .card::after { content: ""; display: block; clear: both; }
+
+            新  display: flow-root;    ← 這裡用的
+                意思就是「請你好好把裡面的浮動包住」，一行、無副作用
+
+          三種都是在做同一件事：讓父層把浮動元素算進自己的高度。
+        */
+        display: flow-root;
+      }
+
+      /* ==============================================================
+         5. 這次作業的重點：圖片浮到左上角，文字排在右邊
+
+         float 的行為要一次搞懂：
+
+           1. 浮動元素會往指定的方向靠（left 就是靠左）
+           2. 它會「脫離正常流」，後面的區塊元素會當它不存在，
+              直接排到它下面——但那些區塊裡的「文字」看得到它，
+              會自動繞開。這就是為什麼叫「文繞圖」
+           3. 文字比圖片長的時候，超出的部分會自動繞到圖片下方接續，
+              這是 float 和 flex 最關鍵的差別（第 7 區有對照）
+
+         圖片要放在 HTML 的「最前面」，因為 float 只能讓後面的內容
+         繞著它排，排在它前面的元素不受影響。
+         ============================================================== */
+      .card__figure {
+        float: left;         /* ← 靠左浮動，文字就會排到右邊 */
+
+        width: 260px;        /* 給固定寬度，文字才有可預期的空間 */
+        max-width: 45%;      /* 但不准超過卡片的 45%，窄螢幕才不會壓死文字 */
+
+        /*
+          浮動元素和旁邊文字之間的距離，一定要自己給，
+          不然文字會直接貼在圖片邊上，很難讀。
+
+          margin: 上 右 下 左
+                  0  20px 16px 0
+          右邊和下面給間距（文字會出現在這兩個方向），
+          上面和左邊不給——那兩側貼著卡片的 padding 就好。
+        */
+        margin: 0 20px 16px 0;
+
+        padding: 12px;       /* 綠框到圖片的距離 */
+        border: 2px solid #16a34a;
+        border-radius: 6px;
+        background: #f0fdf4;
+      }
+
+      .card__image {
+        /*
+          block 和 inline 的差別要記：
+            block  → 自己獨佔一行，可以設定寬高（div、p、h1~h6）
+            inline → 和文字排在同一行，設寬高無效（span、a、img）
+
+          img 預設是 inline，改成 block 有兩個理由：
+
+          1. 版面可預期。block 元素自己佔一行，寬高設定一定生效。
+
+          2. 消掉「圖片下面那條縫」——但這一條要講清楚，
+             因為網路上大多寫得太絕對。
+
+             成因：inline 的 img 會被當成一個字來排，底部對齊文字基線，
+             而基線下面還要留空間給 g、y 這種字母的下伸部位。
+
+             關鍵是「同一行有沒有別的文字」：
+               同一行還有文字   → 真的會多出一條縫（實測約 6px）
+               圖片自己獨佔一行 → 現在的瀏覽器不會留那條縫（實測 0px）
+
+             想親眼確認：把下面這行 display: block 註解掉，
+             然後在 <img> 前面打幾個字，容器高度就會突然多幾 px。
+
+          所以 display: block 還是值得寫，但要知道它解決的是哪一種情況，
+          不要把「inline 圖片下面一定有縫」當成通則背下來。
+        */
+        display: block;
+
+        /* width 用百分比、height 用 auto → 圖片隨容器縮放且不變形。
+           只給其中一邊，另一邊寫 auto，比例就會自動算。 */
+        width: 100%;
+        height: auto;
+
+        border-radius: 4px;
+      }
+
+      .card__caption {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #15803d;
+        text-align: center;
+      }
+
+      /* ==============================================================
+         6. 右邊的文字內容：標題與連續段落
+
+         注意 .card__title 沒有做任何「靠右」的設定。
+         它會出現在圖片右邊，純粹是因為圖片浮動之後空出了那塊位置。
+         文字不需要知道旁邊有圖片，這是 float 好用的地方。
+
+         但有一件事很多人第一次會誤會，而且它會害你抓不到 bug：
+
+           被擠到旁邊的，只有「文字行」，不是那個元素的「盒子」。
+
+         h2 和 p 的盒子其實還是整排寬，只是它們裡面的每一行文字被
+         縮短、避開浮動元素而已。想親眼確認，把 p 加一個背景色：
+         你會看到底色一路鋪到圖片後面去，而不是只鋪在右半邊。
+
+         這就是為什麼「幫段落加背景色」在文繞圖版面裡常常出乎意料。
+         真的要讓盒子也避開浮動，那個元素要自己形成 BFC
+         （例如加 display: flow-root），或者改用 flex／grid。
+
+         （如果老師要的是「標題橫跨整排、只有段落繞圖」，
+         就把 h2 移到 figure 前面，並加上 clear: both。）
+
+         這裡順便複習上一份作業的第二個重點：margin 合併
+
+           A 的 margin-bottom: 20px
+           B 的 margin-top:    30px
+           實際距離 = 30px，不是 50px（取大的，不是相加）
+
+         自保方式：間距只往一個方向給，整份專案統一只用 margin-bottom。
+         ============================================================== */
+      .card__title {
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+
+      .card__text {
+        margin-bottom: 12px;
+      }
+
+      /*
+        :last-child 是「偽類選擇器」，意思是「在同一個父層裡排最後的那一個」。
+
+        最後一段文字如果也帶著 margin-bottom，那段空白會加在
+        .card 自己的 padding 上面，卡片底部就會比上面胖一截。
+        把最後一個歸零，上下留白才會對稱。
+      */
+      .card__text:last-child {
+        margin-bottom: 0;
+      }
+
+      /* <code> 標籤：用來標示「這是一段程式碼」，通常會配等寬字型 */
+      .card__text code {
+        padding: 1px 5px;
+        border-radius: 4px;
+        background: #f1f5f9;
+        font-size: 0.9em; /* em = 相對於「自己的字級」的倍數 */
+      }
+
+      /* ==============================================================
+         7. 對照組：同樣的版面用 flex 排
+
+         .card--flex 是 Modifier，只覆寫「怎麼排」，其他都繼承 .card。
+
+         兩種做法的差別，看第二張卡片就很清楚：
+
+           float  圖片和文字在同一個流裡，文字變長時會繞到圖片下方，
+                  版面像雜誌。適合「圖文混排的文章」
+           flex   圖片和文字是兩個獨立的欄，文字再長也只會在自己那欄
+                  往下長，不會跑到圖片下面。適合「並排的卡片版面」
+
+         沒有誰比較好，看你要的是哪種行為。
+         現代版面大多用 flex，但 float 沒有被淘汰——文繞圖只有它做得到。
+         ============================================================== */
+      .card--flex {
+        display: flex;   /* 直接讓卡片自己變成 flex 容器 */
+        gap: 20px;       /* 欄與欄之間的距離，比用 margin 乾淨 */
+
+        /* align-items 預設是 stretch（等高），改成 flex-start
+           讓圖片維持自己的高度，不要被拉長。 */
+        align-items: flex-start;
+      }
+
+      .card--flex .card__figure {
+        float: none;     /* 關掉浮動，改由 flex 負責排 */
+        margin: 0;       /* 間距交給上面的 gap */
+        flex: none;      /* 不准被壓縮或拉伸，維持 260px */
+      }
+
+      /* flex 版的文字要包成一欄，才不會每個 p 都變成一個獨立的欄 */
+      .card__body {
+        flex: 1;         /* 佔滿剩下的空間 */
+        min-width: 0;    /* 允許縮小。不寫的話長單字會把版面撐爆 */
+      }
+
+      /* ==============================================================
+         8. 窄螢幕：把浮動關掉
+
+         @media 是「條件式樣式」：只有在符合條件時才套用。
+         這裡的條件是「畫面寬度最多 560px」，也就是手機。
+
+         為什麼要關？手機只有 390px 寬，圖片再佔掉 45%，
+         右邊剩下不到兩百 px，中文一行擠不到十個字，完全不能讀。
+         窄螢幕改成圖片自己一排、文字在下面，才看得下去。
+         ============================================================== */
+      @media (max-width: 560px) {
+        .card__figure {
+          float: none;      /* 取消浮動 */
+          width: 100%;      /* 自己佔滿一排 */
+          max-width: 100%;
+          margin: 0 0 16px; /* 只留下面的間距 */
+        }
+
+        .card--flex {
+          display: block;   /* 兩欄改成上下堆疊 */
+        }
+
+        /*
+          這一條容易漏掉，是 specificity 的實際案例：
+          上面那條 .card__figure 只有一個 class（權重 0-1-0），
+          但第 7 區的 .card--flex .card__figure 有兩個（權重 0-2-0），
+          比較具體、贏過它，margin: 0 會繼續生效。
+          結果就是窄螢幕下 flex 版的圖片和文字黏在一起。
+          要蓋掉它，這裡也得用同樣具體的選擇器。
+        */
+        .card--flex .card__figure {
+          margin: 0 0 16px;
+        }
+      }
+
+      /* ==============================================================
+         9. 標註開關：不用 JavaScript 的做法（俗稱 checkbox hack）
+
+         這是額外的技巧，聽不懂可以先跳過，不影響上面的版面。
+
+         原理只有兩個零件：
+
+           :checked  偽類，意思是「這個核取方塊現在是勾選狀態」
+           ~         一般兄弟選擇器，意思是「我後面的兄弟元素」
+
+         所以下面這一行讀作：
+           「當 #annotate 被勾選時，把它後面的 .card 加上紅色網底」
+
+         關鍵限制（最值得記的一點）：
+         CSS 只能往「後面的兄弟」找，不能往前找、也不能往上找父層。
+         所以 <input> 在 HTML 裡必須排在 .card 前面、而且是同一層的兄弟。
+         這也是為什麼 input 沒有被 label 包起來，改用 id / for 配對。
+
+         純 CSS 的好處是它不依賴 JavaScript 執行環境——
+         有些預覽工具或安全設定會擋掉網頁裡的 script，
+         那種情況下用 JS 寫的開關會整個失效，這個做法不會。
+         ============================================================== */
+
+      /* 開關本體。input 和 label 是兄弟，不能互相包住，
+         所以用 vertical-align 讓它們在同一條線上對齊。 */
+      .toggle__input {
+        vertical-align: middle;
+        margin-right: 6px;
+      }
+
+      .toggle {
+        vertical-align: middle;
+        font-size: 14px;
+        color: #475569;
+        cursor: pointer; /* 滑鼠移上去變成手指，暗示「這可以點」 */
+      }
+
+      /* 狀態小標籤：開和關各準備一個，用 :checked 決定顯示哪一個。 */
+      .toggle__state {
+        display: inline-block;
+        min-width: 3.6em;
+        padding: 0 8px;
+        border-radius: 999px;
+        font-size: 13px;
+        text-align: center;
+        background: #e2e8f0;
+        color: #475569;
+      }
+
+      .toggle__state--on {
+        display: none;
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+
+      #annotate:checked ~ .toggle .toggle__state--off {
+        display: none;
+      }
+
+      #annotate:checked ~ .toggle .toggle__state--on {
+        display: inline-block;
+      }
+
+      /*
+        勾選時才畫出來的標註。
+
+        做法：inset box-shadow 的「擴散值」設成和 padding 一樣大，
+        染出來的那一圈就正好等於 padding 佔掉的空間。
+
+          box-shadow: inset 水平 垂直 模糊 擴散 顏色;
+                       ↑                    ↑
+                   往內畫              設成 24px = padding 值
+      */
+      #annotate:checked ~ .card {
+        box-shadow: inset 0 0 0 24px rgba(239, 68, 68, 0.18);
+      }
+
+      #annotate:checked ~ .card .card__figure {
+        box-shadow: inset 0 0 0 12px rgba(239, 68, 68, 0.22);
+      }
+
+      /*
+        逗號 = 「或」。這幾個選擇器套用同一組樣式，不用寫很多次。
+
+        這裡用 outline 而不是 border，因為 outline 不佔空間、
+        不會把版面推開，很適合拿來做這種暫時性的標示。
+
+        rgba 的第四個數字是透明度（0 全透明 ~ 1 不透明）。
+      */
+      #annotate:checked ~ .card .card__title,
+      #annotate:checked ~ .card .card__text,
+      #annotate:checked ~ .card .card__image {
+        outline: 1px dashed rgba(220, 38, 38, 0.9);
+      }
+
+      /* --------------------------------------------------------------
+         10. 圖例
+
+         圖例只有在標註打開時才看得懂，所以預設收起來（display: none），
+         勾選時再放出來。同一個屬性寫兩次，後面的規則不會蓋掉前面的——
+         真正決定勝負的是「選擇器誰比較具體」：
+           #annotate:checked ~ .legend   有 id，比較具體  → 贏
+           .legend                       只有 class       → 輸
+         這叫 CSS 的「specificity（權重）」，是排版失效時第一個要查的東西。
+         -------------------------------------------------------------- */
+      .legend {
+        display: none;
+        margin-top: 16px;
+        padding: 16px;
+        border-radius: 8px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        list-style: none; /* 拿掉 ul 預設的小圓點 */
+        font-size: 14px;
+      }
+
+      .legend li {
+        display: flex;      /* 讓色塊和文字並排 */
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .legend li:last-child {
+        margin-bottom: 0;
+      }
+
+      .legend__swatch {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        flex: none; /* 不准被壓縮，維持正方形 */
+      }
+
+      .legend__swatch--blue {
+        border: 2px solid #2563eb;
+      }
+
+      .legend__swatch--green {
+        border: 2px solid #16a34a;
+      }
+
+      .legend__swatch--red {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.6);
+      }
+
+      #annotate:checked ~ .legend {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!--
+      ============================================================
+      HTML 開始 —— 這裡是真正會顯示在畫面上的內容
+
+      標籤要挑「意思對」的，不是挑「看起來對」的：
+        <h1>~<h6> 標題，數字代表層級，一頁只放一個 h1，不可跳級
+        <p>       段落
+        <img>     圖片
+        <figure>  圖片和它的說明文字，當成一組
+        <div>     沒有特別意思的容器，純粹拿來包東西、套樣式
+
+      為什麼要在意？搜尋引擎和螢幕閱讀器是靠標籤來理解頁面結構的。
+      全部用 div 排出來的頁面看起來一樣，但機器讀不懂。
+      ============================================================
+    -->
+    <main class="page">
+      <h1 class="page__title">盒模型 ＋ 文繞圖練習</h1>
+
+      <!--
+        這個核取方塊控制下面所有的標註樣式（原理見 CSS 第 9 區）。
+
+        兩個重點：
+
+        1. 它必須排在 .card 和 .legend 的「前面」，而且是同一層的兄弟。
+           因為 CSS 的 ~ 只能往後找，往前、往上都找不到。
+
+        2. input 和 label 用 id / for 配對：
+             <input id="annotate">  ←→  <label for="annotate">
+           兩個字串要一模一樣。配對成功之後，點 label 上的文字
+           也能勾選方塊，點擊範圍變大，對手機和輔助工具都更友善。
+      -->
+      <input class="toggle__input" id="annotate" type="checkbox" checked />
+      <label class="toggle" for="annotate">
+        顯示間距標註（對應白板上的紅色箭頭）
+        <span class="toggle__state toggle__state--off">關</span>
+        <span class="toggle__state toggle__state--on">開</span>
+      </label>
+
+      <!--
+        ====== 第一張卡片：float 版，這次作業的答案 ======
+
+        圖片要放在最前面。float 只能讓「排在它後面」的內容繞著它，
+        寫在它前面的元素完全不受影響，順序錯了就沒有效果。
+      -->
+      <div class="card">
+        <!-- 綠框：浮到左上角的圖片區塊 -->
+        <figure class="card__figure">
+          <!--
+            img 有兩個屬性一定要寫：
+              src → 圖片位置，可以是檔名、網址，或像這裡直接內嵌一張 SVG
+              alt → 圖片的文字描述
+
+            alt 不是可有可無：圖片載入失敗時它會顯示出來，
+            視障使用者的螢幕閱讀器也是唸這一段。
+            （純裝飾用的圖片才寫 alt=""，代表「這張可以略過」。）
+          -->
+          <img
+            class="card__image"
+            src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 200'><rect width='320' height='200' fill='%23dbeafe'/><circle cx='108' cy='72' r='30' fill='%2360a5fa'/><path d='M28 176 L124 88 L184 140 L238 104 L300 176 Z' fill='%233b82f6'/></svg>"
+            alt="示意圖片：藍色調的山景插圖"
+          />
+
+          <!-- figcaption 一定要放在 figure 裡面，它是圖片的正式說明 -->
+          <figcaption class="card__caption">圖片區塊（float: left）</figcaption>
+        </figure>
+
+        <!-- 標題和段落都沒有做任何「靠右」的設定，
+             它們出現在右邊，純粹是因為圖片浮動之後空出了那塊位置。 -->
+        <h2 class="card__title">標題文字（h2）</h2>
+
+        <p class="card__text">
+          第一段文字。圖片用 <code>float: left</code> 浮到左上角之後，
+          這些文字會自動排到它的右邊，不需要對文字做任何設定。
+        </p>
+        <p class="card__text">
+          第二段文字。圖片和文字之間的空隙，是圖片自己的
+          <code>margin-right</code> 撐出來的。沒有給的話文字會直接貼上去。
+        </p>
+        <p class="card__text">
+          第三段文字，故意寫長一點。文字的量超過圖片高度之後，多出來的部分
+          會自動繞到圖片下方接續排列——這就是「文繞圖」，也是 float 和
+          <code>flex</code> 最關鍵的差別。捲動看看下面那張對照組卡片，
+          同樣的文字在 flex 版裡只會待在自己那一欄，永遠不會跑到圖片下面。
+        </p>
+      </div>
+
+      <p class="page__note">
+        ↓ 對照組：同樣的內容改用 <code>display: flex</code> 排成兩欄
+      </p>
+
+      <!--
+        ====== 第二張卡片：flex 版對照組 ======
+
+        class 掛了兩個：.card 提供外觀（框線、padding、圓角），
+        第二個 class 只覆寫排法，這就是 BEM 的 Modifier。
+        （它的完整寫法在上面 CSS 第 0 區——HTML 註解裡不能出現連續兩個減號，
+        所以那個名字只能寫在 CSS 註解裡，這個限制本身也值得記。）
+
+        結構上多了一層 .card__body 把文字包起來，
+        因為 flex 會把「每一個直接子元素」各自變成一欄，
+        不包起來的話 h2 和三個 p 會變成四個並排的欄位。
+      -->
+      <div class="card card--flex">
+        <figure class="card__figure">
+          <img
+            class="card__image"
+            src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 200'><rect width='320' height='200' fill='%23dcfce7'/><circle cx='108' cy='72' r='30' fill='%234ade80'/><path d='M28 176 L124 88 L184 140 L238 104 L300 176 Z' fill='%2316a34a'/></svg>"
+            alt="示意圖片：綠色調的山景插圖"
+          />
+          <figcaption class="card__caption">圖片區塊（flex 的第一欄）</figcaption>
+        </figure>
+
+        <div class="card__body">
+          <h2 class="card__title">標題文字（h2）</h2>
+
+          <p class="card__text">
+            第一段文字。這張卡片用 <code>display: flex</code> 排，
+            圖片和文字是兩個獨立的欄。
+          </p>
+          <p class="card__text">
+            第二段文字。欄與欄之間的距離用 <code>gap</code> 給，
+            不必在圖片上寫 <code>margin-right</code>。
+          </p>
+          <p class="card__text">
+            第三段文字，一樣寫長一點。注意這一段再長，也只會在自己這一欄
+            往下長，<strong>不會繞到圖片下方</strong>。要雜誌式的圖文混排就用
+            float，要穩定的兩欄版面就用 flex。
+          </p>
+        </div>
+      </div>
+
+      <ul class="legend">
+        <li><span class="legend__swatch legend__swatch--blue"></span>藍框＝外層 <code>div</code>（.card）</li>
+        <li><span class="legend__swatch legend__swatch--green"></span>綠框＝圖片區塊（.card__figure）</li>
+        <li><span class="legend__swatch legend__swatch--red"></span>紅色網底＝該元素的 <code>padding</code> 佔掉的空間</li>
+      </ul>
+    </main>
+  </body>
+</html>
