@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>盒模型練習：div / h2 / img / p</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page__head">
+        <h1 class="page__title">盒模型練習</h1>
+        <label class="toggle">
+          <input id="annotate" type="checkbox" checked />
+          顯示間距標註（對應白板上的紅色箭頭）
+        </label>
+      </header>
+
+      <!-- 白板藍框＝最外層 <div>，是整張卡片的容器 -->
+      <div class="card">
+        <!-- 白板：<h2> ... </h2> -->
+        <h2 class="card__title">標題文字（h2）</h2>
+
+        <!-- 白板綠框＝包住 <img> 的圖片區塊，用 padding 把圖片往內推 -->
+        <figure class="card__figure">
+          <img
+            class="card__image"
+            src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 200'><rect width='320' height='200' fill='%23dbeafe'/><circle cx='108' cy='72' r='30' fill='%2360a5fa'/><path d='M28 176 L124 88 L184 140 L238 104 L300 176 Z' fill='%233b82f6'/></svg>"
+            alt="示意圖片：藍色調的山景插圖"
+          />
+          <figcaption class="card__caption">圖片區塊（綠框與圖片之間的空隙＝padding）</figcaption>
+        </figure>
+
+        <!-- 白板右側：連續數個 <p> ... </p>，段落之間靠 margin 拉開 -->
+        <p class="card__text">
+          第一段文字。段落之間的距離，是由 <code>p</code> 的
+          <code>margin-bottom</code> 撐出來的，不是空白行。
+        </p>
+        <p class="card__text">
+          第二段文字。<code>margin</code> 在框線外面、<code>padding</code>
+          在框線裡面，這是盒模型最容易搞混的一組。
+        </p>
+        <p class="card__text">
+          第三段文字。整張卡片與瀏覽器邊緣的距離，來自
+          <code>.card</code> 自己的 <code>margin</code>。
+        </p>
+      </div>
+
+      <ul class="legend">
+        <li><span class="legend__swatch legend__swatch--blue"></span>藍框＝外層 <code>div</code>（.card）</li>
+        <li><span class="legend__swatch legend__swatch--green"></span>綠框＝圖片區塊（.card__figure）</li>
+        <li><span class="legend__swatch legend__swatch--red"></span>紅色網底＝該元素的 <code>padding</code> 佔掉的空間</li>
+      </ul>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

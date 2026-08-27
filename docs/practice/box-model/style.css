@@ -1,0 +1,183 @@
+/* ------------------------------------------------------------------
+   1. 全域重置 —— 白板右上角那一行 * { margin: 0; padding: 0; }
+
+   瀏覽器對 h1~h6、p、ul、body 都有預設的 margin/padding，
+   先歸零，之後每一段間距才是「自己寫出來的」，不是瀏覽器送的。
+   box-sizing: border-box 一起加上：讓 width 把 padding 和 border 算進去，
+   不然給了寬度又加 padding，元素會被撐爆。
+   ------------------------------------------------------------------ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------------
+   2. 基本版面
+   ------------------------------------------------------------------ */
+body {
+  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  line-height: 1.7;
+  color: #1f2937;
+  background: #f8fafc;
+}
+
+.page {
+  max-width: 720px;
+  /* 上下 32px、左右 auto —— auto 讓區塊在父層水平置中 */
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+.page__head {
+  margin-bottom: 24px;
+}
+
+.page__title {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #475569;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------
+   3. 白板藍框：最外層 <div>
+
+   margin  → 框線「外面」，決定卡片離瀏覽器邊緣多遠（白板最上方的紅箭頭）
+   padding → 框線「裡面」，決定內容離藍框多遠（白板左右兩側的紅箭頭）
+   ------------------------------------------------------------------ */
+.card {
+  margin: 24px 0;          /* 外距：藍框到外部的距離 */
+  padding: 24px;           /* 內距：藍框到內容的距離 */
+  border: 2px solid #2563eb;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+/* 白板：<h2> ... </h2>，靠 margin-bottom 和下方的圖片區塊拉開 */
+.card__title {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+/* ------------------------------------------------------------------
+   4. 白板綠框：包住 <img> 的圖片區塊
+
+   圖片本身不加間距，改由外層區塊的 padding 負責，
+   之後要調整留白只要改一個地方，圖片可以隨時替換。
+   ------------------------------------------------------------------ */
+.card__figure {
+  margin-bottom: 20px;     /* 圖片區塊與下方第一段文字的距離 */
+  padding: 12px;           /* 綠框到圖片的距離（白板上下的紅箭頭） */
+  border: 2px solid #16a34a;
+  border-radius: 6px;
+  background: #f0fdf4;
+}
+
+/* img 預設是 inline，底部會多出一條莫名的空隙（行高造成的）。
+   改成 block 就沒有這個問題；width/height 讓圖片隨容器縮放不變形。 */
+.card__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.card__caption {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #15803d;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------
+   5. 白板右側：連續的 <p>
+
+   段落之間的空隙只給 margin-bottom，統一往下推；
+   最後一段把 margin 歸零，避免卡片底部多出一段空白。
+   ------------------------------------------------------------------ */
+.card__text {
+  margin-bottom: 12px;
+}
+
+.card__text:last-child {
+  margin-bottom: 0;
+}
+
+.card__text code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  font-size: 0.9em;
+}
+
+/* ------------------------------------------------------------------
+   6. 標註模式：把白板上的紅箭頭畫出來
+
+   inset box-shadow 的擴散值設成和 padding 一樣，
+   染出來的那一圈就正好是 padding 佔掉的空間。
+   ------------------------------------------------------------------ */
+.is-annotated .card {
+  box-shadow: inset 0 0 0 24px rgba(239, 68, 68, 0.12);
+}
+
+.is-annotated .card__figure {
+  box-shadow: inset 0 0 0 12px rgba(239, 68, 68, 0.16);
+}
+
+.is-annotated .card__title,
+.is-annotated .card__text,
+.is-annotated .card__image {
+  outline: 1px dashed rgba(239, 68, 68, 0.7);
+}
+
+/* ------------------------------------------------------------------
+   7. 圖例
+   ------------------------------------------------------------------ */
+.legend {
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.legend li:last-child {
+  margin-bottom: 0;
+}
+
+.legend__swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  flex: none;
+}
+
+.legend__swatch--blue {
+  border: 2px solid #2563eb;
+}
+
+.legend__swatch--green {
+  border: 2px solid #16a34a;
+}
+
+.legend__swatch--red {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.6);
+}
